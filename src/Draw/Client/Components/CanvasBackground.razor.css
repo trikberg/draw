@@ -1,0 +1,7 @@
+﻿.background {
+    grid-column: 1 / 1;
+    grid-row: 1 / 1;
+    z-index: -20;
+    width: 800px;
+    height: 600px;
+}

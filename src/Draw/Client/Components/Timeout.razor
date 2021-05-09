@@ -1,0 +1,15 @@
+﻿@if (active)
+{
+    <div class="frame">
+        <div class="progress" style="animation-duration: @(Duration)s;" />
+    </div>
+}
+
+@code {
+    bool active = true;
+
+    [Parameter]
+    public int Duration { get; set; }
+
+
+}

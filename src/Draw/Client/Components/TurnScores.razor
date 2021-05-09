@@ -1,0 +1,69 @@
+﻿@implements IDisposable
+@inject IGameService GameService
+
+@if (turnScoresVisible)
+{
+    <div class="overlay">
+        <h2>Turn scores</h2>
+        <table class="score-table">
+            @foreach (PlayerScore ts in turnScores)
+            {
+                <tr>
+                    <td class="name">@ts.Player.Name</td>
+                    <td>@ts.Score</td>
+                </tr>
+            }
+        </table>
+        <Timeout Duration="@timeout" />
+    </div>
+}
+
+@code {
+    private bool turnScoresVisible = false;
+    private List<PlayerScore> turnScores = null;
+    private int timeout = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.ActivePlayerWordChoiceStarted += ActivePlayerWordChoiceStarted;
+        GameService.PlayerWordChoiceStarted += PlayerWordChoiceStarted;
+        GameService.TurnScores += OnTurnScores;
+        GameService.GameScores += GameEnded;
+    }
+
+    public void Dispose()
+    {
+        GameService.ActivePlayerWordChoiceStarted -= ActivePlayerWordChoiceStarted;
+        GameService.PlayerWordChoiceStarted -= PlayerWordChoiceStarted;
+        GameService.TurnScores -= OnTurnScores;
+        GameService.GameScores -= GameEnded;
+    }
+
+    private void OnTurnScores(object sender, (List<PlayerScore> scores, int timeout) args)
+    {
+        args.scores.Sort((s1, s2) => s2.Score.CompareTo(s1.Score));
+        turnScores = args.scores;
+        timeout = args.timeout;
+        turnScoresVisible = true;
+        StateHasChanged();
+    }
+
+    private void ActivePlayerWordChoiceStarted(object sender, WordChoiceEventArgs e)
+    {
+        turnScoresVisible = false;
+        StateHasChanged();
+    }
+
+    private void PlayerWordChoiceStarted(object sender, (PlayerDTO player, int timeout) args)
+    {
+        turnScoresVisible = false;
+        StateHasChanged();
+    }
+
+    private void GameEnded(object sender, (List<PlayerScore> scores, int timeout) args)
+    {
+        turnScoresVisible = false;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,24 @@
+﻿.overlay {
+    grid-column: 1 / 1;
+    grid-row: 1 / 1;
+    width: 800px;
+    height: 600px;
+    background: #000000dd;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+
+h2 {
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+p {
+    color: #ffffff;
+    font-size: 20px;
+}

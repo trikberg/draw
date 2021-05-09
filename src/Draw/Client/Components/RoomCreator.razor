@@ -1,0 +1,41 @@
+﻿@inject IGameService GameService
+
+<div class="vertical">
+    <div class="setting">
+        <span>Room name:</span>
+        <input class="roomname" 
+               @bind="roomName" 
+               @bind:event="oninput" 
+               @ref="inputref" 
+               placeholder="Room name" 
+               maxlength="20"/>    
+    </div>
+    <RoomSettingsDisplay Settings="roomSettings" IsEditable="true" />
+    <button @onclick="CreateRoom" disabled="@(!CreationAllowed)">Create room</button>
+</div>
+
+@code {
+    private string roomName;
+    private RoomSettings roomSettings = new RoomSettings();
+
+    private ElementReference inputref;
+
+    private bool CreationAllowed => !string.IsNullOrWhiteSpace(roomName);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await inputref.FocusAsync();
+        }
+    }
+
+    private async void CreateRoom()
+    {
+        if (await GameService.CreateRoom(roomName, roomSettings))
+        {
+            await GameService.JoinRoom(roomName);
+        }
+    }
+
+}

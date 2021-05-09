@@ -1,0 +1,39 @@
+﻿.wrapper {
+    width: 600px;
+    height: 48px;
+    position: relative;
+    display: inline-block;
+    vertical-align:middle;
+}
+
+.slider {
+    width: 100%;
+    height: 30px;
+    position: relative;
+    top: 9px;
+    border: 2px solid white;
+    border-radius: 2px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    vertical-align: middle;
+}
+
+.difficulty {
+    text-align: center;
+    line-height: 28px;
+    background-color: #ffffff66;
+}
+
+.grabber {
+    width: 30px;
+    height: 40px;
+    position: absolute;
+    top: 4px;
+    border: 2px solid white;
+    border-radius: 2px;
+    background-color: #ffffffaa;
+    transform: translate(-50%, 0px);
+    cursor: grab;
+    vertical-align: middle;
+}

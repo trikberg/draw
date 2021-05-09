@@ -1,0 +1,7 @@
+﻿.slider {
+    appearance: none;
+    outline: none;
+    width: 150px;
+    height: 10px;
+    background: linear-gradient(to right, black, white);
+}

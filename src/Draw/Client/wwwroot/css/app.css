@@ -1,0 +1,103 @@
+﻿/*@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');*/
+
+:root {
+    --theme-color1: #3f78c8;
+    --theme-color2: #3fc878;
+    --theme-gradient: linear-gradient(to right bottom, var(--theme-color1), var(--theme-color2));
+}
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a, .btn-link {
+    color: #0366d6;
+}
+
+div,
+span {
+    user-select: none;
+}
+
+input,
+select {
+    font-size: 1em;
+}
+
+button {
+    height: 50px;
+    font-size: 30px;
+    padding: 2px 10px 2px 10px;
+    border-radius: 5px;
+    border: 2px solid #ffffffcc;
+    color: white;
+    background-color: var(--theme-color1);
+    box-shadow: 2px 2px 6px 2px #00000022;
+}
+
+    button:hover {
+        box-shadow: 4px 4px 8px 2px #00000044;
+    }
+
+    button:disabled,
+    button[disabled] {
+        background-color: #cccccc;
+        color: #666666;
+    }
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#app {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--theme-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#loading {
+    color: #fffc;
+    font-size: 80px;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }

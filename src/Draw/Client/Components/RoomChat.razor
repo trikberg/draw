@@ -1,0 +1,54 @@
+﻿@implements IDisposable
+@inject IGameService GameService
+
+<div class="roomchat">
+    <div class="chat-messages">
+        @foreach (ChatMessage message in messages)
+        {
+            <ChatMessageDisplay Message=message />
+        }
+    </div>
+    <input class="guess-input" 
+           maxlength="50" 
+           placeholder="@(IsChatMode ? "Chat here..." : "Type your guess here...")"
+           @bind="Guess" />
+</div>
+
+@code {
+    [Parameter]
+    public bool IsChatMode { get; set; } = false;
+
+    private List<ChatMessage> messages = new List<ChatMessage>();
+
+    private string guess = "";
+    private string Guess
+    {
+        set
+        {
+            GameService.MakeGuess(value);
+            guess = "";
+        }
+        get { return guess; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.ChatMessageReceived += ChatMessageReceived;
+    }
+
+    public void Dispose()
+    {
+        GameService.ChatMessageReceived -= ChatMessageReceived;
+    }
+
+    private void ChatMessageReceived(object sender, ChatMessage cm)
+    {
+        if (messages.Count >= 50 )
+        {
+            messages.RemoveRange(0, messages.Count - 49);
+        }
+        messages.Add(cm);
+        StateHasChanged();
+    }
+}

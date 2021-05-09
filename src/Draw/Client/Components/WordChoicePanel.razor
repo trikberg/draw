@@ -1,0 +1,22 @@
+﻿@inject IGameService GameService
+
+<div class="word-choice">
+    <h2>Choose a word to draw:</h2>
+    <button @onclick="() => WordChosen(1)">@Word1.Word <WordDifficultyDisplay Difficulty="Word1.Difficulty" /></button>
+    <button @onclick="() => WordChosen(2)">@Word2.Word <WordDifficultyDisplay Difficulty="Word2.Difficulty" /></button>
+    <button @onclick="() => WordChosen(3)">@Word3.Word <WordDifficultyDisplay Difficulty="Word3.Difficulty" /></button>
+</div>
+
+@code {
+    [Parameter]
+    public WordDTO Word1 { get; set; }
+    [Parameter]
+    public WordDTO Word2 { get; set; }
+    [Parameter]
+    public WordDTO Word3 { get; set; }
+
+    private async Task WordChosen(int wordIndex)
+    {
+        await GameService.WordChosen(wordIndex);
+    }
+}

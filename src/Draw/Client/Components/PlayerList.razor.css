@@ -1,0 +1,12 @@
+﻿.playerlist {
+    background: #ffffff22;
+    flex-grow: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 4px;
+    border-right: 2px solid white;
+    max-width: 335px;
+}

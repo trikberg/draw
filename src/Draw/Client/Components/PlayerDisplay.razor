@@ -1,0 +1,87 @@
+﻿@implements IDisposable
+@inject IGameService GameService
+
+<div class="playerdisplay @(isPlayerTurn ? "playerturn" : "") @(hasGuessedWord ? "correct" : "")">
+    <img src="icons/player.svg" width="50" height="50" />
+    <div>
+        <div class="player-name">@Player.Name</div>
+        @if (ShowScore && Player.Position.HasValue)
+        {
+            <div class="player-score"><span class="player-position">#@Player.Position</span> - @Player.Score</div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Player Player { get; set; }
+
+    [Parameter]
+    public bool ShowScore { get; set; }
+
+    private bool isPlayerTurn = false;
+    private bool hasGuessedWord = false;
+
+    protected override void OnInitialized()
+    {
+        Player.ScoreChanged += ScoreChanged;
+        GameService.PlayerWordChoiceStarted += PlayerWordChoiceStarted;
+        GameService.ActivePlayerWordChoiceStarted += ActivePlayerWordChoiceStarted;
+        GameService.PlayerDrawStarted += PlayerDrawStarted;
+        GameService.CorrectGuessMade += CorrectGuessMade;
+        GameService.GameScores += GameScores;
+    }
+
+    public void Dispose()
+    {
+        Player.ScoreChanged -= ScoreChanged;
+        GameService.PlayerWordChoiceStarted -= PlayerWordChoiceStarted;
+        GameService.ActivePlayerWordChoiceStarted -= ActivePlayerWordChoiceStarted;
+        GameService.PlayerDrawStarted -= PlayerDrawStarted;
+        GameService.CorrectGuessMade -= CorrectGuessMade;
+        GameService.GameScores -= GameScores;
+    }
+
+    public void ScoreChanged(object sender, int newScore)
+    {
+        StateHasChanged();
+    }
+
+    // Needed for player being added during drawing.
+    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs args)
+    {
+        isPlayerTurn = Player.Equals(args.Player);
+        StateHasChanged();
+    }
+
+    private void PlayerWordChoiceStarted(object sender, (PlayerDTO player, int timeout) args)
+    {
+        isPlayerTurn = Player.Equals(args.player);
+        hasGuessedWord = false;
+        StateHasChanged();
+    }
+
+    private void ActivePlayerWordChoiceStarted(object sender, WordChoiceEventArgs args)
+    {
+        isPlayerTurn = Player.Id.Equals(GameService.PlayerGuid);
+        hasGuessedWord = false;
+        StateHasChanged();
+    }
+
+    private void CorrectGuessMade(object sender, (PlayerDTO player, int timeRemaining) args)
+    {
+        if (Player.Equals(args.player))
+        {
+            hasGuessedWord = true;
+            StateHasChanged();
+        }
+    }
+
+    private void GameScores(object sender, (List<PlayerScore> scores, int timeout) args)
+    {
+        isPlayerTurn = false;
+        hasGuessedWord = false;
+        StateHasChanged();
+    }
+
+}

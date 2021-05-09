@@ -1,0 +1,15 @@
+﻿.logo {
+    color: #fffc;
+    left: 10px;
+    font-size: 120px;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+.vertical {
+    position: absolute;
+    bottom: 10px;
+    transform: rotateZ(-90deg);
+    transform-origin: bottom left;
+    text-shadow: -8px 8px 15px #00000055;
+}

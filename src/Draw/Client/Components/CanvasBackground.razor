@@ -1,0 +1,22 @@
+﻿@implements IDisposable
+@inject IToolboxService ToolboxService
+
+<div class="background" style="background-color: @ToolboxService.GetBackgroundColor()"></div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        ToolboxService.BackgroundColorChanged += BackgroundColorChanged;
+    }
+
+    public void Dispose()
+    {
+        ToolboxService.BackgroundColorChanged -= BackgroundColorChanged;
+    }
+
+    private void BackgroundColorChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+}

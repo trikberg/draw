@@ -1,0 +1,21 @@
+﻿@inject IToolboxService ToolboxService
+
+<button title=@Title @onclick="OnClick">
+    @ChildContent
+</button>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public Action Callback { get; set; }
+
+    private void OnClick()
+    {
+        Callback?.Invoke();
+    }
+}

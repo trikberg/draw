@@ -1,0 +1,49 @@
+﻿@inject IToolboxService ToolboxService
+@implements IDisposable
+
+<div style="background-color:@BackgroundColor" class=@(IsActiveColor ? "active" : "") @onclick="OnClick"></div>
+
+@code {
+    [Parameter]
+    public int X { get; set; }
+
+    [Parameter]
+    public int Y { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ToolboxService.BrushColorChanged += OnActiveColorChanged;
+    }
+
+    public void Dispose()
+    {
+        ToolboxService.BrushColorChanged -= OnActiveColorChanged;
+    }
+
+    private string BackgroundColor
+    {
+        get
+        {
+            return ToolboxService.GetBrushColor(X, Y);
+        }
+    }
+
+    private bool IsActiveColor
+    {
+        get
+        {
+            return ToolboxService.IsActiveBrushColor(X, Y);
+        }
+    }
+
+    private void OnClick()
+    {
+        ToolboxService.SetActiveBrushColor(X, Y);
+    }
+
+    private void OnActiveColorChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+}
+

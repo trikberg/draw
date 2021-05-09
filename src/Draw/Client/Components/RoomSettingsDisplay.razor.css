@@ -1,0 +1,28 @@
+﻿.room-settings {
+    width: 100%;
+    min-width: 400px;
+    flex-grow: 4;
+}
+
+.vertical {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    gap: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.setting {
+    font-size: 20px;
+    line-height: 1.0;
+    padding: 10px;
+    background: #ffffff66;
+}
+
+label {
+    font-weight:bold;
+}
+

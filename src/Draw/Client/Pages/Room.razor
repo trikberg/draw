@@ -1,0 +1,20 @@
+﻿@page "/room"
+
+<div class="vertical">
+    <GameBar />
+    <div class="horizontal">
+        <PlayerList ShowScore="@true" />
+        <div class="vertical">
+            <div class="place-holder">
+                <GameCanvas />
+                <GameStateOverlay />
+            </div>
+            <Toolbox />
+        </div>
+        <RoomChat />
+    </div>
+</div>
+
+@code {
+
+}

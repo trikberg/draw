@@ -1,0 +1,41 @@
+﻿.spinner {
+    position: relative;
+    border: 12px solid #ffffff33;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+
+.spinner_a {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    width: 60px;
+    height: 60px;
+    border: 12px solid #ffffff00;
+    border-top: 12px solid #fff;
+    border-radius: 50%;
+    animation: spin 2.0s linear infinite;
+}
+
+.spinner_b {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    width: 60px;
+    height: 60px;
+    border: 12px solid #ffffff00;
+    border-top: 12px solid #fff;
+    border-radius: 50%;
+    animation: spin 2.5s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

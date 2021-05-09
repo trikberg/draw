@@ -1,0 +1,24 @@
+﻿.roomchat {
+    max-height: 756px;
+    flex-grow: 2;
+    background-color: #ffffff22;
+    border-left: 2px solid white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.chat-messages {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0px;
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.guess-input {
+    flex: 0 0 auto;
+    border-bottom-right-radius: 18px;
+}

@@ -1,0 +1,29 @@
+@implements IDisposable
+@inject IGameService GameService
+
+<div>
+    Round @(currentRound) / @(roundCount)
+</div>
+
+@code {
+    private int currentRound = 0;
+    private int roundCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.RoundStarted += RoundStarted;
+    }
+
+    public void Dispose()
+    {
+        GameService.RoundStarted -= RoundStarted;
+    }
+
+    private void RoundStarted(object sender, (int currentRound, int roundCount) args)
+    {
+        currentRound = args.currentRound;
+        roundCount = args.roundCount;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,75 @@
+﻿@page "/waitingroom"
+@implements IDisposable
+@inject IGameService GameService
+@inject NavigationManager navigationManager
+
+<div class="vertical">
+    <div class="top-bar">
+        @GameService.RoomState.RoomName
+    </div>
+    <div class="horizontal">
+        <PlayerList ShowScore="@false"/>
+        <div class="vertical center">
+            <RoomSettingsDisplay IsEditable="@IsEditable()" 
+                                 Settings="GameService.RoomState.RoomSettings" 
+                                 OnSettingsChanged="SettingsChangedHandler" />
+            <button class="startbutton" @onclick="() => StartGame()" disabled="@(!IsEditable())">Start</button>
+        </div>
+        <RoomChat IsChatMode="true" />
+    </div>
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.GameStarted += GameStartedReceived;
+        GameService.PlayerListChanged += OnPlayerListChanged;
+        GameService.RoomSettingsChanged += OnRoomSettingsChanged;
+    }
+
+    public void Dispose()
+    {
+        GameService.GameStarted -= GameStartedReceived;
+        GameService.PlayerListChanged -= OnPlayerListChanged;
+        GameService.RoomSettingsChanged -= OnRoomSettingsChanged;
+    }
+
+    private async Task StartGame()
+    {
+        await GameService.StartGame();
+    }
+
+    private void GameStartedReceived(object sender, EventArgs e)
+    {
+        navigationManager.NavigateTo("/room");
+    }
+
+    private bool IsEditable()
+    {
+        Player firstPlayer = GameService.Players.FirstOrDefault();
+        Guid? myGuid = GameService.PlayerGuid;
+        if (myGuid.HasValue &&
+            firstPlayer != null &&
+            myGuid.Value.Equals(firstPlayer.Id))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private void OnPlayerListChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private void OnRoomSettingsChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private void SettingsChangedHandler(RoomSettings newSettings)
+    {
+        GameService.SetRoomSettings(newSettings);
+    }
+}

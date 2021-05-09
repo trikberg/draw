@@ -1,0 +1,16 @@
+﻿<table class="colorgrid">
+    @for (int y = 0; y < tableHeight; y++)
+    {
+        <tr>
+            @for (int x = 0; x < tableWidth; x++)
+            {
+                <td><SingleColorSelector X="@x" Y="@y" /></td>
+            }
+        </tr>
+    }
+</table>
+
+@code {
+    private int tableWidth = 9;
+    private int tableHeight = 5;
+}

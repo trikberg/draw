@@ -1,0 +1,75 @@
+﻿@implements IDisposable
+@inject IGameService GameService
+
+@if (activePlayerWordChoiceActive)
+{
+    <div class="overlay">
+        <WordChoicePanel Word1=word1 Word2=word2 Word3=word3 />
+        <Timeout Duration="@timeout" />
+    </div>
+}
+else if (playerWordChoiceActive)
+{
+    <div class="overlay">
+        <h2>Waiting for @(player.Name) to choose a word</h2>
+        <Timeout Duration="@timeout" />
+    </div>
+}
+
+@code {
+    private bool activePlayerWordChoiceActive = false;
+    private bool playerWordChoiceActive = false;
+
+    private WordDTO word1 = null;
+    private WordDTO word2 = null;
+    private WordDTO word3 = null;
+    private PlayerDTO player = null;
+    private int timeout = 0;
+
+        protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.ActivePlayerWordChoiceStarted += ActivePlayerWordChoiceStarted;
+        GameService.PlayerWordChoiceStarted += PlayerWordChoiceStarted;
+        GameService.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
+        GameService.PlayerDrawStarted += PlayerDrawStarted;
+    }
+
+    public void Dispose()
+    {
+        GameService.ActivePlayerWordChoiceStarted -= ActivePlayerWordChoiceStarted;
+        GameService.PlayerWordChoiceStarted -= PlayerWordChoiceStarted;
+        GameService.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
+        GameService.PlayerDrawStarted -= PlayerDrawStarted;
+    }
+
+    private void ActivePlayerWordChoiceStarted(object sender, WordChoiceEventArgs e)
+    {
+        word1 = e.Word1;
+        word2 = e.Word2;
+        word3 = e.Word3;
+        timeout = e.Timeout;
+        activePlayerWordChoiceActive = true;
+        StateHasChanged();
+    }
+
+    private void PlayerWordChoiceStarted(object sender, (PlayerDTO player, int timeout) args)
+    {
+        player = args.player;
+        timeout = args.timeout;
+        playerWordChoiceActive = true;
+        StateHasChanged();
+    }
+
+    private void ActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+    {
+        activePlayerWordChoiceActive = false;
+        StateHasChanged();
+    }
+
+    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)
+    {
+        playerWordChoiceActive = false;
+        StateHasChanged();
+    }
+}

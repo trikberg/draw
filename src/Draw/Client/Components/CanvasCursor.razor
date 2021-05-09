@@ -1,0 +1,78 @@
+﻿@implements IDisposable
+@inject IToolboxService ToolboxService
+
+<div class="cursor-container">
+    @if (activeTool == Tool.Brush || activeTool == Tool.Erase)
+    {
+        <div class="cursor @((activeTool == Tool.Brush) ? "brush" : "erase")"
+             style="visibility: @(cursorVisible ? "visible" : "hidden");
+                                left: @(cursorX)px;
+                                top: @(cursorY)px;
+                                width: @(BrushSize)px;
+                                height: @(BrushSize)px;">
+        </div>
+    }
+    else if (activeTool == Tool.Fill)
+    {
+        <div class="cursor fill"
+             style="visibility: @(cursorVisible ? "visible" : "hidden");
+                                left: @(cursorX)px;
+                                top: @(cursorY)px;">
+            <img src="icons/fill_cursor.svg" width="20" height="20" />
+        </div>
+    }
+    <div class="content-wrapper" @onmousemove="OnMouseMove" @onmouseout="OnMouseOut">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    private int cursorX = 0;
+    private int cursorY = 0;
+    private bool cursorVisible = false;
+    private Tool activeTool;
+
+    private int BrushSize => Math.Max(6, ToolboxService.GetBrushSize());
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        ToolboxService.ActiveToolChanged += OnActiveToolChanged;
+        activeTool = ToolboxService.GetActiveTool();
+    }
+
+    public void Dispose()
+    {
+
+    }
+
+    private void OnMouseMove(MouseEventArgs e)
+    {
+        if (activeTool == Tool.Fill)
+        {
+            cursorX = (int)(e.OffsetX - 3);
+            cursorY = (int)(e.OffsetY - 3);
+        }
+        else
+        {
+            cursorX = (int)(e.OffsetX - (BrushSize / 2.0));
+            cursorY = (int)(e.OffsetY - (BrushSize / 2.0));
+        }
+        cursorVisible = true;
+    }
+
+    private void OnMouseOut()
+    {
+        cursorVisible = false;
+    }
+
+    private void OnActiveToolChanged(object sender, Tool activeTool)
+    {
+        this.activeTool = activeTool;
+        StateHasChanged();
+    }
+}
+

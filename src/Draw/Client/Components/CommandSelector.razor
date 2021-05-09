@@ -1,0 +1,12 @@
+﻿@inject IToolboxService ToolboxService
+
+<div class="horizontal">
+    <CommandToolButton Title="Brush" Tool=@Tool.Brush><img src="icons/brush.svg" width="30" height="30" /></CommandToolButton>
+    <CommandToolButton Title="Fill" Tool=@Tool.Fill><img src="icons/fill.svg" width="30" height="30" /></CommandToolButton>
+    <CommandToolButton Title="Erase" Tool=@Tool.Erase><img src="icons/erase.svg" width="30" height="30" /></CommandToolButton>
+    <CommandButton Title="Undo" Callback="@(() => ToolboxService.Undo())"><img src="icons/undo.svg" width="30" height="30" /></CommandButton>
+    <CommandButton Title="Clear canvas" Callback=@(() => ToolboxService.ClearCanvas())><img src="icons/trash.svg" width="30" height="30" /></CommandButton>
+</div>
+
+@code {
+}

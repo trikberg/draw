@@ -1,0 +1,73 @@
+﻿@implements IDisposable
+@inject IToolboxService ToolboxService
+
+<div class="wrapper">
+    <span>Brush size: </span>
+    <input type="range"
+           min="0"
+           max="15"
+           step="1"
+           class="slider"
+           @bind-value="SliderValue"
+           @bind-value:event="oninput"
+           @onmouseover="OnMouseOver"
+           @onmouseout="OnMouseOut" />
+    @if (showSizePreview)
+    {
+        <div class="preview">
+            <div class="preview-brush" style="width: @(brushSizes[sliderValue])px; height: @(brushSizes[sliderValue])px"></div>
+        </div>
+    }
+</div>
+
+@code {
+    private int[] brushSizes = new int[16] { 1, 2, 3, 4, 5, 7, 9, 12, 15, 20, 25, 30, 40, 50, 75, 100 };
+    private bool showSizePreview = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        ToolboxService.BrushSizeChanged += OnBrushSizeChanged;
+    }
+
+    public void Dispose()
+    {
+        ToolboxService.BrushSizeChanged -= OnBrushSizeChanged;
+    }
+
+    private int sliderValue = 1;
+    private int SliderValue
+    {
+        get
+        {
+            return sliderValue;
+        }
+        set
+        {
+            if (sliderValue != value)
+            {
+                sliderValue = value;
+                ToolboxService.SetBrushSize(brushSizes[sliderValue]);
+            }
+        }
+    }
+
+    private void OnBrushSizeChanged(object sender, EventArgs e)
+    {
+        int size = ToolboxService.GetBrushSize();
+        int i = Array.IndexOf<int>(brushSizes, size);
+        i = Math.Max(i, 0);
+        sliderValue = i;
+        StateHasChanged();
+    }
+
+    private void OnMouseOver(MouseEventArgs e)
+    {
+        showSizePreview = true;
+    }
+
+    private void OnMouseOut(MouseEventArgs e)
+    {
+        showSizePreview = false;
+    }
+}

@@ -1,0 +1,139 @@
+﻿<div class="wrapper" @onmouseout=OnMouseOut @onmouseup=OnMouseUp style="@(IsDragging ? "cursor: grab;" : "")">
+    <div class="slider">
+        @for (int i=1; i<=9; i++)
+        {
+            int j = i;
+            <div class="difficulty" 
+                 style="background-color:@(GetBackgroundColor(i));"
+                 @onmousemove="(e) => OnMouseMove(e, j)"
+                 @onmouseout:stopPropagation>
+               @i
+            </div>
+        }
+    </div>
+    @if (IsEditable)
+    {
+        <div class="grabber" 
+             style="left:@(MinPercentage)%;" 
+             @onmousedown=MinMouseDown
+             @onmouseup=OnMouseUp
+             @onmouseout:stopPropagation>
+        </div>
+        <div class="grabber" 
+             style="left:@(MaxPercentage)%;"
+             @onmousedown=MaxMouseDown
+             @onmouseup=OnMouseUp
+             @onmouseout:stopPropagation>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+	public RoomSettings Settings { get; set; }
+
+    [Parameter]
+    public EventCallback<RoomSettings> OnSettingsChanged { get; set; }
+
+    [Parameter]
+    public bool IsEditable { get; set; }
+
+    private double MinPercentage => DifficultyPercentage(MinWordDifficulty);
+    private double MaxPercentage => DifficultyPercentage(MaxWordDifficulty);
+    private bool IsDragging => draggingMin || draggingMax;
+
+    private bool draggingMin = false;
+    private bool draggingMax = false;
+
+    private double DifficultyPercentage(int difficulty)
+    {
+        return 100.0 * (((difficulty - 1) / 9.0) + (0.5 / 9.0));
+    }
+
+    private string GetBackgroundColor(WordDifficulty i)
+    {
+        if (i >= Settings.MinWordDifficulty && i <= Settings.MaxWordDifficulty)
+        {
+            return WordDifficulty.DifficultyToColor(i);
+        }
+        if (i % 2 == 0)
+        {
+            return "#ffffff44";
+        }
+        return "#ffffffaa";
+    }
+
+    public void MinMouseDown(MouseEventArgs e)
+    {
+        if (IsEditable)
+        {
+            draggingMin = true;
+        }
+    }
+
+    public void MaxMouseDown(MouseEventArgs e)
+    {
+        if (IsEditable)
+        {
+            draggingMax = true;
+        }
+    }
+
+    public void OnMouseMove(MouseEventArgs e, int difficulty)
+    {
+        if (draggingMin && difficulty < MaxWordDifficulty)
+        {
+            MinWordDifficulty = difficulty;
+        }
+        if (draggingMax && difficulty > MinWordDifficulty)
+        {
+            MaxWordDifficulty = difficulty;
+        }
+    }
+
+
+    public void OnMouseUp(MouseEventArgs e)
+    {
+        StopDrag();
+    }
+
+    public void OnMouseOut(MouseEventArgs e)
+    {
+        StopDrag();
+    }
+
+    private void StopDrag()
+    {
+        if (draggingMin || draggingMax)
+        {
+            draggingMin = false;
+            draggingMax = false;
+            OnSettingsChanged.InvokeAsync(Settings);
+        }
+    }
+    
+    private int MinWordDifficulty
+    {
+        get { return Settings.MinWordDifficulty; }
+        set
+        {
+            if (Settings.MinWordDifficulty != value)
+            {
+                Settings.MinWordDifficulty = value;
+            }
+        }
+    }
+
+    private int MaxWordDifficulty
+    {
+        get { return Settings.MaxWordDifficulty; }
+        set
+        {
+            if (Settings.MaxWordDifficulty != value)
+            {
+                Settings.MaxWordDifficulty = value;
+            }
+        }
+    }
+
+}

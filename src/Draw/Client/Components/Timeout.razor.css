@@ -1,0 +1,27 @@
+﻿.frame {
+    height: 20px;
+    width: 300px;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    background-color: transparent;
+    overflow: hidden;
+}
+
+.progress {
+    width: 100%;
+    height: 100%;
+    background: var(--theme-gradient);
+    animation-name: progress;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+}
+
+@keyframes progress {
+    0% {
+        width: 100%;
+    }
+
+    100% {
+        width: 0%;
+    }
+}

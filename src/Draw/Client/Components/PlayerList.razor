@@ -1,0 +1,30 @@
+﻿@implements IDisposable
+@inject IGameService GameService
+
+<div class="playerlist">
+    @foreach (Player player in GameService.Players)
+    {
+        <PlayerDisplay Player="player" ShowScore="@ShowScore"/>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public bool ShowScore { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.PlayerListChanged += OnPlayerListChange;
+    }
+
+    public void Dispose()
+    {
+        GameService.PlayerListChanged -= OnPlayerListChange;
+    }
+
+    private void OnPlayerListChange(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+}

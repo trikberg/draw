@@ -1,0 +1,11 @@
+﻿div {
+    background-color: white;
+    height: 20px;
+    width: 20px;
+    border: 2px solid #ffffffaa;
+    border-radius: 4px;
+}
+
+.active {
+    outline: 2px solid black;
+}

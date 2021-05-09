@@ -1,0 +1,84 @@
+﻿@page "/lobby"
+@implements IDisposable
+@inject IGameService GameService
+@inject NavigationManager navigationManager
+
+<div class="horizontal">
+    <div class="roomlist">
+        <p class="title center"><button class="newroombutton" @onclick="ShowCreateRoomDialog">Create a new room</button></p>
+        <p class="title">Waiting for players</p>
+        <ul>
+            @foreach (RoomStateDTO room in GameService.Rooms.Where(r => !r.GameInProgress))
+            {
+                <li @onclick="() => SelectRoom(room)">@room.RoomName [@(room.RoomSettings.Language)]</li>
+            }
+        </ul>
+        <p class="title">In Progress</p>
+        <ul>
+            @foreach (RoomStateDTO room in GameService.Rooms.Where(r => r.GameInProgress))
+            {
+                <li @onclick="() => SelectRoom(room)">@room.RoomName [@(room.RoomSettings.Language)]</li>
+            }
+        </ul>
+
+    </div>
+    <div class="roomdata">
+        @if (showCreateRoomDialog)
+        {
+            <RoomCreator />
+        }
+        else if (selectedRoom != null)
+        {
+            <div class=vertical>
+                <p class="roomname">@selectedRoom.RoomName</p>
+                <RoomSettingsDisplay Settings="selectedRoom.RoomSettings" IsEditable="false" />
+                <button class="joinbutton" @onclick="() => JoinRoom(selectedRoom.RoomName)">Join</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool showCreateRoomDialog = false;
+    private RoomStateDTO selectedRoom = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        GameService.RoomListChanged += OnRoomListChanged;
+        GameService.RoomSettingsChanged += OnRoomSettingsChanged;
+    }
+
+    public void Dispose()
+    {
+        GameService.RoomListChanged -= OnRoomListChanged;
+        GameService.RoomSettingsChanged -= OnRoomSettingsChanged;
+    }
+
+    private void OnRoomListChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private void OnRoomSettingsChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private async Task JoinRoom(string roomName)
+    {
+        await GameService.JoinRoom(roomName);
+    }
+
+    private void SelectRoom(RoomStateDTO room)
+    {
+        showCreateRoomDialog = false;
+        selectedRoom = room;
+    }
+
+    private void ShowCreateRoomDialog()
+    {
+        showCreateRoomDialog = true;
+    }
+}

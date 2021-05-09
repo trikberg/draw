@@ -1,0 +1,33 @@
+﻿.cursor-container {
+    position: relative;
+    cursor: none;
+    grid-column: 1 / 1;
+    grid-row: 1 / 1;
+}
+
+.content-wrapper {
+    display: inline-block;
+}
+
+.cursor {
+    position: absolute;
+    pointer-events: none;
+}
+
+    .cursor.brush {
+        border-radius: 50%;
+        background-color: #000000bb;
+        border: 1px solid #ffffff;
+    }
+
+    .cursor.erase {
+        border-radius: 50%;
+        background-color: #ffffffbb;
+        border: 1px solid #000000;
+    }
+
+    .cursor.fill {
+        background-color: #ffffffbb;
+        border-radius: 4px;
+        font-size: 0px;
+    }

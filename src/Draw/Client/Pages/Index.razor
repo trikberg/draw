@@ -1,0 +1,50 @@
+﻿@page "/"
+@inject IGameService GameService
+@inject NavigationManager NavigationManager
+
+<div class="wrapper">
+    <Logo />
+    <div>
+        <input class="username" 
+               @bind="userName" 
+               @bind:event="oninput" 
+               @onkeydown="@Enter" 
+               @ref="inputref" 
+               placeholder="Nickname" 
+               maxlength="20"/>
+        <button class="button" 
+                @onclick="NavigateToLobby" 
+                disabled="@String.IsNullOrWhiteSpace(userName)">Let's go!</button>
+    </div>
+</div>
+
+@code
+{ 
+    private string userName = "";
+    private ElementReference inputref;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await inputref.FocusAsync();
+        }
+    }
+
+    private async Task NavigateToLobby()
+    {
+        await GameService.SetPlayerName(userName);
+        NavigationManager.NavigateTo("lobby");
+    }
+
+    public async Task Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrWhiteSpace(userName))
+            {
+                await NavigateToLobby();
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+﻿.message-display {
+    margin-left: 4px;
+}
+
+.player-name {
+    font-weight: bold;
+}
+
+.gameflow-message {
+    color: #2020cc;
+    font-weight: bold;
+}
+
+.correct-guess {
+    color: #008800;
+    font-weight: bold;
+}
+
+.already-guessed {
+    color: #3d9a3d;
+}

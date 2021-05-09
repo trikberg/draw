@@ -1,0 +1,30 @@
+﻿.wrapper {
+    position: relative;
+}
+
+.slider {
+    appearance: none;
+    outline: none;
+    width: 150px;
+    height: 10px;
+}
+
+.preview {
+    position: absolute;
+    top: -115px;
+    left: 35%;
+    width: 110px;
+    height: 110px;
+    background-color: #ffffffee;
+    border: 1px solid black;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.preview-brush {
+    border-radius: 50%;
+    background-color: #222222;
+}

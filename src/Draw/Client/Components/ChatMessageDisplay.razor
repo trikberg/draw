@@ -1,0 +1,26 @@
+﻿<div class="message-display">
+    @if (Message.MessageType == ChatMessageType.Guess ||
+         Message.MessageType == ChatMessageType.Chat)
+    {
+        <span class="player-name">@(Message.PlayerName + ": ")</span>
+        <span class="message-text">@Message.Message</span>
+    }
+    else if (Message.MessageType == ChatMessageType.GameFlow)
+    {
+        <span class="gameflow-message">@Message.Message</span>
+    }
+    else if (Message.MessageType == ChatMessageType.CorrectGuess)
+    {
+        <span class="correct-guess">@Message.Message</span>
+    }
+    else if (Message.MessageType == ChatMessageType.AlreadyGuessed)
+    {
+        <span class="player-name already-guessed">@(Message.PlayerName + ": ")</span>
+        <span class="already-guessed">@Message.Message</span>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ChatMessage Message { get; set; }
+}

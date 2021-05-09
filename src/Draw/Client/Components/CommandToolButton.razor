@@ -1,0 +1,43 @@
+﻿@implements IDisposable
+@inject IToolboxService ToolboxService
+
+<button title=@Title @onclick="OnActivateTool" class=@(isActiveTool ? "active" : "")>
+    @ChildContent
+</button>
+
+@code {
+    private bool isActiveTool = false;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public Tool Tool { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        ToolboxService.ActiveToolChanged += OnActiveToolChanged;
+        isActiveTool = (Tool == ToolboxService.GetActiveTool());
+    }
+
+
+    public void Dispose()
+    {
+        ToolboxService.ActiveToolChanged -= OnActiveToolChanged;
+    }
+
+    private void OnActivateTool()
+    {
+        ToolboxService.SetActiveTool(Tool);
+    }
+
+    private void OnActiveToolChanged(object sender, Tool activeTool)
+    {
+        isActiveTool = (activeTool == Tool);
+        StateHasChanged();
+    }
+}

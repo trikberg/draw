@@ -1,0 +1,135 @@
+﻿@using System.Text
+@inject IGameService GameService
+@implements IDisposable
+
+@if (word == null || wordHint == null)
+{
+    <div><span class="preformatted">@WordString</span> @LetterCount</div>
+}
+else
+{
+    <div>
+        @for (int i = 0; i < word.Word.Length; i++)
+        {
+            <span class="preformatted @(Char.IsLetter(wordHint[i]) ? "known-letter" : "")">@(word.Word[i])&nbsp;</span>
+        }
+        <span> @LetterCount</span>
+        <WordDifficultyDisplay Difficulty="word.Difficulty" />
+    </div>
+}
+
+@code {
+    private WordDTO word = null;
+    private string wordHint = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
+        GameService.PlayerDrawStarted += PlayerDrawStarted;
+        GameService.HintLetterReceived += HintLetterReceived;
+        GameService.CorrectWordReceived += CorrectWordReceived;
+    }
+
+    public void Dispose()
+    {
+        GameService.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
+        GameService.PlayerDrawStarted -= PlayerDrawStarted;
+        GameService.HintLetterReceived -= HintLetterReceived;
+        GameService.CorrectWordReceived -= CorrectWordReceived;
+    }
+
+    private void ActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+    {
+        wordHint = WordDTO.GetHintWord(e.Word.Word);
+        word = e.Word;
+        StateHasChanged();
+    }
+
+    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)
+    {
+        word = null;
+        wordHint = e.WordHint;
+        StateHasChanged();
+    }
+
+    private void HintLetterReceived(object sender, HintLetter hint)
+    {
+        StringBuilder sb = new StringBuilder(wordHint);
+        sb[hint.Position] = hint.Letter;
+        wordHint = sb.ToString();
+        StateHasChanged();
+    }
+
+    private void CorrectWordReceived(object sender, WordDTO correctWord)
+    {
+        word = correctWord;
+        StateHasChanged();
+    }
+
+    private string WordString
+    {
+        get
+        {
+            if (word != null)
+            {
+                return word.Word;
+            }
+            else if (wordHint != null)
+            {
+                string result = "";
+                foreach (char c in wordHint)
+                {
+                    if (c == ' ')
+                    {
+                        result += "   ";
+                    }
+                    else
+                    {
+                        result += c + " ";
+                    }
+                }
+                return result;
+            }
+            return "";
+        }
+    }
+
+    private string LetterCount
+    {
+        get
+        {
+            string w = null;
+            if (wordHint != null)
+            {
+                w = wordHint;
+            }
+            else if (word != null)
+            {
+                w = word.Word;
+            }
+
+            if (w == null)
+            {
+                return "";
+            }
+
+            string result = "(";
+            int i = 0;
+            foreach (char c in w)
+            {
+                if (c == ' ')
+                {
+                    result += i + "+";
+                    i = 0;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+            result += i + ")";
+            return result;
+        }
+    }
+}

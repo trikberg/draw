@@ -1,0 +1,17 @@
+﻿.canvas-container {
+    width: 800px;
+    height: 600px;
+    border: 0px solid #ffffff;
+    grid-column: 1 / 1;
+    grid-row: 1 / 1;
+    display: grid;
+    grid-template: 1fr / 1fr;
+}
+
+#canvas-wrapper {
+    width: 800px;
+    height: 600px;
+    border: 0px;
+/*    grid-column: 1 / 1;
+    grid-row: 1 / 1;*/
+}

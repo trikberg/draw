@@ -1,0 +1,46 @@
+﻿@implements IDisposable
+@inject IGameService GameService
+
+@if (toolsVisible)
+{
+    <div class="tools">
+        <div class="horizontal">
+            <BrushColorSelector />
+            <div class="vertical">
+                <CommandSelector />
+                <BackgroundSelector />
+                <BrushSizeSelector />
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool toolsVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.ActivePlayerDrawStarted += OnActivePlayerDrawStarted;
+        GameService.PlayerDrawStarted += OnPlayerDrawStarted;
+    }
+
+    public void Dispose()
+    {
+        GameService.ActivePlayerDrawStarted -= OnActivePlayerDrawStarted;
+        GameService.PlayerDrawStarted -= OnPlayerDrawStarted;
+
+    }
+
+    private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs e)
+    {
+        toolsVisible = false;
+        StateHasChanged();
+    }
+
+    private void OnActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+    {
+        toolsVisible = true;
+        StateHasChanged();
+    }
+}

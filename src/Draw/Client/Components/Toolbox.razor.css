@@ -1,0 +1,25 @@
+﻿.tools {
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff22;
+    border-top: 2px solid white;
+    display:grid;
+    align-items:center;
+}
+
+.horizontal {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-evenly;
+}
+
+.vertical {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    gap: 15px;
+}

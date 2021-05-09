@@ -1,0 +1,12 @@
+﻿div {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.preformatted {
+    white-space: pre;
+}
+
+.known-letter {
+    color: var(--theme-color1);
+}

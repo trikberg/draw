@@ -1,0 +1,106 @@
+﻿<div class="room-settings">
+    @if (Settings == null)
+    {
+        <div style="height: 100%; display:flex; align-items:center; justify-content:center;">
+            <WaitSpinner />
+        </div>
+    }
+    else if (IsEditable)
+    {
+        <div class="vertical">
+            <div class="setting">
+                <label for="language">Language:</label>
+                <select name="language" @bind="Language">
+                    @foreach (Language language in Enum.GetValues(typeof(Language)))
+                    {
+                        <option value="@language">@language</option>
+                    }
+                </select>
+            </div>
+            <div class="setting">
+                <label for="rounds">Rounds:</label>
+                <select name="rounds" @bind="Rounds">
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+            <div class="setting">
+                <label for="time">Drawing Time (s):</label>
+                <select name="time" @bind="Time">
+                    @for (int t = 60; t <= 120; t += 10)
+                    {
+                        <option value="@t">@t</option>
+                    }
+                </select>
+            </div>
+            <div class="setting">
+                <label>Difficulty:</label>
+                <DifficultySlider Settings="Settings" OnSettingsChanged="OnSettingsChanged" IsEditable="true"/>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="vertical">
+            <div class="setting"><label>Language:</label> @Settings.Language</div>
+            <div class="setting"><label>Rounds:</label> @Settings.Rounds</div>
+            <div class="setting"><label>Drawing Time (s):</label> @Settings.DrawingTime</div>
+            <div class="setting">
+                <label style="line-height:48px;">Difficulty:</label> 
+                <DifficultySlider Settings="Settings" OnSettingsChanged="OnSettingsChanged" IsEditable="false"/>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public bool IsEditable { get; set; }
+
+    [Parameter]
+    public RoomSettings Settings { get; set; }
+
+    [Parameter]
+    public EventCallback<RoomSettings> OnSettingsChanged { get; set; }
+
+    private Language Language
+    {
+        get { return Settings.Language; }
+        set
+        {
+            if (Settings.Language != value)
+            {
+                Settings.Language = value;
+                OnSettingsChanged.InvokeAsync(Settings);
+            }
+        }
+    }
+
+    private int  Rounds
+    {
+        get { return Settings.Rounds; }
+        set
+        {
+            if (Settings.Rounds != value)
+            {
+                Settings.Rounds = value;
+                OnSettingsChanged.InvokeAsync(Settings);
+            }
+        }
+    }
+
+    private int Time
+    {
+        get { return Settings.DrawingTime; }
+        set
+        {
+            if (Settings.DrawingTime != value)
+            {
+                Settings.DrawingTime = value;
+                OnSettingsChanged.InvokeAsync(Settings);
+            }
+        }
+    }
+}

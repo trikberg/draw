@@ -1,0 +1,62 @@
+﻿@implements IDisposable
+@inject IToolboxService ToolboxService
+
+<div>
+    <span>Background: </span>
+    <input type="range"
+           min="0"
+           max="15"
+           step="1"
+           class="slider"
+           @bind-value="SliderValue"
+           @bind-value:event="oninput"
+           @onmouseup="OnMouseUp" />
+</div>
+
+@code {
+    private string[] backgroundColors = new string[16] { "#000000", "#111111", "#222222", "#333333", "#444444",
+                                                        "#555555", "#666666", "#777777", "#888888", "#999999",
+                                                        "#aaaaaa", "#bbbbbb", "#cccccc", "#dddddd", "#eeeeee", "#ffffff"};
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        ToolboxService.BackgroundColorChanged += OnBackgroundChanged;
+    }
+
+    public void Dispose()
+    {
+        ToolboxService.BackgroundColorChanged -= OnBackgroundChanged;
+    }
+
+    private int sliderValue = 13;
+    private int SliderValue
+    {
+        get
+        {
+            return sliderValue;
+        }
+        set
+        {
+            if (sliderValue != value)
+            {
+                sliderValue = value;
+                ToolboxService.SetBackgroundColor(backgroundColors[sliderValue], false);
+            }
+        }
+    }
+
+    public async Task OnMouseUp(MouseEventArgs e)
+    {
+        await ToolboxService.SetBackgroundColor(backgroundColors[sliderValue], true);
+    }
+
+    private void OnBackgroundChanged(object sender, EventArgs e)
+    {
+        string color = ToolboxService.GetBackgroundColor();
+        int i = Array.IndexOf<string>(backgroundColors, color);
+        i = i == -1 ? 13 : i;
+        sliderValue = i;
+        StateHasChanged();
+    }
+}

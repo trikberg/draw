@@ -1,0 +1,12 @@
+﻿.gamebar {
+    flex: 0 0 auto;
+    background-color: #ffffff22;
+    height: 40px;
+    min-height: 40px;
+    border-bottom: 2px solid #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+}

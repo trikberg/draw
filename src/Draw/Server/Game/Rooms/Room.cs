@@ -11,6 +11,9 @@ namespace Draw.Server.Game.Rooms
 {
     public class Room
     {
+        private static int roomCounter = 0;
+
+        private int roomIndex;
         private List<Word> unusedWords = null;
         private List<Word> rejectedWords = null;
         private int wordCount = 0;
@@ -24,12 +27,14 @@ namespace Draw.Server.Game.Rooms
 
         public Room(IHubContext<Hubs.GameHub> context, string name, RoomSettings settings)
         {
+            roomIndex = roomCounter++;
             hubContext = context;
             RoomName = name;
             RoomSettings = settings;
             RoomState = new RoomStateLobby(this);
         }
 
+        internal int RoomIndex => roomIndex;
         internal IHubContext<GameHub> HubContext => hubContext;
         internal List<Word> UnusedWords => unusedWords;
         public List<Player> Players => players;

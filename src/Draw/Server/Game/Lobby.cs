@@ -6,18 +6,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Draw.Server.Game
 {
     public class Lobby
     {
+        private readonly ILogger<Lobby> logger;
         private IHubContext<GameHub> hubContext;
         private List<Room> rooms = new List<Room>();
         private Dictionary<Player, Room> playerToRoomDictionary = new Dictionary<Player, Room>();
         private string lobbyGroupName = Guid.NewGuid().ToString();
 
-        public Lobby(IHubContext<GameHub> context)
+        public Lobby(IHubContext<GameHub> context, ILogger<Lobby> logger)
         {
+            this.logger = logger;
             hubContext = context;
             for (int i = 0; i < 10; i++)
             {
@@ -31,6 +34,7 @@ namespace Draw.Server.Game
             {
                 rooms.Add(room);
             }
+            logger.LogInformation("Room added. Index: " + room.RoomIndex + ". Name: " + room.RoomName);
         }
 
         internal IEnumerable<Player> GetPlayersInRoom(string roomName)

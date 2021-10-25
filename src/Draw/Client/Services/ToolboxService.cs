@@ -26,8 +26,8 @@ namespace Draw.Client.Services
                                                   { "#808080", "#975528", "#0000ff", "#00ffff", "#00ff00", "#ffff00", "#fc6c00", "#ff0000", "#ff00ff", },
                                                   { "#404040", "#622f06", "#0000be", "#00bebe", "#00be00", "#bebe00", "#bf5900", "#be0000", "#be00be", },
                                                   { "#000000", "#431b02", "#000080", "#008080", "#008000", "#808000", "#7f3b00", "#800000", "#800080", }};
-        private int brushSize = 2;
-        private string backgroundColor = "#dddddd";
+        private int brushSize = CanvasSettings.DEFAULT_BRUSH_SIZE;
+        private string backgroundColor = CanvasSettings.DEFAULT_BACKGROUND_COLOR;
         private Tool activeTool = Tool.Brush;
 
         public ToolboxService(IGameService gameService)
@@ -60,8 +60,8 @@ namespace Draw.Client.Services
         {
             activeTool = Tool.Brush;
             activeColor = (4, 0);
-            brushSize = 2;
-            backgroundColor = "#dddddd";
+            brushSize = CanvasSettings.DEFAULT_BRUSH_SIZE;
+            backgroundColor = CanvasSettings.DEFAULT_BACKGROUND_COLOR;
             ActiveToolChanged?.Invoke(this, activeTool);
             BrushColorChanged?.Invoke(this, null);
             BrushSizeChanged?.Invoke(this, null);

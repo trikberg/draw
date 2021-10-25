@@ -1,5 +1,6 @@
 ﻿using Draw.Shared.Draw;
 using Draw.Shared.Game;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Draw.Server.Game.Rooms
     internal class RoomStateDrawing : IRoomState
     {
         private static Random random = new Random(new Guid().GetHashCode());
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private Player activePlayer;
         private Room room;
@@ -23,6 +25,10 @@ namespace Draw.Server.Game.Rooms
         private GameTimer hintTimer;
         private List<Player> playersGuessing;
         private List<(Player player, double timeRemaining)> playerResults = new List<(Player player, double timeRemaining)>();
+
+        private string currentBackgroundColor = CanvasSettings.DEFAULT_BACKGROUND_COLOR;
+        private CommandList drawCommandLog = new CommandList(CanvasSettings.DEFAULT_BACKGROUND_COLOR);
+        private List<ChatMessage> chatLog = new List<ChatMessage>();
 
         private bool turnEnded = false;
 
@@ -60,11 +66,12 @@ namespace Draw.Server.Game.Rooms
             }
             foreach((Player player, double timeRemaining) result in playerResults)
             {
-                ChatMessage cm = new ChatMessage(ChatMessageType.CorrectGuess, result.player.Name, result.player.Name + " guessed correctly.");
-                await room.SendPlayer(player, "CorrectGuess", result.player.ToPlayerDTO(), cm);
+                await room.SendPlayer(player, "CorrectGuess", result.player.ToPlayerDTO(), null);
             }
-            // TODO send drawing
-            // TODO send chat log
+            foreach(ChatMessage cm in chatLog)
+            {
+                await room.SendPlayer(player, "ChatMessage", cm);
+            }
         }
 
         public Task RemovePlayer(Player player)
@@ -132,6 +139,7 @@ namespace Draw.Server.Game.Rooms
             if (!playersGuessing.Contains(player))
             {
                 ChatMessage cm = new ChatMessage(ChatMessageType.AlreadyGuessed, player.Name, CensorMessage(guess));
+                chatLog.Add(cm);
                 await room.SendAll("ChatMessage", cm);
             }
             else
@@ -151,6 +159,7 @@ namespace Draw.Server.Game.Rooms
                     }
                     int turnTimeLeft = (int)(timeRemaining / 1000);
                     ChatMessage cm = new ChatMessage(ChatMessageType.CorrectGuess, player.Name, player.Name + " guessed correctly.");
+                    chatLog.Add(cm);
                     await room.SendAllExcept(player, "CorrectGuess", player.ToPlayerDTO(), turnTimeLeft, null, cm);
                     await room.SendPlayer(player, "CorrectGuess", player.ToPlayerDTO(), turnTimeLeft, word.ToWordDTO(), cm);
                     if (playersGuessing.Count == 0)
@@ -161,6 +170,7 @@ namespace Draw.Server.Game.Rooms
                 else
                 {
                     ChatMessage cm = new ChatMessage(ChatMessageType.Guess, player.Name, guess);
+                    chatLog.Add(cm);
                     await room.SendAll("ChatMessage", cm);
                 }
             }
@@ -171,8 +181,12 @@ namespace Draw.Server.Game.Rooms
             if (activePlayer.Equals(player))
             {
                 await room.SendAllExcept(player, "ChangeBackgroundColor", color);
+                currentBackgroundColor = color;
             }
-            // TODO else log error state
+            else
+            {
+                logger.Warn("Someone else (" + player.Name + ") than active player (" + player.Name + ") tried to draw.");
+            }
         }
 
         internal async Task DrawLine(Player player, DrawLineEventArgs e)
@@ -180,8 +194,12 @@ namespace Draw.Server.Game.Rooms
             if (activePlayer.Equals(player))
             {
                 await room.SendAllExcept(player, "DrawLine", e);
+                drawCommandLog.Add(e);
             }
-            // TODO else log error state
+            else
+            {
+                logger.Warn("Someone else (" + player.Name + ") than active player (" + player.Name + ") tried to draw.");
+            }
         }
 
         internal async Task Fill(Player player, FillEventArgs e)
@@ -189,8 +207,12 @@ namespace Draw.Server.Game.Rooms
             if (activePlayer.Equals(player))
             {
                 await room.SendAllExcept(player, "Fill", e);
+                drawCommandLog.Add(e);
             }
-            // TODO else log error state
+            else
+            {
+                logger.Warn("Someone else (" + player.Name + ") than active player (" + player.Name + ") tried to draw.");
+            }
         }
 
         internal async Task ClearCanvas(Player player)
@@ -198,8 +220,12 @@ namespace Draw.Server.Game.Rooms
             if (activePlayer.Equals(player))
             {
                 await room.SendAllExcept(player, "ClearCanvas");
+                drawCommandLog.Add(new CommandClearCanvas(currentBackgroundColor));
             }
-            // TODO else log error state
+            else
+            {
+                logger.Warn("Someone else (" + player.Name + ") than active player (" + player.Name + ") tried to draw.");
+            }
         }
 
 
@@ -208,8 +234,12 @@ namespace Draw.Server.Game.Rooms
             if (activePlayer.Equals(player))
             {
                 await room.SendAllExcept(player, "Undo");
+                drawCommandLog.Undo();
             }
-            // TODO else log error state
+            else
+            {
+                logger.Warn("Someone else (" + player.Name + ") than active player (" + player.Name + ") tried to draw.");
+            }
         }
 
         private void EndTurn()
@@ -222,6 +252,7 @@ namespace Draw.Server.Game.Rooms
                     timer.Dispose();
                     hintTimer.Dispose();
                     ChatMessage cm = new ChatMessage(ChatMessageType.GameFlow, null, "The word was \"" + word.TheWord + "\".");
+                    chatLog.Add(cm);
                     _ = room.SendAll("ChatMessage", cm);
                     room.RoomState = new RoomStateScoring(activePlayer, room, word.Difficulty, playerResults, playersGuessing, roomStatePlayerTurn);
                 }
@@ -230,7 +261,7 @@ namespace Draw.Server.Game.Rooms
 
         private string CensorMessage(string guess)
         {
-            return guess.Replace(word.TheWord, "gobbledygook", false, null);
+            return guess.Replace(word.TheWord, "gobbledygook", true, null);
         }
     }
 }

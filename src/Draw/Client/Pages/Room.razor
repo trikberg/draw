@@ -1,4 +1,6 @@
 ﻿@page "/room"
+@inject IGameService GameService
+@inject NavigationManager NavigationManager
 
 <div class="vertical">
     <GameBar />
@@ -16,5 +18,13 @@
 </div>
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
 
+        if (GameService.RoomState == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+   }
 }

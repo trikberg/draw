@@ -1,11 +1,12 @@
 ﻿@page "/waitingroom"
 @implements IDisposable
 @inject IGameService GameService
-@inject NavigationManager navigationManager
+@inject NavigationManager NavigationManager
 
 <div class="vertical">
     <div class="top-bar">
-        @if (GameService.RoomState.RoomSettings.IsPrivateRoom)
+        @if (GameService.RoomState != null &&
+             GameService.RoomState.RoomSettings.IsPrivateRoom)
         {
             <span>Private room:&nbsp;</span>
         }
@@ -13,13 +14,13 @@
         {
             <span>Public room:&nbsp;</span>
         }
-        @GameService.RoomState.RoomName
+        @GameService.RoomState?.RoomName
     </div>
     <div class="horizontal">
         <PlayerList ShowScore="@false"/>
         <div class="vertical center">
             <RoomSettingsDisplay IsEditable="@IsEditable()" 
-                                 Settings="GameService.RoomState.RoomSettings" 
+                                 Settings="GameService.RoomState?.RoomSettings" 
                                  OnSettingsChanged="SettingsChangedHandler" />
             <button class="startbutton" @onclick="() => StartGame()" disabled="@(!IsEditable())">Start</button>
         </div>
@@ -31,6 +32,12 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        if (GameService.RoomState == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+
         GameService.GameStarted += GameStartedReceived;
         GameService.PlayerListChanged += OnPlayerListChanged;
         GameService.RoomSettingsChanged += OnRoomSettingsChanged;
@@ -50,7 +57,7 @@
 
     private void GameStartedReceived(object sender, EventArgs e)
     {
-        navigationManager.NavigateTo("/room");
+        NavigationManager.NavigateTo("/room");
     }
 
     private bool IsEditable()

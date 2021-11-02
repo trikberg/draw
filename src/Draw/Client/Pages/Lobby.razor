@@ -1,7 +1,7 @@
 ﻿@page "/lobby"
 @implements IDisposable
 @inject IGameService GameService
-@inject NavigationManager navigationManager
+@inject NavigationManager NavigationManager
 
 <div class="horizontal">
     <div class="roomlist">
@@ -64,6 +64,11 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        if (GameService.PlayerGuid == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
 
         GameService.RoomListChanged += OnRoomListChanged;
         GameService.RoomSettingsChanged += OnRoomSettingsChanged;

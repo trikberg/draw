@@ -70,7 +70,7 @@ namespace Draw.Server.Hubs
             return lobby.CreateRoom(roomName, roomSettings);
         }
 
-        public async Task<RoomStateDTO> JoinRoom(string roomName)
+        public async Task<RoomStateDTO> JoinRoom(string roomName, string password)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player == null)
@@ -81,7 +81,7 @@ namespace Draw.Server.Hubs
             Room newRoom = lobby.GetRoom(roomName);
             if (newRoom != null)
             {
-                return await lobby.JoinRoom(player, newRoom);
+                return await lobby.JoinRoom(player, newRoom, password);
             }
             return null;
         }

@@ -4,13 +4,21 @@ namespace Draw.Shared.Game
     public class RoomSettings
     {
         public RoomSettings() { }
-        public RoomSettings(Language language, int rounds, int drawingTime, int minWordDifficulty, int maxWordDifficulty)
+        public RoomSettings(Language language, 
+                            int rounds, 
+                            int drawingTime, 
+                            int minWordDifficulty, 
+                            int maxWordDifficulty, 
+                            bool isPrivateRoom,
+                            string password)
         {
             Language = language;
             Rounds = rounds;
             DrawingTime = drawingTime;
             MinWordDifficulty = minWordDifficulty;
             MaxWordDifficulty = maxWordDifficulty;
+            IsPrivateRoom = isPrivateRoom;
+            Password = password;
         }
 
         public RoomSettings(RoomSettings settings)
@@ -22,6 +30,8 @@ namespace Draw.Shared.Game
                 DrawingTime = settings.DrawingTime;
                 MinWordDifficulty = settings.MinWordDifficulty;
                 MaxWordDifficulty = settings.MaxWordDifficulty;
+                IsPrivateRoom = settings.IsPrivateRoom;
+                Password = settings.Password;
             }
         }
 
@@ -31,5 +41,7 @@ namespace Draw.Shared.Game
         public WordDifficulty MinWordDifficulty { get; set; } = 1;
         public WordDifficulty MaxWordDifficulty { get; set; } = 6;
         public int WordDifficultyDelta => MaxWordDifficulty - MinWordDifficulty;
+        public bool IsPrivateRoom { get; set; } = false;
+        public string Password { get; set; } = "";
     }
 }

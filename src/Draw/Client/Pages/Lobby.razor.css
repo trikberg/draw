@@ -32,12 +32,16 @@ ul {
 
 li {
     background-color: #ffffff33;
-    padding: 5px;
+    padding: 5px 10px;
     margin-top: 5px;
 }
 
 li:hover {
     background-color: #ffffff66;
+}
+
+img {
+    margin-right: 5px;
 }
 
 .newroombutton {
@@ -69,6 +73,21 @@ li:hover {
     font-weight: bold;
     padding: 10px;
     background: #ffffff66;
+}
+
+.password-input {
+    height: 50px;
+    width: 50%;
+    font-size: 30px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    vertical-align: bottom;
+}
+
+.password-input.incorrect {
+    border-color: red;
+    border-width: 3px;
+    background-color: #ffccccff;
 }
 
 .joinbutton {

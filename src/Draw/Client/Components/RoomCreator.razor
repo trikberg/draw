@@ -34,7 +34,7 @@
     {
         if (await GameService.CreateRoom(roomName, roomSettings))
         {
-            await GameService.JoinRoom(roomName);
+            await GameService.JoinRoom(roomName, roomSettings.Password);
         }
     }
 

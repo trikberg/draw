@@ -5,6 +5,14 @@
 
 <div class="vertical">
     <div class="top-bar">
+        @if (GameService.RoomState.RoomSettings.IsPrivateRoom)
+        {
+            <span>Private room:&nbsp;</span>
+        }
+        else
+        {
+            <span>Public room:&nbsp;</span>
+        }
         @GameService.RoomState.RoomName
     </div>
     <div class="horizontal">

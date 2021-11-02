@@ -39,6 +39,15 @@
                 <label>Difficulty:</label>
                 <DifficultySlider Settings="Settings" OnSettingsChanged="OnSettingsChanged" IsEditable="true"/>
             </div>
+            <div class="setting">
+                <input type="checkbox" id="private-room" @bind="@IsPrivateRoom" />    
+                <label class="privacy-label" for="private-room">Private room</label>
+                @if(IsPrivateRoom)
+                {
+                    <label>Password</label>
+                    <input type="password" placeholder="Password" @bind="@Password"/>
+                }
+            </div>
         </div>
     }
     else
@@ -99,6 +108,33 @@
             if (Settings.DrawingTime != value)
             {
                 Settings.DrawingTime = value;
+                OnSettingsChanged.InvokeAsync(Settings);
+            }
+        }
+    }
+
+    private bool IsPrivateRoom
+    {
+        get { return Settings.IsPrivateRoom; }
+        set
+        {
+            if (Settings.IsPrivateRoom != value)
+            {
+                Settings.IsPrivateRoom = value;
+                OnSettingsChanged.InvokeAsync(Settings);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private string Password
+    {
+        get { return Settings.Password; }
+        set
+        {
+            if (!Settings.Password.Equals(value))
+            {
+                Settings.Password = value;
                 OnSettingsChanged.InvokeAsync(Settings);
             }
         }

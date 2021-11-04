@@ -46,6 +46,7 @@
         ToolboxService.DrawEvent += DrawEventReceived;
         ToolboxService.ClearCanvasEvent += ClearCanvasReceived;
         ToolboxService.UndoEvent += UndoReceived;
+        ToolboxService.BackgroundColorChanged += BackgroundColorChanged;
     }
 
     public void Dispose()
@@ -58,6 +59,7 @@
         GameService.TurnScores -= TurnScores;
         ToolboxService.DrawEvent -= DrawEventReceived;
         ToolboxService.ClearCanvasEvent -= ClearCanvasReceived;
+        ToolboxService.BackgroundColorChanged -= BackgroundColorChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -161,6 +163,14 @@
         await ClearCanvas();
     }
 
+    private void BackgroundColorChanged(object sender, bool addToUndoStack)
+    {
+        if (addToUndoStack)
+        {
+            undoStack.Add(new CommandBackground(ToolboxService.GetBackgroundColor()));
+        }
+    }
+
     private async void UndoReceived(object sender, EventArgs e)
     {
         IEnumerable<IDrawCommand> commands = undoStack.Undo();
@@ -175,7 +185,7 @@
             if (command is CommandClearCanvas ccc)
             {
                 await context.ClearRectAsync(0, 0, canvasWidth, canvasHeight);
-                await ToolboxService.SetBackgroundColor(ccc.BackgroundColor, false);
+                await ToolboxService.SetBackgroundColor(ccc.BackgroundColor, false, false);
             }
             else if (command is CommandDrawLine cdl)
             {
@@ -184,6 +194,10 @@
             else if (command is CommandFill cf)
             {
                 await Fill(cf.FillArgs);
+            }
+            else if (command is CommandBackground cbg)
+            {
+                await ToolboxService.SetBackgroundColor(cbg.BackgroundColor, false, false);
             }
         }
     }

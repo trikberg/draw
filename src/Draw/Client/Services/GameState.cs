@@ -54,5 +54,10 @@ namespace Draw.Client.Services
             }
             return undoStack.GetDrawCommands();
         }
+
+        internal void BackgroundColorChanged(string color)
+        {
+            undoStack.Add(new CommandBackground(color));
+        }
     }
 }

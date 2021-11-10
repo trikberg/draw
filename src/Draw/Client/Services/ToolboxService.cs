@@ -107,7 +107,7 @@ namespace Draw.Client.Services
         {
             if (addToUndoStack)
             {
-
+                gameService.GameState.BackgroundColorChanged(color);
             }
             backgroundColor = color;
             BackgroundColorChanged?.Invoke(this, addToUndoStack);

@@ -83,6 +83,10 @@ namespace Draw.Server.Game.Rooms
                 {
                     await room.SendPlayer(player, "ClearCanvas");
                 }
+                else if (command is CommandBackground cbg)
+                {
+                    await room.SendPlayer(player, "ChangeBackgroundColor", cbg.BackgroundColor);
+                }
                 else if (command is CommandDrawLine cdl)
                 {
                     foreach (DrawLineEventArgs args in cdl.DrawCommands)
@@ -205,6 +209,7 @@ namespace Draw.Server.Game.Rooms
             {
                 await room.SendAllExcept(player, "ChangeBackgroundColor", color);
                 currentBackgroundColor = color;
+                drawCommandLog.Add(new CommandBackground(color));
             }
             else
             {

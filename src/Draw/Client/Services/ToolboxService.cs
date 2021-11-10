@@ -7,9 +7,7 @@ namespace Draw.Client.Services
 {
     internal class ToolboxService : IToolboxService, IDisposable
     {
-        public event EventHandler<IDrawEventArgs> DrawEvent;
         public event EventHandler ClearCanvasEvent;
-        public event EventHandler UndoEvent;
         public event EventHandler BrushColorChanged;
         public event EventHandler BrushSizeChanged;
         public event EventHandler BackgroundColorChanged;
@@ -139,7 +137,7 @@ namespace Draw.Client.Services
                 };
                 DrawLineEventArgs args = new DrawLineEventArgs(mousePoint, currentPoint, brushSize, color, false);
                 Task sendTask = gameService.DrawLine(args);
-                DrawEvent?.Invoke(this, args);
+                gameService.GameState.DrawLine(args);
                 mousePoint = null;
                 await sendTask;
             }
@@ -162,7 +160,7 @@ namespace Draw.Client.Services
                 };
                 DrawLineEventArgs args = new DrawLineEventArgs(mousePoint, currentPoint, brushSize, color, false);
                 Task sendTask = gameService.DrawLine(args);
-                DrawEvent?.Invoke(this, args);
+                gameService.GameState.DrawLine(args);
                 mousePoint = currentPoint;
                 await sendTask;
             }
@@ -181,22 +179,20 @@ namespace Draw.Client.Services
                 };
                 DrawLineEventArgs args = new DrawLineEventArgs(mousePoint, currentPoint, brushSize, color, true);
                 Task sendTask = gameService.DrawLine(args);
-                DrawEvent?.Invoke(this, args);
+                gameService.GameState.DrawLine(args);
                 mousePoint = null;
                 isMouseDown = false;
-
                 await sendTask;
             }
             else if (isMouseDown && activeTool == Tool.Fill)
             {
                 Point2D currentPoint = new Point2D(e.OffsetX, e.OffsetY);
                 FillEventArgs args = new FillEventArgs(currentPoint, colors[activeColor.y, activeColor.x]);
-                DrawEvent?.Invoke(this, args);
                 Task sendTask = gameService.Fill(args);
+                gameService.GameState.Fill(args);
                 mousePoint = null;
                 isMouseDown = false;
-
-                //await sendTask;
+                await sendTask;
             }
             return;
         }
@@ -217,7 +213,7 @@ namespace Draw.Client.Services
             if (isActivePlayer)
             {
                 Task sendTask = gameService.Undo();
-                UndoEvent?.Invoke(this, null);
+                gameService.GameState.Undo();
                 await sendTask;
             }
         }

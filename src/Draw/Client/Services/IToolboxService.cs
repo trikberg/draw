@@ -14,9 +14,7 @@ namespace Draw.Client.Services
 
     interface IToolboxService
     {
-        public event EventHandler<IDrawEventArgs> DrawEvent;
         public event EventHandler ClearCanvasEvent;
-        public event EventHandler UndoEvent;
         public event EventHandler BrushColorChanged;
         public event EventHandler BrushSizeChanged;
         public event EventHandler BackgroundColorChanged;

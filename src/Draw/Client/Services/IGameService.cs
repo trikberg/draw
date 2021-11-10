@@ -9,9 +9,7 @@ namespace Draw.Client.Services
 {
     internal interface IGameService
     {
-        public event EventHandler<IDrawEventArgs> DrawEventReceived;
         public event EventHandler ClearCanvasReceived;
-        public event EventHandler UndoReceived;
         public event EventHandler<string> BackgroundColorChanged;
         public event EventHandler<ChatMessage> ChatMessageReceived;
         public event EventHandler RoomListChanged;
@@ -32,6 +30,7 @@ namespace Draw.Client.Services
         public IEnumerable<RoomStateDTO> Rooms { get; }
         public IEnumerable<Player> Players { get; }
         public RoomStateDTO RoomState { get; }
+        public GameState GameState { get; }
         public Guid? PlayerGuid { get; }
 
         public Task SetPlayerName(string userName);

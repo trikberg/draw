@@ -26,7 +26,6 @@
     private const int canvasHeight = 600;
 
     private bool drawingAllowed = false;
-    private CommandList undoStack;
 
     private Canvas2DContext context;
     private BECanvasComponent canvasReference;
@@ -35,28 +34,23 @@
     {
         await base.OnInitializedAsync();
 
-        undoStack = new CommandList(ToolboxService.GetBackgroundColor());
-
-        GameService.DrawEventReceived += DrawEventReceived;
+        GameService.GameState.DrawEventReceived += DrawEventReceived;
         GameService.ClearCanvasReceived += ClearCanvasReceived;
-        GameService.UndoReceived += UndoReceived;
+        GameService.GameState.UndoEventReceived += UndoReceived;
         GameService.PlayerDrawStarted += PlayerDrawStarted;
         GameService.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
         GameService.TurnScores += TurnScores;
-        ToolboxService.DrawEvent += DrawEventReceived;
         ToolboxService.ClearCanvasEvent += ClearCanvasReceived;
-        ToolboxService.UndoEvent += UndoReceived;
     }
 
     public void Dispose()
     {
-        GameService.DrawEventReceived -= DrawEventReceived;
+        GameService.GameState.DrawEventReceived -= DrawEventReceived;
         GameService.ClearCanvasReceived -= ClearCanvasReceived;
-        GameService.UndoReceived -= UndoReceived;
+        GameService.GameState.UndoEventReceived -= UndoReceived;
         GameService.PlayerDrawStarted -= PlayerDrawStarted;
         GameService.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
         GameService.TurnScores -= TurnScores;
-        ToolboxService.DrawEvent -= DrawEventReceived;
         ToolboxService.ClearCanvasEvent -= ClearCanvasReceived;
     }
 
@@ -68,6 +62,9 @@
 
             await context.SetLineCapAsync(LineCap.Round);
             await context.ClearRectAsync(0, 0, canvasWidth, canvasHeight);
+
+            IEnumerable<IDrawCommand> backlog = GameService.GameState.GetDrawBacklog();
+            await DrawCommandList(backlog);
         }
     }
 
@@ -75,18 +72,21 @@
     {
         if (e is DrawLineEventArgs drawLineArgs)
         {
-            undoStack.Add(drawLineArgs);
             await DrawLine(drawLineArgs);
         }
         else if (e is FillEventArgs fillArgs)
         {
-            undoStack.Add(fillArgs);
             await Fill(fillArgs);
         }
     }
 
     private async Task DrawLine(DrawLineEventArgs e)
     {
+        if (context == null)
+        {
+            return;
+        }
+
         bool isTransparent = IsTransparent(e.Color);
         if (isTransparent)
         {
@@ -161,10 +161,13 @@
         await ClearCanvas();
     }
 
-    private async void UndoReceived(object sender, EventArgs e)
+    private async void UndoReceived(object sender, IEnumerable<IDrawCommand> commands)
     {
-        IEnumerable<IDrawCommand> commands = undoStack.Undo();
+        await DrawCommandList(commands);
+    }
 
+    private async Task DrawCommandList(IEnumerable<IDrawCommand> commands)
+    {
         if (commands == null)
         {
             return;
@@ -191,19 +194,19 @@
     private async void ActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
     {
         drawingAllowed = true;
-        undoStack.Clear(ToolboxService.GetBackgroundColor());
+        GameService.GameState.ResetUndoStack(ToolboxService.GetBackgroundColor());
         await ClearCanvas();
     }
 
     private async void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)
     {
-        undoStack.Clear(ToolboxService.GetBackgroundColor());
+        GameService.GameState.ResetUndoStack(ToolboxService.GetBackgroundColor());
         await ClearCanvas();
     }
 
     private async Task ClearCanvas()
     {
-        undoStack.Add(new CommandClearCanvas(ToolboxService.GetBackgroundColor()));
+        GameService.GameState.ClearCanvas(ToolboxService.GetBackgroundColor());
         if (context != null)
         {
             await context.ClearRectAsync(0, 0, canvasWidth, canvasHeight);

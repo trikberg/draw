@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Collections;
 
 namespace Draw.Shared.Draw
 {
-    internal class CommandSubList
+    internal class CommandSubList : IEnumerable<IDrawCommand>
     {
         private List<IDrawCommand> commands = new List<IDrawCommand>();
 
@@ -37,6 +38,16 @@ namespace Draw.Shared.Draw
         internal IDrawCommand Last()
         {
             return commands.LastOrDefault();
+        }
+
+        public IEnumerator<IDrawCommand> GetEnumerator()
+        {
+            return commands.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }

@@ -72,6 +72,29 @@ namespace Draw.Server.Game.Rooms
             {
                 await room.SendPlayer(player, "ChatMessage", cm);
             }
+            await SendDrawLog(player);
+        }
+
+        private async Task SendDrawLog(Player player)
+        {
+            foreach (IDrawCommand command in drawCommandLog)
+            {
+                if (command is CommandClearCanvas ccc)
+                {
+                    await room.SendPlayer(player, "ClearCanvas");
+                }
+                else if (command is CommandDrawLine cdl)
+                {
+                    foreach (DrawLineEventArgs args in cdl.DrawCommands)
+                    {
+                        await room.SendPlayer(player, "DrawLine", args);
+                    }
+                }
+                else if (command is CommandFill cf)
+                {
+                    await room.SendPlayer(player, "Fill", cf.FillArgs);
+                }
+            }
         }
 
         public Task RemovePlayer(Player player)

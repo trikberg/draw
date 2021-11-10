@@ -14,14 +14,13 @@ namespace Draw.Client.Services
         private HubConnection hubConnection;
         private NavigationManager navigationManager;
 
+        private GameState gameState = new GameState();
         private List<RoomStateDTO> rooms = new List<RoomStateDTO>();
         private List<Player> players = new List<Player>();
         private RoomStateDTO currentRoomState = null;
         private Guid? playerGuid = null;
 
-        public event EventHandler<IDrawEventArgs> DrawEventReceived;
         public event EventHandler ClearCanvasReceived;
-        public event EventHandler UndoReceived;
         public event EventHandler<string> BackgroundColorChanged;
         public event EventHandler<ChatMessage> ChatMessageReceived;
         public event EventHandler RoomListChanged;
@@ -61,11 +60,11 @@ namespace Draw.Client.Services
 
         private void InitServerCallbacks()
         {
-            hubConnection.On<DrawLineEventArgs>("DrawLine", (e) => DrawEventReceived?.Invoke(this, e));
-            hubConnection.On<FillEventArgs>("Fill", (e) => DrawEventReceived?.Invoke(this, e));
+            hubConnection.On<DrawLineEventArgs>("DrawLine", (e) => gameState.DrawLine(e));
+            hubConnection.On<FillEventArgs>("Fill", (e) => gameState.Fill(e));
             hubConnection.On<string>("ChangeBackgroundColor", (color) => BackgroundColorChanged?.Invoke(this, color));
             hubConnection.On("ClearCanvas", () => ClearCanvasReceived?.Invoke(this, null));
-            hubConnection.On("Undo", () => UndoReceived?.Invoke(this, null));
+            hubConnection.On("Undo", () => gameState.Undo());
 
             hubConnection.On<PlayerDTO>("PlayerJoined", (p) =>
             {
@@ -163,6 +162,8 @@ namespace Draw.Client.Services
         public IEnumerable<Player> Players => players;
 
         public RoomStateDTO RoomState => currentRoomState;
+
+        public GameState GameState => gameState;
 
         public Guid? PlayerGuid => playerGuid;
 

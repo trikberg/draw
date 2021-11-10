@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Draw.Shared.Draw
 {
-    public class CommandList
+    public class CommandList : IEnumerable<IDrawCommand>
     {
         private List<CommandSubList> stack = new List<CommandSubList>();
 
@@ -99,6 +100,29 @@ namespace Draw.Shared.Draw
                 result.Insert(0, new CommandClearCanvas(currentList.BackgroundColor));
                 return result;
             }
+        }
+
+        public IEnumerable<IDrawCommand> GetDrawCommands()
+        {
+            return stack.LastOrDefault()?.ToList();
+        }
+
+
+        public IEnumerator<IDrawCommand> GetEnumerator()
+        {
+            foreach(CommandSubList subList in stack)
+            {
+                yield return new CommandClearCanvas(subList.BackgroundColor);
+                foreach (IDrawCommand command in subList)
+                {
+                    yield return command;
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }

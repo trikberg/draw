@@ -26,3 +26,15 @@ label {
     font-weight:bold;
 }
 
+.privacy-label {
+    line-height: 2rem;
+}
+
+.privacy-label::after {
+    content: "";
+    display: block;
+}
+
+input[type=checkbox] {
+    transform: scale(1.5);
+}

@@ -41,17 +41,17 @@
             if (sliderValue != value)
             {
                 sliderValue = value;
-                ToolboxService.SetBackgroundColor(backgroundColors[sliderValue], false);
+                ToolboxService.SetBackgroundColor(backgroundColors[sliderValue], false, false);
             }
         }
     }
 
     public async Task OnMouseUp(MouseEventArgs e)
     {
-        await ToolboxService.SetBackgroundColor(backgroundColors[sliderValue], true);
+        await ToolboxService.SetBackgroundColor(backgroundColors[sliderValue], true, true);
     }
 
-    private void OnBackgroundChanged(object sender, EventArgs e)
+    private void OnBackgroundChanged(object sender, bool _)
     {
         string color = ToolboxService.GetBackgroundColor();
         int i = Array.IndexOf<string>(backgroundColors, color);

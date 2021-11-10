@@ -22,7 +22,7 @@ namespace Draw.Server.Game
         {
             this.logger = logger;
             hubContext = context;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 AddRoom(new PublicRoom(context, "Room " + i, new RoomSettings()));
             }
@@ -81,9 +81,15 @@ namespace Draw.Server.Game
             return true;
         }
 
-        internal async Task<RoomStateDTO> JoinRoom(Player player, Room newRoom)
+        internal async Task<RoomStateDTO> JoinRoom(Player player, Room newRoom, string password)
         {
             if (newRoom == null || player == null)
+            {
+                return null;
+            }
+
+            if (newRoom.RoomSettings.IsPrivateRoom &&
+                !newRoom.RoomSettings.Password.Equals(password))
             {
                 return null;
             }

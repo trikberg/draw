@@ -10,7 +10,7 @@ namespace Draw.Client.Services
         public event EventHandler ClearCanvasEvent;
         public event EventHandler BrushColorChanged;
         public event EventHandler BrushSizeChanged;
-        public event EventHandler BackgroundColorChanged;
+        public event EventHandler<bool> BackgroundColorChanged;
         public event EventHandler<Tool> ActiveToolChanged;
 
         private IGameService gameService;
@@ -63,12 +63,12 @@ namespace Draw.Client.Services
             ActiveToolChanged?.Invoke(this, activeTool);
             BrushColorChanged?.Invoke(this, null);
             BrushSizeChanged?.Invoke(this, null);
-            BackgroundColorChanged?.Invoke(this, null);
+            BackgroundColorChanged?.Invoke(this, false);
         }
 
         private void OnBackgroundColorChanged(object sender, string color)
         {
-            _ = SetBackgroundColor(color, false);
+            _ = SetBackgroundColor(color, false, true);
         }
 
         public string GetBrushColor(int x, int y)
@@ -103,11 +103,14 @@ namespace Draw.Client.Services
             return backgroundColor;
         }
 
-        public async Task SetBackgroundColor(string color, bool sendToServer)
+        public async Task SetBackgroundColor(string color, bool sendToServer, bool addToUndoStack)
         {
-            // TODO add command to undo stack
+            if (addToUndoStack)
+            {
+
+            }
             backgroundColor = color;
-            BackgroundColorChanged?.Invoke(this, null);
+            BackgroundColorChanged?.Invoke(this, addToUndoStack);
             if (sendToServer)
             {
                 await gameService.ChangeBackgroundColor(color);

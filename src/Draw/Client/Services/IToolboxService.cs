@@ -17,7 +17,7 @@ namespace Draw.Client.Services
         public event EventHandler ClearCanvasEvent;
         public event EventHandler BrushColorChanged;
         public event EventHandler BrushSizeChanged;
-        public event EventHandler BackgroundColorChanged;
+        public event EventHandler<bool> BackgroundColorChanged;
         public event EventHandler<Tool> ActiveToolChanged;
 
         public string GetBrushColor(int x, int y);
@@ -29,7 +29,7 @@ namespace Draw.Client.Services
         public void SetBrushSize(int size);
 
         public string GetBackgroundColor();
-        public Task SetBackgroundColor(string color, bool sendToServer);
+        public Task SetBackgroundColor(string color, bool sendToServer, bool addToUndoStack);
 
         public Tool GetActiveTool();
         public void SetActiveTool(Tool tool);

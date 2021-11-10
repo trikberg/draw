@@ -1,7 +1,7 @@
 ﻿@page "/lobby"
 @implements IDisposable
 @inject IGameService GameService
-@inject NavigationManager navigationManager
+@inject NavigationManager NavigationManager
 
 <div class="horizontal">
     <div class="roomlist">
@@ -10,14 +10,26 @@
         <ul>
             @foreach (RoomStateDTO room in GameService.Rooms.Where(r => !r.GameInProgress))
             {
-                <li @onclick="() => SelectRoom(room)">@room.RoomName [@(room.RoomSettings.Language)]</li>
+                <li @onclick="() => SelectRoom(room)">
+                    @if (room.RoomSettings.IsPrivateRoom)
+                    {
+                        <img src="icons/lock.svg" width="18" height="18" />
+                    }
+                    @room.RoomName [@(room.RoomSettings.Language)]
+                </li>
             }
         </ul>
         <p class="title">In Progress</p>
         <ul>
             @foreach (RoomStateDTO room in GameService.Rooms.Where(r => r.GameInProgress))
             {
-                <li @onclick="() => SelectRoom(room)">@room.RoomName [@(room.RoomSettings.Language)]</li>
+                <li @onclick="() => SelectRoom(room)">
+                    @if (room.RoomSettings.IsPrivateRoom)
+                    {
+                        <img src="icons/lock.svg" width="18" height="18" />
+                    }
+                    @room.RoomName [@(room.RoomSettings.Language)]
+                </li>
             }
         </ul>
 
@@ -32,7 +44,11 @@
             <div class=vertical>
                 <p class="roomname">@selectedRoom.RoomName</p>
                 <RoomSettingsDisplay Settings="selectedRoom.RoomSettings" IsEditable="false" />
-                <button class="joinbutton" @onclick="() => JoinRoom(selectedRoom.RoomName)">Join</button>
+                @if (selectedRoom.RoomSettings.IsPrivateRoom)
+                {
+                    <input type="password" class="password-input @(joinFailed? "incorrect" : "")" placeholder="Password" @bind="@password"/>
+                }
+                <button disabled="@waitingForJoin" class="joinbutton" @onclick="() => JoinRoom(selectedRoom.RoomName, password)">Join</button>
             </div>
         }
     </div>
@@ -41,10 +57,18 @@
 @code {
     private bool showCreateRoomDialog = false;
     private RoomStateDTO selectedRoom = null;
+    private string password = "";
+    private bool waitingForJoin = false;
+    private bool joinFailed = false;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        if (GameService.PlayerGuid == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
 
         GameService.RoomListChanged += OnRoomListChanged;
         GameService.RoomSettingsChanged += OnRoomSettingsChanged;
@@ -66,9 +90,13 @@
         StateHasChanged();
     }
 
-    private async Task JoinRoom(string roomName)
+    private async Task JoinRoom(string roomName, string password)
     {
-        await GameService.JoinRoom(roomName);
+        waitingForJoin = true;
+        StateHasChanged();
+        joinFailed = !(await GameService.JoinRoom(roomName, password));
+        waitingForJoin = false;
+        StateHasChanged();
     }
 
     private void SelectRoom(RoomStateDTO room)

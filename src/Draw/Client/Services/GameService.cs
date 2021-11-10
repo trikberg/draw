@@ -199,15 +199,16 @@ namespace Draw.Client.Services
             return await hubConnection.InvokeAsync<bool>("CreateRoom", roomName, roomSettings);
         }
 
-        public async Task JoinRoom(string roomName)
+        public async Task<bool> JoinRoom(string roomName, string password)
         {
-            RoomStateDTO roomState = await hubConnection.InvokeAsync<RoomStateDTO>("JoinRoom", roomName);
+            RoomStateDTO roomState = await hubConnection.InvokeAsync<RoomStateDTO>("JoinRoom", roomName, password);
             if (roomState == null)
             {
                 players = new List<Player>();
                 PlayerListChanged?.Invoke(this, null);
                 currentRoomState = null;
                 RoomSettingsChanged?.Invoke(this, null);
+                return false;
             }
             else
             {
@@ -223,6 +224,7 @@ namespace Draw.Client.Services
                 {
                     navigationManager.NavigateTo("/waitingroom");
                 }
+                return true;
             }
         }
 

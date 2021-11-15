@@ -3,7 +3,7 @@
 
 <div class="roomchat">
     <div class="chat-messages">
-        @foreach (ChatMessage message in messages)
+        @foreach (ChatMessage message in GameService.GameState.ChatLog)
         {
             <ChatMessageDisplay Message=message />
         }
@@ -17,8 +17,6 @@
 @code {
     [Parameter]
     public bool IsChatMode { get; set; } = false;
-
-    private List<ChatMessage> messages = new List<ChatMessage>();
 
     private string guess = "";
     private string Guess
@@ -34,21 +32,16 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        GameService.ChatMessageReceived += ChatMessageReceived;
+        GameService.GameState.ChatMessageReceived += ChatMessageReceived;
     }
 
     public void Dispose()
     {
-        GameService.ChatMessageReceived -= ChatMessageReceived;
+        GameService.GameState.ChatMessageReceived -= ChatMessageReceived;
     }
 
     private void ChatMessageReceived(object sender, ChatMessage cm)
     {
-        if (messages.Count >= 50 )
-        {
-            messages.RemoveRange(0, messages.Count - 49);
-        }
-        messages.Add(cm);
         StateHasChanged();
     }
 }

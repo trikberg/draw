@@ -22,12 +22,10 @@ namespace Draw.Client.Services
 
         public event EventHandler ClearCanvasReceived;
         public event EventHandler<string> BackgroundColorChanged;
-        public event EventHandler<ChatMessage> ChatMessageReceived;
         public event EventHandler RoomListChanged;
         public event EventHandler PlayerListChanged;
         public event EventHandler RoomSettingsChanged;
         public event EventHandler GameStarted;
-        public event EventHandler<(int, int)> RoundStarted;
         public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
         public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
         public event EventHandler<ActivePlayerDrawEventArgs> ActivePlayerDrawStarted;
@@ -116,15 +114,9 @@ namespace Draw.Client.Services
             });
 
             hubConnection.On<int, int, ChatMessage>("RoundStarted", (currentRound, roundCount, chatMessage) =>
-            {
-                RoundStarted?.Invoke(this, (currentRound, roundCount));
-                if (chatMessage != null)
-                {
-                    ChatMessageReceived?.Invoke(this, chatMessage);
-                }
-            });
+                gameState.NewRoundStarted(currentRound, roundCount, chatMessage));
 
-            hubConnection.On<ChatMessage>("ChatMessage", (cm) => ChatMessageReceived?.Invoke(this, cm));
+            hubConnection.On<ChatMessage>("ChatMessage", (cm) => gameState.AddChatMessage(cm));
 
             hubConnection.On<WordDTO, WordDTO, WordDTO, int>("ActivePlayerWordChoice", (w1, w2, w3, timeout) =>
                 ActivePlayerWordChoiceStarted?.Invoke(this, new WordChoiceEventArgs(w1, w2, w3, timeout)));
@@ -148,7 +140,7 @@ namespace Draw.Client.Services
                 }
                 if (chatMessage != null)
                 {
-                    ChatMessageReceived?.Invoke(this, chatMessage);
+                    gameState.AddChatMessage(chatMessage);
                 }
             });
             hubConnection.On<List<PlayerScore>, int>("TurnScores", (scores, timeout) => TurnScores?.Invoke(this, (scores, timeout)));

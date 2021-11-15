@@ -40,6 +40,7 @@ namespace Draw.Client.Services
         {
             gameService.BackgroundColorChanged -= OnBackgroundColorChanged;
             gameService.ActivePlayerDrawStarted -= OnActivePlayerDrawStarted;
+            gameService.PlayerDrawStarted -= OnPlayerDrawStarted;
         }
 
         private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs e)

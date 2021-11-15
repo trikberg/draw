@@ -2,28 +2,24 @@
 @inject IGameService GameService
 
 <div>
-    Round @(currentRound) / @(roundCount)
+    Round @(GameService.GameState.CurrentRound) / @(GameService.GameState.RoundCount)
 </div>
 
 @code {
-    private int currentRound = 0;
-    private int roundCount = 0;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        GameService.RoundStarted += RoundStarted;
+        GameService.GameState.RoundStarted += RoundStarted;
     }
 
     public void Dispose()
     {
-        GameService.RoundStarted -= RoundStarted;
+        GameService.GameState.RoundStarted -= RoundStarted;
     }
 
-    private void RoundStarted(object sender, (int currentRound, int roundCount) args)
+    private void RoundStarted(object sender, EventArgs _)
     {
-        currentRound = args.currentRound;
-        roundCount = args.roundCount;
         StateHasChanged();
     }
 }

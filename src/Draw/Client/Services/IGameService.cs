@@ -11,12 +11,10 @@ namespace Draw.Client.Services
     {
         public event EventHandler ClearCanvasReceived;
         public event EventHandler<string> BackgroundColorChanged;
-        public event EventHandler<ChatMessage> ChatMessageReceived;
         public event EventHandler RoomListChanged;
         public event EventHandler PlayerListChanged;
         public event EventHandler RoomSettingsChanged;
         public event EventHandler GameStarted;
-        public event EventHandler<(int, int)> RoundStarted;
         public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
         public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
         public event EventHandler<ActivePlayerDrawEventArgs> ActivePlayerDrawStarted;

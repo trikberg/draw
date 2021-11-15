@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using NLog;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -6,6 +6,8 @@ namespace Draw.Server.Game.Rooms
 {
     internal class RoomStateWordChoice : IRoomState
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         private Player activePlayer;
         private Room room;
         private RoomStatePlayerTurn roomStatePlayerTurn;
@@ -91,7 +93,10 @@ namespace Draw.Server.Game.Rooms
 
                     room.RoomState = new RoomStateDrawing(player, room, word, roomStatePlayerTurn);
                 }
-                // TODO else -> log error state
+                else
+                {
+                    logger.Warn("Someone else (" + player.Name + ") than active player (" + player.Name + ") tried to choose a word.");
+                }
             }
         }
     }

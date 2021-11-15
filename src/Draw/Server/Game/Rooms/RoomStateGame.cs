@@ -90,7 +90,6 @@ namespace Draw.Server.Game.Rooms
             return room.SendAll("UpdateTotalScores", totalScores);
         }
 
-        // TODO rename to FinalScores?
         private Task GameScores(int timeout)
         {
             List<PlayerScore> totalScores = GetTotalScores();

@@ -1,5 +1,6 @@
 ﻿using Draw.Server.Extensions;
 using Draw.Shared.Game;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,8 @@ namespace Draw.Server.Game
 {
     internal class WordProvider
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         private static readonly WordProvider instance = new WordProvider();
         public static WordProvider Instance => instance;
 
@@ -32,7 +35,7 @@ namespace Draw.Server.Game
 
                 if (resourceStream == null)
                 {
-                    //TODO log failure
+                    logger.Error("Error getting resource stream for word list " + languageName);
                     continue;
                 }
 
@@ -46,9 +49,9 @@ namespace Draw.Server.Game
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    //TODO log exception
+                    logger.Error(e, "Exception when reading word list " + languageName);
                     continue;
                 }
             }

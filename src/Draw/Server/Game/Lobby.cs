@@ -30,11 +30,13 @@ namespace Draw.Server.Game
 
         internal void AddRoom(Room room)
         {
+            int count;
             lock (rooms)
             {
                 rooms.Add(room);
+                count = rooms.Count;
             }
-            logger.LogInformation("Room added. Index: " + room.RoomIndex + ". Name: " + room.RoomName);
+            logger.LogInformation("Room added. Index: " + room.RoomIndex + ". Name: " + room.RoomName + ". Active rooms: " + count);
         }
 
         internal IEnumerable<Player> GetPlayersInRoom(string roomName)

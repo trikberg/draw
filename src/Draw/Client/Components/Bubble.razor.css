@@ -1,0 +1,50 @@
+﻿
+.bubble {
+    width: 200px;
+    aspect-ratio: 1;
+    top: -50%;
+    border-radius: 50%;
+    position: absolute;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.0), rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.7) 100%);
+    animation-name: float;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-duration: 60s;
+}
+
+    .bubble:before {
+        content: "";
+        position: absolute;
+        top: 1%;
+        left: 1%;
+        width: 98%;
+        height: 98%;
+        border-radius: 100%;
+        background: radial-gradient(circle at top, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 40%);
+        transform: rotateZ(160deg);
+        filter: blur(5px);
+        z-index: 2;
+    }
+
+    .bubble:after {
+        content: "";
+        position: absolute;
+        top: 1%;
+        left: 1%;
+        width: 98%;
+        height: 98%;
+        border-radius: 100%;
+        background: radial-gradient(circle at top, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 15%);
+        filter: blur(1px);
+        transform: rotateZ(-20deg);
+        z-index: 2;
+    }
+
+@keyframes float {
+    0% {
+        top: 120%;
+    }
+    100% {
+        top: -20%
+    }
+}

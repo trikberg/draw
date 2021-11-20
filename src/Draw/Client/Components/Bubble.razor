@@ -1,0 +1,22 @@
+﻿<div class="bubble" 
+     style="width: @(Size)px;
+			left: @(Left)%; 
+			animation-duration: @(AnimationDuration)s; 
+			animation-delay: @(AnimationDelay)s; "/>
+
+@code {
+	[Parameter]
+	public int Size { get; set; }
+
+	[Parameter]
+	public int Left { get; set; }
+
+	[Parameter]
+	public int AnimationDuration { get; set; }
+
+	[Parameter]
+	public int AnimationDelay { get; set; }
+
+}
+
+

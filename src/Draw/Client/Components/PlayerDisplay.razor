@@ -68,9 +68,9 @@
         StateHasChanged();
     }
 
-    private void CorrectGuessMade(object sender, (PlayerDTO player, int timeRemaining) args)
+    private void CorrectGuessMade(object sender, PlayerDTO player)
     {
-        if (Player.Equals(args.player))
+        if (Player.Equals(player))
         {
             hasGuessedWord = true;
             StateHasChanged();

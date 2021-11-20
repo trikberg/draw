@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Draw.Client.Services
 {
-    public class GameService : IGameService
+    public class GameService : IGameService, IDisposable
     {
         private HubConnection hubConnection;
         private NavigationManager navigationManager;
@@ -28,7 +28,7 @@ namespace Draw.Client.Services
         public event EventHandler GameStarted;
         public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
         public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
-        public event EventHandler<(PlayerDTO player, int timeRemaining)> CorrectGuessMade;
+        public event EventHandler<PlayerDTO> CorrectGuessMade;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> TurnScores;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> GameScores;
 
@@ -36,6 +36,11 @@ namespace Draw.Client.Services
         {
             this.navigationManager = navigationManager;
             Init();
+        }
+
+        public void Dispose()
+        {
+            gameState?.TurnTimer?.Dispose();
         }
 
         private async void Init()
@@ -129,7 +134,8 @@ namespace Draw.Client.Services
             hubConnection.On<HintLetter>("HintLetter", (hint) => gameState.HintLetter(hint));
             hubConnection.On<PlayerDTO, int, WordDTO, ChatMessage>("CorrectGuess", (player, timeRemaining, word, chatMessage) =>
             {
-                CorrectGuessMade?.Invoke(this, (player, timeRemaining));
+                CorrectGuessMade?.Invoke(this, player);
+                gameState.TurnTimer.SetTime(timeRemaining);
                 if (word != null)
                 {
                     gameState.CorrectWord(word);
@@ -139,7 +145,11 @@ namespace Draw.Client.Services
                     gameState.AddChatMessage(chatMessage);
                 }
             });
-            hubConnection.On<List<PlayerScore>, int>("TurnScores", (scores, timeout) => TurnScores?.Invoke(this, (scores, timeout)));
+            hubConnection.On<List<PlayerScore>, int>("TurnScores", (scores, timeout) =>
+            {
+                gameState.TurnTimer.Stop();
+                TurnScores?.Invoke(this, (scores, timeout));
+            });
             hubConnection.On<List<PlayerScore>>("UpdateTotalScores", (scores) => UpdatePlayerScores(scores));
             hubConnection.On<List<PlayerScore>, int>("GameScores", (scores, timeout) => GameScores?.Invoke(this, (scores, timeout)));
             hubConnection.On("GameEnded", () => navigationManager.NavigateTo("/waitingroom"));

@@ -195,7 +195,7 @@
         }
     }
 
-    private async void ActivePlayerDrawStarted(object sender, int _)
+    private async void ActivePlayerDrawStarted(object sender, EventArgs _)
     {
         drawingAllowed = true;
         GameService.GameState.ResetUndoStack(ToolboxService.GetBackgroundColor());

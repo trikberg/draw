@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Draw.Client.Services
 {
-    internal interface IGameService
+    internal interface IGameService : IDisposable
     {
         public event EventHandler ClearCanvasReceived;
         public event EventHandler<string> BackgroundColorChanged;
@@ -17,7 +17,7 @@ namespace Draw.Client.Services
         public event EventHandler GameStarted;
         public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
         public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
-        public event EventHandler<(PlayerDTO player, int timeRemaining)> CorrectGuessMade;
+        public event EventHandler<PlayerDTO> CorrectGuessMade;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> TurnScores;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> GameScores;
 

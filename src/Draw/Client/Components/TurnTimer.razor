@@ -1,70 +1,24 @@
 ﻿@implements IDisposable
 @inject IGameService GameService
-@using System.Timers
 
 <div>@(timeString)s</div>
 
 @code {
-    private string timeString => remainingSeconds.ToString();
-    private int remainingSeconds;
-    private Timer timer;
+    private string timeString => GameService.GameState.TurnTimer.RemainingSeconds.ToString();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        GameService.GameState.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
-        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
-        GameService.CorrectGuessMade += CorrectGuessMade;
-        GameService.TurnScores += TurnScores;
-        timer = new Timer();
-        timer.Interval = 1000;
-        timer.Elapsed += TimerElapsed;
+        GameService.GameState.TurnTimer.TurnTimerChanged += TurnTimerChanged;
     }
 
     public void Dispose()
     {
-        GameService.GameState.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
-        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
-        GameService.CorrectGuessMade -= CorrectGuessMade;
-        GameService.TurnScores -= TurnScores;
-        timer.Dispose();
+        GameService.GameState.TurnTimer.TurnTimerChanged -= TurnTimerChanged;
     }
 
-    private void ActivePlayerDrawStarted(object sender, int time)
+    private void TurnTimerChanged(object sender, int time)
     {
-        StartTimer(time);
-    }
-
-    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)
-    {
-        StartTimer(e.Time);
-    }
-
-    private void StartTimer(int time)
-    {
-        remainingSeconds = time;
-        timer.Start();
         StateHasChanged();
-    }
-
-    private void CorrectGuessMade(object sender, (PlayerDTO player, int timeRemaining) args)
-    {
-        remainingSeconds = args.timeRemaining;
-        StateHasChanged();
-    }
-
-    private void TurnScores(object sender, (List<PlayerScore> scores, int timeout) args)
-    {
-        timer.Stop();
-    }
-
-    private void TimerElapsed(object sender, ElapsedEventArgs e)
-    {
-        remainingSeconds -= 1;
-        StateHasChanged();
-        if (remainingSeconds <= 0)
-        {
-            timer.Stop();
-        }
     }
 }

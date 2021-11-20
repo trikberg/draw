@@ -9,7 +9,7 @@ namespace Draw.Client.Services
     public class GameState
     {
         public event EventHandler RoundStarted;
-        public event EventHandler<int> ActivePlayerDrawStarted;
+        public event EventHandler ActivePlayerDrawStarted;
         public event EventHandler<PlayerDrawEventArgs> PlayerDrawStarted;
         public event EventHandler HintLetterReceived;
         public event EventHandler CorrectWordReceived;
@@ -23,6 +23,7 @@ namespace Draw.Client.Services
         public IEnumerable<ChatMessage> ChatLog => chatLog;
         public int CurrentRound { get; private set; } = 0;
         public int RoundCount { get; private set; } = 0;
+        public TurnTimer TurnTimer { get; } = new TurnTimer();
 
         public WordDTO Word { get; private set; } = null;
         public string WordHint { get; private set; } = null;
@@ -43,14 +44,15 @@ namespace Draw.Client.Services
         {
             WordHint = WordDTO.GetHintWord(word.Word);
             Word = word;
-
-            ActivePlayerDrawStarted?.Invoke(this, time);
+            TurnTimer.StartTimer(time);
+            ActivePlayerDrawStarted?.Invoke(this, EventArgs.Empty);
         }
 
         internal void PlayerDrawStart(PlayerDTO player, string wordHint, int time)
         {
             Word = null;
             WordHint = wordHint;
+            TurnTimer.StartTimer(time);
             PlayerDrawStarted?.Invoke(this, new PlayerDrawEventArgs(player, time));
         }
         internal void HintLetter(HintLetter hint)

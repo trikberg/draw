@@ -49,7 +49,7 @@ namespace Draw.Client.Services
             ResetTools();
         }
 
-        private void OnActivePlayerDrawStarted(object sender, int _)
+        private void OnActivePlayerDrawStarted(object sender, EventArgs _)
         {
             isActivePlayer = true;
             ResetTools();

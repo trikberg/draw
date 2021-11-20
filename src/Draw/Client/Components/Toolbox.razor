@@ -21,24 +21,24 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        GameService.ActivePlayerDrawStarted += OnActivePlayerDrawStarted;
-        GameService.PlayerDrawStarted += OnPlayerDrawStarted;
+        GameService.GameState.ActivePlayerDrawStarted += OnActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted += OnPlayerDrawStarted;
     }
 
     public void Dispose()
     {
-        GameService.ActivePlayerDrawStarted -= OnActivePlayerDrawStarted;
-        GameService.PlayerDrawStarted -= OnPlayerDrawStarted;
+        GameService.GameState.ActivePlayerDrawStarted -= OnActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted -= OnPlayerDrawStarted;
 
     }
 
-    private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs e)
+    private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs _)
     {
         toolsVisible = false;
         StateHasChanged();
     }
 
-    private void OnActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+    private void OnActivePlayerDrawStarted(object sender, int _)
     {
         toolsVisible = true;
         StateHasChanged();

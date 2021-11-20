@@ -32,24 +32,24 @@ namespace Draw.Client.Services
         {
             this.gameService = gameService;
             gameService.BackgroundColorChanged += OnBackgroundColorChanged;
-            gameService.ActivePlayerDrawStarted += OnActivePlayerDrawStarted;
-            gameService.PlayerDrawStarted += OnPlayerDrawStarted;
+            gameService.GameState.ActivePlayerDrawStarted += OnActivePlayerDrawStarted;
+            gameService.GameState.PlayerDrawStarted += OnPlayerDrawStarted;
         }
 
         public void Dispose()
         {
             gameService.BackgroundColorChanged -= OnBackgroundColorChanged;
-            gameService.ActivePlayerDrawStarted -= OnActivePlayerDrawStarted;
-            gameService.PlayerDrawStarted -= OnPlayerDrawStarted;
+            gameService.GameState.ActivePlayerDrawStarted -= OnActivePlayerDrawStarted;
+            gameService.GameState.PlayerDrawStarted -= OnPlayerDrawStarted;
         }
 
-        private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs e)
+        private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs _)
         {
             isActivePlayer = false;
             ResetTools();
         }
 
-        private void OnActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+        private void OnActivePlayerDrawStarted(object sender, int _)
         {
             isActivePlayer = true;
             ResetTools();

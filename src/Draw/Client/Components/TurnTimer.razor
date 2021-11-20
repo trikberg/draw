@@ -12,8 +12,8 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        GameService.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
-        GameService.PlayerDrawStarted += PlayerDrawStarted;
+        GameService.GameState.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
         GameService.CorrectGuessMade += CorrectGuessMade;
         GameService.TurnScores += TurnScores;
         timer = new Timer();
@@ -23,16 +23,16 @@
 
     public void Dispose()
     {
-        GameService.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
-        GameService.PlayerDrawStarted -= PlayerDrawStarted;
+        GameService.GameState.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
         GameService.CorrectGuessMade -= CorrectGuessMade;
         GameService.TurnScores -= TurnScores;
         timer.Dispose();
     }
 
-    private void ActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+    private void ActivePlayerDrawStarted(object sender, int time)
     {
-        StartTimer(e.Time);
+        StartTimer(time);
     }
 
     private void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)

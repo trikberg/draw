@@ -27,7 +27,7 @@
         Player.ScoreChanged += ScoreChanged;
         GameService.PlayerWordChoiceStarted += PlayerWordChoiceStarted;
         GameService.ActivePlayerWordChoiceStarted += ActivePlayerWordChoiceStarted;
-        GameService.PlayerDrawStarted += PlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
         GameService.CorrectGuessMade += CorrectGuessMade;
         GameService.GameScores += GameScores;
     }
@@ -37,7 +37,7 @@
         Player.ScoreChanged -= ScoreChanged;
         GameService.PlayerWordChoiceStarted -= PlayerWordChoiceStarted;
         GameService.ActivePlayerWordChoiceStarted -= ActivePlayerWordChoiceStarted;
-        GameService.PlayerDrawStarted -= PlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
         GameService.CorrectGuessMade -= CorrectGuessMade;
         GameService.GameScores -= GameScores;
     }

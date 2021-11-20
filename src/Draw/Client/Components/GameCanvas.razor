@@ -37,8 +37,8 @@
         GameService.GameState.DrawEventReceived += DrawEventReceived;
         GameService.ClearCanvasReceived += ClearCanvasReceived;
         GameService.GameState.UndoEventReceived += UndoReceived;
-        GameService.PlayerDrawStarted += PlayerDrawStarted;
-        GameService.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
+        GameService.GameState.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
         GameService.TurnScores += TurnScores;
         ToolboxService.ClearCanvasEvent += ClearCanvasReceived;
     }
@@ -48,8 +48,8 @@
         GameService.GameState.DrawEventReceived -= DrawEventReceived;
         GameService.ClearCanvasReceived -= ClearCanvasReceived;
         GameService.GameState.UndoEventReceived -= UndoReceived;
-        GameService.PlayerDrawStarted -= PlayerDrawStarted;
-        GameService.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
+        GameService.GameState.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
         GameService.TurnScores -= TurnScores;
         ToolboxService.ClearCanvasEvent -= ClearCanvasReceived;
     }
@@ -195,14 +195,14 @@
         }
     }
 
-    private async void ActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+    private async void ActivePlayerDrawStarted(object sender, int _)
     {
         drawingAllowed = true;
         GameService.GameState.ResetUndoStack(ToolboxService.GetBackgroundColor());
         await ClearCanvas();
     }
 
-    private async void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)
+    private async void PlayerDrawStarted(object sender, PlayerDrawEventArgs _)
     {
         GameService.GameState.ResetUndoStack(ToolboxService.GetBackgroundColor());
         await ClearCanvas();

@@ -2,12 +2,17 @@
 using Draw.Shared.Game;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Draw.Client.Services
 {
     public class GameState
     {
         public event EventHandler RoundStarted;
+        public event EventHandler<int> ActivePlayerDrawStarted;
+        public event EventHandler<PlayerDrawEventArgs> PlayerDrawStarted;
+        public event EventHandler HintLetterReceived;
+        public event EventHandler CorrectWordReceived;
         public event EventHandler<IDrawEventArgs> DrawEventReceived;
         public event EventHandler<IEnumerable<IDrawCommand>> UndoEventReceived;
         public event EventHandler<ChatMessage> ChatMessageReceived;
@@ -16,10 +21,14 @@ namespace Draw.Client.Services
         private List<ChatMessage> chatLog = new List<ChatMessage>();
 
         public IEnumerable<ChatMessage> ChatLog => chatLog;
-        public int CurrentRound { get; private set; }
-        public int RoundCount { get; private set; }
+        public int CurrentRound { get; private set; } = 0;
+        public int RoundCount { get; private set; } = 0;
 
-        internal void NewRoundStarted(int currentRound, int roundCount, ChatMessage chatMessage)
+        public WordDTO Word { get; private set; } = null;
+        public string WordHint { get; private set; } = null;
+
+
+        internal void NewRoundStart(int currentRound, int roundCount, ChatMessage chatMessage)
         {
             CurrentRound = currentRound;
             RoundCount = roundCount;
@@ -28,6 +37,33 @@ namespace Draw.Client.Services
             {
                 AddChatMessage(chatMessage);
             }
+        }
+
+        internal void ActivePlayerDrawStart(WordDTO word, int time)
+        {
+            WordHint = WordDTO.GetHintWord(word.Word);
+            Word = word;
+
+            ActivePlayerDrawStarted?.Invoke(this, time);
+        }
+
+        internal void PlayerDrawStart(PlayerDTO player, string wordHint, int time)
+        {
+            Word = null;
+            WordHint = wordHint;
+            PlayerDrawStarted?.Invoke(this, new PlayerDrawEventArgs(player, time));
+        }
+        internal void HintLetter(HintLetter hint)
+        {
+            StringBuilder sb = new StringBuilder(WordHint);
+            sb[hint.Position] = hint.Letter;
+            WordHint = sb.ToString();
+            HintLetterReceived?.Invoke(this, EventArgs.Empty);
+        }
+        internal void CorrectWord(WordDTO correctWord)
+        {
+            Word = correctWord;
+            CorrectWordReceived?.Invoke(this, EventArgs.Empty);
         }
 
         #region Drawing Commands
@@ -91,6 +127,7 @@ namespace Draw.Client.Services
             chatLog.Add(cm);
             ChatMessageReceived?.Invoke(this, cm);
         }
+
         #endregion Chat Message
     }
 }

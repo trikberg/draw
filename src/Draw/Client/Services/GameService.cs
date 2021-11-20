@@ -28,10 +28,6 @@ namespace Draw.Client.Services
         public event EventHandler GameStarted;
         public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
         public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
-        public event EventHandler<ActivePlayerDrawEventArgs> ActivePlayerDrawStarted;
-        public event EventHandler<PlayerDrawEventArgs> PlayerDrawStarted;
-        public event EventHandler<HintLetter> HintLetterReceived;
-        public event EventHandler<WordDTO> CorrectWordReceived;
         public event EventHandler<(PlayerDTO player, int timeRemaining)> CorrectGuessMade;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> TurnScores;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> GameScores;
@@ -114,7 +110,7 @@ namespace Draw.Client.Services
             });
 
             hubConnection.On<int, int, ChatMessage>("RoundStarted", (currentRound, roundCount, chatMessage) =>
-                gameState.NewRoundStarted(currentRound, roundCount, chatMessage));
+                gameState.NewRoundStart(currentRound, roundCount, chatMessage));
 
             hubConnection.On<ChatMessage>("ChatMessage", (cm) => gameState.AddChatMessage(cm));
 
@@ -125,18 +121,18 @@ namespace Draw.Client.Services
                 PlayerWordChoiceStarted?.Invoke(this, (player, timeout)));
 
             hubConnection.On<WordDTO, int>("ActivePlayerDrawing", (word, time) => 
-                ActivePlayerDrawStarted?.Invoke(this, new ActivePlayerDrawEventArgs(word, time)));
+                gameState.ActivePlayerDrawStart(word, time));
 
             hubConnection.On<PlayerDTO, string, int>("PlayerDrawing", (player, wordHint, time) =>
-                PlayerDrawStarted?.Invoke(this, new PlayerDrawEventArgs(player, wordHint, time)));
+                gameState.PlayerDrawStart(player, wordHint, time));
 
-            hubConnection.On<HintLetter>("HintLetter", (hint) => HintLetterReceived?.Invoke(this, hint));
+            hubConnection.On<HintLetter>("HintLetter", (hint) => gameState.HintLetter(hint));
             hubConnection.On<PlayerDTO, int, WordDTO, ChatMessage>("CorrectGuess", (player, timeRemaining, word, chatMessage) =>
             {
                 CorrectGuessMade?.Invoke(this, (player, timeRemaining));
                 if (word != null)
                 {
-                    CorrectWordReceived?.Invoke(this, word);
+                    gameState.CorrectWord(word);
                 }
                 if (chatMessage != null)
                 {

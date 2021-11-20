@@ -2,68 +2,58 @@
 @inject IGameService GameService
 @implements IDisposable
 
-@if (word == null || wordHint == null)
+@if (GameService.GameState.Word == null || GameService.GameState.WordHint == null)
 {
     <div><span class="preformatted">@WordString</span> @LetterCount</div>
 }
 else
 {
     <div>
-        @for (int i = 0; i < word.Word.Length; i++)
+        @for (int i = 0; i < GameService.GameState.Word.Word.Length; i++)
         {
-            <span class="preformatted @(Char.IsLetter(wordHint[i]) ? "known-letter" : "")">@(word.Word[i])&nbsp;</span>
+            <span class="preformatted @(Char.IsLetter(GameService.GameState.WordHint[i]) ? "known-letter" : "")">@(GameService.GameState.Word.Word[i])&nbsp;</span>
         }
         <span> @LetterCount</span>
-        <WordDifficultyDisplay Difficulty="word.Difficulty" />
+        <WordDifficultyDisplay Difficulty="GameService.GameState.Word.Difficulty" />
     </div>
 }
 
 @code {
-    private WordDTO word = null;
-    private string wordHint = null;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        GameService.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
-        GameService.PlayerDrawStarted += PlayerDrawStarted;
-        GameService.HintLetterReceived += HintLetterReceived;
-        GameService.CorrectWordReceived += CorrectWordReceived;
+        GameService.GameState.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
+        GameService.GameState.HintLetterReceived += HintLetterReceived;
+        GameService.GameState.CorrectWordReceived += CorrectWordReceived;
     }
 
     public void Dispose()
     {
-        GameService.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
-        GameService.PlayerDrawStarted -= PlayerDrawStarted;
-        GameService.HintLetterReceived -= HintLetterReceived;
-        GameService.CorrectWordReceived -= CorrectWordReceived;
+        GameService.GameState.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
+        GameService.GameState.HintLetterReceived -= HintLetterReceived;
+        GameService.GameState.CorrectWordReceived -= CorrectWordReceived;
     }
 
-    private void ActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+    private void ActivePlayerDrawStarted(object sender, int _)
     {
-        wordHint = WordDTO.GetHintWord(e.Word.Word);
-        word = e.Word;
         StateHasChanged();
     }
 
     private void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)
     {
-        word = null;
-        wordHint = e.WordHint;
         StateHasChanged();
     }
 
-    private void HintLetterReceived(object sender, HintLetter hint)
+    private void HintLetterReceived(object sender, EventArgs _)
     {
-        StringBuilder sb = new StringBuilder(wordHint);
-        sb[hint.Position] = hint.Letter;
-        wordHint = sb.ToString();
         StateHasChanged();
     }
 
-    private void CorrectWordReceived(object sender, WordDTO correctWord)
+    private void CorrectWordReceived(object sender, EventArgs _)
     {
-        word = correctWord;
         StateHasChanged();
     }
 
@@ -71,14 +61,14 @@ else
     {
         get
         {
-            if (word != null)
+            if (GameService.GameState.Word != null)
             {
-                return word.Word;
+                return GameService.GameState.Word.Word;
             }
-            else if (wordHint != null)
+            else if (GameService.GameState.WordHint != null)
             {
                 string result = "";
-                foreach (char c in wordHint)
+                foreach (char c in GameService.GameState.WordHint)
                 {
                     if (c == ' ')
                     {
@@ -100,13 +90,13 @@ else
         get
         {
             string w = null;
-            if (wordHint != null)
+            if (GameService.GameState.WordHint != null)
             {
-                w = wordHint;
+                w = GameService.GameState.WordHint;
             }
-            else if (word != null)
+            else if (GameService.GameState.Word != null)
             {
-                w = word.Word;
+                w = GameService.GameState.Word.Word;
             }
 
             if (w == null)

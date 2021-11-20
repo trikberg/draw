@@ -17,10 +17,6 @@ namespace Draw.Client.Services
         public event EventHandler GameStarted;
         public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
         public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
-        public event EventHandler<ActivePlayerDrawEventArgs> ActivePlayerDrawStarted;
-        public event EventHandler<PlayerDrawEventArgs> PlayerDrawStarted;
-        public event EventHandler<HintLetter> HintLetterReceived;
-        public event EventHandler<WordDTO> CorrectWordReceived;
         public event EventHandler<(PlayerDTO player, int timeRemaining)> CorrectGuessMade;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> TurnScores;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> GameScores;

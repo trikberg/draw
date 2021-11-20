@@ -31,16 +31,16 @@ else if (playerWordChoiceActive)
         await base.OnInitializedAsync();
         GameService.ActivePlayerWordChoiceStarted += ActivePlayerWordChoiceStarted;
         GameService.PlayerWordChoiceStarted += PlayerWordChoiceStarted;
-        GameService.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
-        GameService.PlayerDrawStarted += PlayerDrawStarted;
+        GameService.GameState.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
     }
 
     public void Dispose()
     {
         GameService.ActivePlayerWordChoiceStarted -= ActivePlayerWordChoiceStarted;
         GameService.PlayerWordChoiceStarted -= PlayerWordChoiceStarted;
-        GameService.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
-        GameService.PlayerDrawStarted -= PlayerDrawStarted;
+        GameService.GameState.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
     }
 
     private void ActivePlayerWordChoiceStarted(object sender, WordChoiceEventArgs e)
@@ -61,13 +61,13 @@ else if (playerWordChoiceActive)
         StateHasChanged();
     }
 
-    private void ActivePlayerDrawStarted(object sender, ActivePlayerDrawEventArgs e)
+    private void ActivePlayerDrawStarted(object sender, int _)
     {
         activePlayerWordChoiceActive = false;
         StateHasChanged();
     }
 
-    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)
+    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs _)
     {
         playerWordChoiceActive = false;
         StateHasChanged();

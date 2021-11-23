@@ -27,39 +27,5 @@
     box-shadow: 10px 10px 25px 0px #00000055;
 }
 
-.circle {
-    position: absolute;
-    background: linear-gradient(to left top, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
-    border-radius: 50%;
-}
-
-#c1 {
-    height: 200px;
-    width: 200px;
-    top: 100px;
-    left: 100px;
-}
-
-#c2 {
-    height: 250px;
-    width: 250px;
-    top: 400px;
-    right: 100px;
-}
-
-#c3 {
-    height: 200px;
-    width: 200px;
-    top: 50px;
-    left: 500px;
-}
-
-#c4 {
-    height: 225px;
-    width: 225px;
-    bottom: 50px;
-    left: 720px;
-}
-
 @media (max-width: 640.98px) {
 }

@@ -21,7 +21,7 @@
     {
         await base.OnInitializedAsync();
         ToolboxService.ActiveToolChanged += OnActiveToolChanged;
-        isActiveTool = (Tool == ToolboxService.GetActiveTool());
+        isActiveTool = (Tool == ToolboxService.ActiveTool);
     }
 
 
@@ -32,7 +32,7 @@
 
     private void OnActivateTool()
     {
-        ToolboxService.SetActiveTool(Tool);
+        ToolboxService.ActiveTool = Tool;
     }
 
     private void OnActiveToolChanged(object sender, Tool activeTool)

@@ -43,6 +43,32 @@ namespace Draw.Client.Services
             gameService.GameState.PlayerDrawStarted -= OnPlayerDrawStarted;
         }
 
+        public int BrushSize
+        {
+            get { return brushSize; }
+            set
+            {
+                if (brushSize != value)
+                {
+                    brushSize = value;
+                    BrushSizeChanged?.Invoke(this, null);
+                }
+            }
+        }
+
+        public Tool ActiveTool
+        {
+            get { return activeTool; }
+            set
+            {
+                if (activeTool != value)
+                {
+                    activeTool = value;
+                    ActiveToolChanged?.Invoke(this, activeTool);
+                }
+            }
+        }
+
         private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs _)
         {
             isActivePlayer = false;
@@ -57,13 +83,11 @@ namespace Draw.Client.Services
 
         private void ResetTools()
         {
-            activeTool = Tool.Brush;
+            ActiveTool = Tool.Brush;
+            BrushSize = CanvasSettings.DEFAULT_BRUSH_SIZE;
             activeColor = (4, 0);
-            brushSize = CanvasSettings.DEFAULT_BRUSH_SIZE;
-            backgroundColor = CanvasSettings.DEFAULT_BACKGROUND_COLOR;
-            ActiveToolChanged?.Invoke(this, activeTool);
             BrushColorChanged?.Invoke(this, null);
-            BrushSizeChanged?.Invoke(this, null);
+            backgroundColor = CanvasSettings.DEFAULT_BACKGROUND_COLOR;
             BackgroundColorChanged?.Invoke(this, false);
         }
 
@@ -86,17 +110,6 @@ namespace Draw.Client.Services
         public bool IsActiveBrushColor(int x, int y)
         {
             return x == activeColor.x && y == activeColor.y;
-        }
-
-        public int GetBrushSize()
-        {
-            return brushSize;
-        }
-
-        public void SetBrushSize(int size)
-        {
-            brushSize = size;
-            BrushSizeChanged?.Invoke(this, null);
         }
 
         public string GetBackgroundColor()
@@ -199,17 +212,6 @@ namespace Draw.Client.Services
                 await sendTask;
             }
             return;
-        }
-
-        public Tool GetActiveTool()
-        {
-            return activeTool;
-        }
-
-        public void SetActiveTool(Tool tool)
-        {
-            activeTool = tool;
-            ActiveToolChanged?.Invoke(this, activeTool);
         }
 
         public async Task Undo()

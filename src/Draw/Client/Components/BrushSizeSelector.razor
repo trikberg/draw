@@ -47,14 +47,14 @@
             if (sliderValue != value)
             {
                 sliderValue = value;
-                ToolboxService.SetBrushSize(brushSizes[sliderValue]);
+                ToolboxService.BrushSize = brushSizes[sliderValue];
             }
         }
     }
 
     private void OnBrushSizeChanged(object sender, EventArgs e)
     {
-        int size = ToolboxService.GetBrushSize();
+        int size = ToolboxService.BrushSize;
         int i = Array.IndexOf<int>(brushSizes, size);
         i = Math.Max(i, 0);
         sliderValue = i;

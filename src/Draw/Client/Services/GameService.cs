@@ -82,6 +82,7 @@ namespace Draw.Client.Services
                 {
                     players.Remove(player);
                     PlayerListChanged?.Invoke(this, null);
+                    gameState.AddChatMessage(new ChatMessage(ChatMessageType.GameFlow, p.Name, p.Name + " left the game."));
                 }
             });
 

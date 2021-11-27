@@ -226,6 +226,10 @@ namespace Draw.Client.Services
                 return true;
             }
         }
+        public Task<bool> LeaveRoom()
+        {
+            return hubConnection.InvokeAsync<bool>("LeaveRoom");
+        }
 
         public Task<bool> StartGame()
         {

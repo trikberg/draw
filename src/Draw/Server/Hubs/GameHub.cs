@@ -86,6 +86,18 @@ namespace Draw.Server.Hubs
             return null;
         }
 
+        public async Task<bool> LeaveRoom()
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            Room room = lobby.GetRoom(player);
+            if (player == null || room == null)
+            {
+                return false;
+            }
+            await lobby.LeaveRoom(player, room);
+            return true;
+        }
+
         public async Task SetRoomSettings(RoomSettings settings)
         {
             Player player = GetPlayer(Context.ConnectionId);

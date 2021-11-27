@@ -32,6 +32,7 @@ namespace Draw.Client.Services
         public Task<bool> JoinRoom(string roomName, string password);
         public Task SetRoomSettings(RoomSettings roomSettings);
         public Task<bool> StartGame();
+        public Task<bool> LeaveRoom();
         public Task WordChosen(int wordIndex);
         public Task MakeGuess(string guess);
         public Task DrawLine(DrawLineEventArgs e);

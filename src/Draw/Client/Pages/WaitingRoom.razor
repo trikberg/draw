@@ -23,6 +23,7 @@
                                  Settings="GameService.RoomState?.RoomSettings" 
                                  OnSettingsChanged="SettingsChangedHandler" />
             <button class="startbutton" @onclick="() => StartGame()" disabled="@(!IsEditable())">Start</button>
+            <button class="startbutton" @onclick="() => LeaveRoom()">Leave Room</button>
         </div>
         <RoomChat IsChatMode="true" />
     </div>
@@ -53,6 +54,14 @@
     private async Task StartGame()
     {
         await GameService.StartGame();
+    }
+
+    private async Task LeaveRoom()
+    {
+        if (await GameService.LeaveRoom())
+        {
+            NavigationManager.NavigateTo("lobby");
+        }
     }
 
     private void GameStartedReceived(object sender, EventArgs e)

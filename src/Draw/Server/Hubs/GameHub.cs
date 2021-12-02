@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Draw.Server.Game;
+﻿using Draw.Server.Game;
 using Draw.Server.Game.Rooms;
 using Draw.Shared.Draw;
 using Draw.Shared.Game;
+using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.Http.Connections.Features;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +20,18 @@ namespace Draw.Server.Hubs
         private static Dictionary<string, Player> playerDictionary = new Dictionary<string, Player>();
 
         private Lobby lobby;
+        private ILogger<GameHub> logger;
 
-        public GameHub(Lobby lobby)
+        public GameHub(Lobby lobby, ILogger<GameHub> logger)
         {
             this.lobby = lobby;
+            this.logger = logger;
         }
 
         public override async Task OnConnectedAsync()
         {
+            HttpTransportType? tranportType = Context.Features.Get<IHttpTransportFeature>()?.TransportType;
+            logger.LogDebug("OnConnected SignalR TransportType: " + tranportType);
             if (!playerDictionary.ContainsKey(Context.ConnectionId))
             {
                 Player player = new Player(Context.ConnectionId);
@@ -36,6 +43,10 @@ namespace Draw.Server.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            if (exception != null)
+            {
+                logger.LogWarning(exception, "Player disconnect with exception " + exception.GetType().Name);
+            }
             Player player = GetPlayer(Context.ConnectionId);
             Room room = lobby.GetRoom(player);
             if (room != null && player != null)

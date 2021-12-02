@@ -27,7 +27,12 @@ namespace Draw.Server.Game.Rooms
             {
                await room.SendAll("GameStarted");
             }
-            
+
+            if (room.Players.Count == 0)
+            {
+                room.RoomState = roomStateLobby;
+            }
+
             if (entryCount < room.RoundCount)
             {
                 room.RoomState = new RoomStateRound(entryCount, room, this);

@@ -77,11 +77,28 @@ button {
     justify-content: center;
 }
 
+#loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#loading_logo {
+    margin-bottom: 40px;
+    color: #fffc;
+    font-size: 120px;
+    font-weight: bold;
+    font-family: sans-serif;
+    text-shadow: -8px 8px 15px #00000055;
+}
+
 #loading {
     color: #fffc;
     font-size: 80px;
     font-weight: bold;
     font-family: sans-serif;
+    text-shadow: -8px 8px 15px #00000055;
 }
 
 #blazor-error-ui {

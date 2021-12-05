@@ -31,6 +31,7 @@ namespace Draw.Server.Game.Rooms
             if (room.Players.Count == 0)
             {
                 room.RoomState = roomStateLobby;
+                return;
             }
 
             if (entryCount < room.RoundCount)

@@ -1,0 +1,11 @@
+﻿<button class="close-button" @onclick="() => ButtonClicked()">X</button>
+
+@code {
+	[Parameter]
+	public Action CloseCommand { get; set; }
+
+	private void ButtonClicked()
+	{
+		CloseCommand?.Invoke();
+	}
+}

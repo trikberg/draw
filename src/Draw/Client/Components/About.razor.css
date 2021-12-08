@@ -1,0 +1,38 @@
+﻿.about-button {
+    position: absolute;
+    width: 104px;
+    left: -110px;
+    top: 20px;
+    backdrop-filter: blur(15px);
+    box-shadow: 10px 10px 25px 0px #00000055;
+}
+
+.about-button:hover {
+    box-shadow: 10px 10px 25px 0px #000000AA;
+}
+
+.about-dialog {
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    width: 50%;
+    height: 75%;
+    z-index: 20;
+    background: linear-gradient(to right bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.3));
+    border-radius: 20px;
+    border: 2px solid white;
+    overflow: hidden;
+    backdrop-filter: blur(15px);
+    box-shadow: 10px 10px 25px 0px #00000055;
+    padding: 20px;
+    color: black;
+}
+
+h2 {
+    margin: 8px 0px;
+    font-size: 30px;
+}
+
+p {
+    font-size: 20px;
+}

@@ -1,0 +1,24 @@
+﻿<button class="rules-button" @onclick="() => ShowRulesDialog()">Rules</button>
+@if (rulesVisible)
+{
+	<div class="rules-dialog">
+		<CloseButton CloseCommand="CloseRulesDialog" />
+		<h2>Rules</h2>
+		<p>Rules text</p>
+    </div>
+}
+
+@code {
+	bool rulesVisible = false;
+
+	private void ShowRulesDialog()
+	{
+		rulesVisible = true;
+	}
+
+	private void CloseRulesDialog()
+	{
+		rulesVisible = false;
+		StateHasChanged();
+	}
+}

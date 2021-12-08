@@ -1,0 +1,24 @@
+﻿<button class="about-button" @onclick="() => ShowAboutDialog()">About</button>
+@if (aboutVisible)
+{
+	<div class="about-dialog">
+		<CloseButton CloseCommand="CloseAboutDialog" />
+		<h2>About DRAW.FI</h2>
+		<p>About text</p>
+    </div>
+}
+
+@code {
+	bool aboutVisible = false;
+
+	private void ShowAboutDialog()
+	{
+		aboutVisible = true;
+	}
+
+	private void CloseAboutDialog()
+	{
+		aboutVisible = false;
+		StateHasChanged();
+	}
+}

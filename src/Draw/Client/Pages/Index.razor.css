@@ -11,34 +11,11 @@
     height: 50px;
     width: 350px;
     font-size: 30px;
-    margin-right: 0px;
-    border-bottom-left-radius: 5px;
-    border-top-left-radius: 5px;
+    border-radius: 5px;
     vertical-align: bottom;
 }
 
 .username:focus {
     outline: none;
     border: 3px solid black;
-}
-
-.button {
-    height: 50px;
-    width: 170px;
-    font-size: 30px;
-    margin-left: 0px;
-    float: right;
-    border-bottom-right-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom-left-radius: 0px;
-    border-top-left-radius: 0px;
-    border: 1px solid #00000066;
-    color: white;
-    background-color: var(--theme-color1);
-}
-
-button:disabled,
-button[disabled] {
-    background-color: #cccccc;
-    color: #666666;
 }

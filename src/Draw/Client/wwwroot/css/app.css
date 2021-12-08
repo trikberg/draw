@@ -41,6 +41,7 @@ button {
 }
 
     button:hover {
+        filter: saturate(150%);
         box-shadow: 4px 4px 8px 2px #00000044;
     }
 
@@ -48,6 +49,12 @@ button {
     button[disabled] {
         background-color: #cccccc;
         color: #666666;
+        border-color: #888888cc;
+    }
+
+    button:active {
+        transform: scale(0.95);
+        box-shadow: 2px 2px 4px 2px #000000AA;
     }
 
 .btn-primary {

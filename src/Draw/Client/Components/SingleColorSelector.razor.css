@@ -6,6 +6,10 @@
     border-radius: 4px;
 }
 
+div:hover {
+    box-shadow: 1px 1px 4px 0px #00000077;
+}
+
 .active {
     outline: 2px solid black;
 }

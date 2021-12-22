@@ -2,6 +2,7 @@
 using Draw.Shared.Game;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Draw.Client.Services
@@ -16,6 +17,7 @@ namespace Draw.Client.Services
         public event EventHandler<IDrawEventArgs> DrawEventReceived;
         public event EventHandler<IEnumerable<IDrawCommand>> UndoEventReceived;
         public event EventHandler<ChatMessage> ChatMessageReceived;
+        public event EventHandler ClearCanvasReceived;
 
         private CommandList undoStack;
         private List<ChatMessage> chatLog = new List<ChatMessage>();
@@ -28,6 +30,9 @@ namespace Draw.Client.Services
         public WordDTO Word { get; private set; } = null;
         public string WordHint { get; private set; } = null;
 
+        internal GameState()
+        {
+        }
 
         internal void NewRoundStart(int currentRound, int roundCount, ChatMessage chatMessage)
         {
@@ -44,6 +49,7 @@ namespace Draw.Client.Services
         {
             WordHint = WordDTO.GetHintWord(word.Word);
             Word = word;
+            ResetUndoStack(CanvasSettings.DEFAULT_BACKGROUND_COLOR);
             TurnTimer.StartTimer(time);
             ActivePlayerDrawStarted?.Invoke(this, EventArgs.Empty);
         }
@@ -52,6 +58,7 @@ namespace Draw.Client.Services
         {
             Word = null;
             WordHint = wordHint;
+            ResetUndoStack(CanvasSettings.DEFAULT_BACKGROUND_COLOR);
             TurnTimer.StartTimer(time);
             PlayerDrawStarted?.Invoke(this, new PlayerDrawEventArgs(player, time));
         }
@@ -86,6 +93,11 @@ namespace Draw.Client.Services
             DrawEventReceived?.Invoke(this, e);
         }
 
+        internal void ClearCanvas()
+        {
+            ClearCanvas(CanvasSettings.DEFAULT_BACKGROUND_COLOR);
+        }
+
         internal void ClearCanvas(string backgroundColor)
         {
             if (undoStack == null)
@@ -96,6 +108,7 @@ namespace Draw.Client.Services
             {
                 undoStack.Add(new CommandClearCanvas(backgroundColor));
             }
+            ClearCanvasReceived?.Invoke(this, null);
         }
 
         internal void Undo()

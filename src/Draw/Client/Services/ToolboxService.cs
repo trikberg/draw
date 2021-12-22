@@ -7,7 +7,6 @@ namespace Draw.Client.Services
 {
     internal class ToolboxService : IToolboxService, IDisposable
     {
-        public event EventHandler ClearCanvasEvent;
         public event EventHandler BrushColorChanged;
         public event EventHandler BrushSizeChanged;
         public event EventHandler<bool> BackgroundColorChanged;
@@ -228,8 +227,8 @@ namespace Draw.Client.Services
         {
             if (isActivePlayer)
             {
+                gameService.GameState.ClearCanvas(backgroundColor);
                 Task sendTask = gameService.ClearCanvas();
-                ClearCanvasEvent?.Invoke(this, null);
                 await sendTask;
             }
         }

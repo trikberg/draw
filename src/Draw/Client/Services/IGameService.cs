@@ -9,7 +9,6 @@ namespace Draw.Client.Services
 {
     internal interface IGameService : IDisposable
     {
-        public event EventHandler ClearCanvasReceived;
         public event EventHandler<string> BackgroundColorChanged;
         public event EventHandler RoomListChanged;
         public event EventHandler PlayerListChanged;

@@ -35,23 +35,19 @@
         await base.OnInitializedAsync();
 
         GameService.GameState.DrawEventReceived += DrawEventReceived;
-        GameService.ClearCanvasReceived += ClearCanvasReceived;
+        GameService.GameState.ClearCanvasReceived += ClearCanvasReceived;
         GameService.GameState.UndoEventReceived += UndoReceived;
-        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
         GameService.GameState.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
         GameService.TurnScores += TurnScores;
-        ToolboxService.ClearCanvasEvent += ClearCanvasReceived;
     }
 
     public void Dispose()
     {
         GameService.GameState.DrawEventReceived -= DrawEventReceived;
-        GameService.ClearCanvasReceived -= ClearCanvasReceived;
+        GameService.GameState.ClearCanvasReceived -= ClearCanvasReceived;
         GameService.GameState.UndoEventReceived -= UndoReceived;
-        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
         GameService.GameState.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
         GameService.TurnScores -= TurnScores;
-        ToolboxService.ClearCanvasEvent -= ClearCanvasReceived;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -195,22 +191,13 @@
         }
     }
 
-    private async void ActivePlayerDrawStarted(object sender, EventArgs _)
+    private void ActivePlayerDrawStarted(object sender, EventArgs _)
     {
         drawingAllowed = true;
-        GameService.GameState.ResetUndoStack(ToolboxService.GetBackgroundColor());
-        await ClearCanvas();
-    }
-
-    private async void PlayerDrawStarted(object sender, PlayerDrawEventArgs _)
-    {
-        GameService.GameState.ResetUndoStack(ToolboxService.GetBackgroundColor());
-        await ClearCanvas();
     }
 
     private async Task ClearCanvas()
     {
-        GameService.GameState.ClearCanvas(ToolboxService.GetBackgroundColor());
         if (context != null)
         {
             await context.ClearRectAsync(0, 0, canvasWidth, canvasHeight);

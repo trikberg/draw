@@ -20,7 +20,6 @@ namespace Draw.Client.Services
         private RoomStateDTO currentRoomState = null;
         private Guid? playerGuid = null;
 
-        public event EventHandler ClearCanvasReceived;
         public event EventHandler<string> BackgroundColorChanged;
         public event EventHandler RoomListChanged;
         public event EventHandler PlayerListChanged;
@@ -62,7 +61,7 @@ namespace Draw.Client.Services
             hubConnection.On<DrawLineEventArgs>("DrawLine", (e) => gameState.DrawLine(e));
             hubConnection.On<FillEventArgs>("Fill", (e) => gameState.Fill(e));
             hubConnection.On<string>("ChangeBackgroundColor", (color) => BackgroundColorChanged?.Invoke(this, color));
-            hubConnection.On("ClearCanvas", () => ClearCanvasReceived?.Invoke(this, null));
+            hubConnection.On("ClearCanvas", () => gameState.ClearCanvas());
             hubConnection.On("Undo", () => gameState.Undo());
 
             hubConnection.On<PlayerDTO>("PlayerJoined", (p) =>

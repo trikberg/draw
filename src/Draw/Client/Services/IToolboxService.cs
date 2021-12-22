@@ -12,9 +12,8 @@ namespace Draw.Client.Services
         Fill
     }
 
-    interface IToolboxService
+    internal interface IToolboxService
     {
-        public event EventHandler ClearCanvasEvent;
         public event EventHandler BrushColorChanged;
         public event EventHandler BrushSizeChanged;
         public event EventHandler<bool> BackgroundColorChanged;

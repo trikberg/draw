@@ -37,7 +37,7 @@ namespace Draw.Client.Services
         public Task DrawLine(DrawLineEventArgs e);
         public Task Fill(FillEventArgs args);
         public Task ChangeBackgroundColor(string color);
-        public Task ClearCanvas();
+        public Task ClearCanvas(string backgroundColor);
         public Task Undo();
     }
 }

@@ -61,7 +61,7 @@ namespace Draw.Client.Services
             hubConnection.On<DrawLineEventArgs>("DrawLine", (e) => gameState.DrawLine(e));
             hubConnection.On<FillEventArgs>("Fill", (e) => gameState.Fill(e));
             hubConnection.On<string>("ChangeBackgroundColor", (color) => BackgroundColorChanged?.Invoke(this, color));
-            hubConnection.On("ClearCanvas", () => gameState.ClearCanvas());
+            hubConnection.On<string>("ClearCanvas", (backgroundColor) => gameState.ClearCanvas(backgroundColor));
             hubConnection.On("Undo", () => gameState.Undo());
 
             hubConnection.On<PlayerDTO>("PlayerJoined", (p) =>
@@ -261,9 +261,9 @@ namespace Draw.Client.Services
             return hubConnection.SendAsync("Fill", e);
         }
 
-        public Task ClearCanvas()
+        public Task ClearCanvas(string backgroundColor)
         {
-            return hubConnection.SendAsync("ClearCanvas");
+            return hubConnection.SendAsync("ClearCanvas", backgroundColor);
         }
 
         public Task Undo()

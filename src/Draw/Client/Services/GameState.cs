@@ -93,11 +93,6 @@ namespace Draw.Client.Services
             DrawEventReceived?.Invoke(this, e);
         }
 
-        internal void ClearCanvas()
-        {
-            ClearCanvas(CanvasSettings.DEFAULT_BACKGROUND_COLOR);
-        }
-
         internal void ClearCanvas(string backgroundColor)
         {
             if (undoStack == null)

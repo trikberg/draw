@@ -243,12 +243,12 @@ namespace Draw.Server.Game.Rooms
             }
         }
 
-        internal async Task ClearCanvas(Player player)
+        internal async Task ClearCanvas(Player player, string backgroundColor)
         {
             if (activePlayer.Equals(player))
             {
-                await room.SendAllExcept(player, "ClearCanvas");
-                drawCommandLog.Add(new CommandClearCanvas(currentBackgroundColor));
+                await room.SendAllExcept(player, "ClearCanvas", backgroundColor);
+                drawCommandLog.Add(new CommandClearCanvas(backgroundColor));
             }
             else
             {

@@ -228,7 +228,7 @@ namespace Draw.Client.Services
             if (isActivePlayer)
             {
                 gameService.GameState.ClearCanvas(backgroundColor);
-                Task sendTask = gameService.ClearCanvas();
+                Task sendTask = gameService.ClearCanvas(backgroundColor);
                 await sendTask;
             }
         }

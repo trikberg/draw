@@ -181,13 +181,13 @@ namespace Draw.Server.Hubs
             }
         }
 
-        public async Task ClearCanvas()
+        public async Task ClearCanvas(string backgroundColor)
         {
             Player player = GetPlayer(Context.ConnectionId);
             Room room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
-                await room.ClearCanvas(player);
+                await room.ClearCanvas(player, backgroundColor);
             }
         }
 

@@ -205,11 +205,11 @@ namespace Draw.Server.Game.Rooms
             }
         }
 
-        internal async Task ClearCanvas(Player player)
+        internal async Task ClearCanvas(Player player, string backgroundColor)
         {
             if (RoomState is RoomStateDrawing rsd)
             {
-                await rsd.ClearCanvas(player);
+                await rsd.ClearCanvas(player, backgroundColor);
             }
         }
 

@@ -2,7 +2,7 @@
     position: absolute;
     width: 104px;
     left: -110px;
-    top: 20px;
+    top: 80px;
     backdrop-filter: blur(15px);
     box-shadow: 10px 10px 25px 0px #00000055;
 }
@@ -13,10 +13,9 @@
 
 .about-dialog {
     position: absolute;
-    left: 100px;
-    top: 100px;
-    width: 50%;
-    height: 75%;
+    left: 75px;
+    top: 75px;
+    width: 40%;
     z-index: 20;
     background: linear-gradient(to right bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.3));
     border-radius: 20px;
@@ -28,11 +27,12 @@
     color: black;
 }
 
-h2 {
-    margin: 8px 0px;
-    font-size: 30px;
+h1 {
+    margin: 12px 0px;
+    font-size: 26px;
+    font-weight: bold;
 }
 
 p {
-    font-size: 20px;
+    font-size: 18px;
 }

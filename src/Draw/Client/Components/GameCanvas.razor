@@ -38,6 +38,7 @@
         GameService.GameState.ClearCanvasReceived += ClearCanvasReceived;
         GameService.GameState.UndoEventReceived += UndoReceived;
         GameService.GameState.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
         GameService.TurnScores += TurnScores;
     }
 
@@ -47,6 +48,7 @@
         GameService.GameState.ClearCanvasReceived -= ClearCanvasReceived;
         GameService.GameState.UndoEventReceived -= UndoReceived;
         GameService.GameState.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
+        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
         GameService.TurnScores -= TurnScores;
     }
 
@@ -191,9 +193,15 @@
         }
     }
 
-    private void ActivePlayerDrawStarted(object sender, EventArgs _)
+    private async void ActivePlayerDrawStarted(object sender, EventArgs _)
     {
         drawingAllowed = true;
+        await ClearCanvas();
+    }
+
+    private async void PlayerDrawStarted(object sender, PlayerDrawEventArgs _)
+    {
+        await ClearCanvas();
     }
 
     private async Task ClearCanvas()

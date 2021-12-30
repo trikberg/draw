@@ -32,6 +32,7 @@ namespace Draw.Server.Game
                 string languageName = Enum.GetName(typeof(Language), language);
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Stream resourceStream = assembly.GetManifestResourceStream("Draw.Server.Resources." + languageName + ".csv");
+                int wordCount = 0;
 
                 if (resourceStream == null)
                 {
@@ -45,7 +46,10 @@ namespace Draw.Server.Game
                     {
                         while (!reader.EndOfStream)
                         {
-                            ParseLine(reader.ReadLine(), language);
+                            if (ParseLine(reader.ReadLine(), language))
+                            {
+                                wordCount++;
+                            }
                         }
                     }
                 }
@@ -54,10 +58,12 @@ namespace Draw.Server.Game
                     logger.Error(e, "Exception when reading word list " + languageName);
                     continue;
                 }
+
+                logger.Info("Added " + wordCount + " words for language " + languageName);
             }
         }
 
-        private void ParseLine(string line, Language language)
+        private bool ParseLine(string line, Language language)
         {
             string[] split = line.Split(',');
             if (split.Length == 2 &&
@@ -66,7 +72,9 @@ namespace Draw.Server.Game
             {
                 Word w = new Word(split[0].Trim(), difficulty);
                 WordLists[language].Add(w);
+                return true;
             }
+            return false;
         }
 
         internal List<Word> GetWords(Language language, WordDifficulty minDifficulty, WordDifficulty maxDifficulty)

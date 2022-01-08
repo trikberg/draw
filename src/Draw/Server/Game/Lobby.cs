@@ -109,6 +109,7 @@ namespace Draw.Server.Game
             await newRoom.AddPlayer(player);
             await hubContext.Groups.AddToGroupAsync(player.ConnectionId, newRoom.RoomName);
             await hubContext.Clients.GroupExcept(newRoom.RoomName, player.ConnectionId).SendAsync("PlayerJoined", player.ToPlayerDTO());
+            await hubContext.Clients.Group(lobbyGroupName).SendAsync("RoomStateChanged", newRoom.ToRoomStateDTO());
             return newRoom.ToRoomStateDTO();
         }
 
@@ -168,6 +169,7 @@ namespace Draw.Server.Game
                 }
                 await hubContext.Clients.GroupExcept(room.RoomName, player.ConnectionId).SendAsync("PlayerLeft", player.ToPlayerDTO());
                 await hubContext.Groups.RemoveFromGroupAsync(player.ConnectionId, room.RoomName);
+                await hubContext.Clients.Group(lobbyGroupName).SendAsync("RoomStateChanged", room.ToRoomStateDTO());
             }
         }
     }

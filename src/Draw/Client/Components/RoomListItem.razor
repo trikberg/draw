@@ -1,0 +1,11 @@
+﻿@if (Room.RoomSettings.IsPrivateRoom)
+{
+    <img src="icons/lock.svg" width="18" height="18" />
+}
+@Room.RoomName [@(Room.RoomSettings.Language)] 
+<span class="player-count"><img src="icons/player.svg" width="18" height="18" /> @Room.Players.Count</span>
+
+@code {
+    [Parameter]
+    public RoomStateDTO Room { get; set; }
+}

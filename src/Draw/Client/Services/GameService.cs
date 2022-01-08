@@ -100,6 +100,7 @@ namespace Draw.Client.Services
                 {
                     room.GameInProgress = state.GameInProgress;
                     room.RoomSettings = state.RoomSettings;
+                    room.Players = state.Players;
                 }
                 RoomSettingsChanged?.Invoke(this, null);
             });

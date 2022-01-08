@@ -1,0 +1,10 @@
+﻿.player-count {
+    background-color: #ffffff44;
+    border-radius: 5px;
+    padding: 3px 8px;
+}
+
+.player-count > img {
+    position: relative;
+    top: 2px;
+}

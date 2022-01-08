@@ -166,7 +166,6 @@ namespace Draw.Server.Hubs
             if (room != null && player != null)
             {
                 await room.DrawLine(player, e);
-                //await Clients.OthersInGroup(room.RoomName).SendAsync("DrawLine", e);
             }
         }
 
@@ -177,7 +176,6 @@ namespace Draw.Server.Hubs
             if (room != null && player != null)
             {
                 await room.Fill(player, e);
-                //await Clients.OthersInGroup(room.RoomName).SendAsync("DrawLine", e);
             }
         }
 

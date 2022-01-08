@@ -126,6 +126,7 @@ namespace Draw.Server.Game
             if (room.StartGame(player))
             {
                 await hubContext.Clients.Group(lobbyGroupName).SendAsync("RoomStateChanged", room.ToRoomStateDTO());
+                logger.LogInformation("New game started in room " + room.RoomName + ". Language: " + room.RoomSettings.Language +  ". Player count: " + room.Players.Count + ".");
                 return true;
             }
             return false;

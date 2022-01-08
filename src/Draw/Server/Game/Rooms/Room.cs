@@ -17,6 +17,9 @@ namespace Draw.Server.Game.Rooms
         private List<Word> unusedWords = null;
         private List<Word> rejectedWords = null;
         private int wordCount = 0;
+        private Language wordListLanguage;
+        private int wordListMinDifficulty;
+        private int wordListMaxDifficulty;
         private List<Player> players = new List<Player>();
         private IHubContext<GameHub> hubContext;
         private IRoomState roomState;
@@ -120,7 +123,10 @@ namespace Draw.Server.Game.Rooms
 
         internal (Word, Word, Word) GetNext3Words()
         {
-            if (unusedWords == null)
+            if (unusedWords == null ||
+                wordListLanguage != RoomSettings.Language ||
+                wordListMinDifficulty != RoomSettings.MinWordDifficulty ||
+                wordListMaxDifficulty != RoomSettings.MaxWordDifficulty)
             {
                 GetFreshWordList();
             }
@@ -147,6 +153,7 @@ namespace Draw.Server.Game.Rooms
                 if (RoomSettings.WordDifficultyDelta > 1 &&
                     selectedWords.Count((w) => w.Difficulty == wordCandidate.Difficulty) > 0)
                 {
+                    // TODO: danger infinite loop if all words left have same difficulty.
                     unusedWords.Add(wordCandidate);
                 }
                 else
@@ -164,6 +171,9 @@ namespace Draw.Server.Game.Rooms
                                                          RoomSettings.MinWordDifficulty,
                                                          RoomSettings.MaxWordDifficulty);
             wordCount = unusedWords.Count;
+            wordListLanguage = RoomSettings.Language;
+            wordListMinDifficulty = RoomSettings.MinWordDifficulty;
+            wordListMaxDifficulty = RoomSettings.MaxWordDifficulty;
             rejectedWords = new List<Word>();
         }
 

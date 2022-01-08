@@ -282,7 +282,7 @@ namespace Draw.Server.Game.Rooms
                     ChatMessage cm = new ChatMessage(ChatMessageType.GameFlow, null, "The word was \"" + word.TheWord + "\".");
                     chatLog.Add(cm);
                     _ = room.SendAll("ChatMessage", cm);
-                    room.RoomState = new RoomStateScoring(activePlayer, room, word.Difficulty, playerResults, playersGuessing, roomStatePlayerTurn);
+                    room.RoomState = new RoomStateScoring(activePlayer, room, word, playerResults, playersGuessing, roomStatePlayerTurn);
                 }
             }
         }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using System;
 
 namespace Draw.Server.Game.Rooms
 {
@@ -11,7 +12,7 @@ namespace Draw.Server.Game.Rooms
     {
         private Player activePlayer;
         private Room room;
-        private WordDifficulty wordDifficulty;
+        private Word word;
         private List<(Player player, double timeRemaining)> playerResults;
         private List<Player> playersGuessing;
         private RoomStatePlayerTurn roomStatePlayerTurn;
@@ -21,14 +22,14 @@ namespace Draw.Server.Game.Rooms
 
         public RoomStateScoring(Player player, 
                                 Room room, 
-                                WordDifficulty difficulty, 
+                                Word word, 
                                 List<(Player player, double timeRemaining)> playerResults, 
                                 List<Player> playersGuessing, 
                                 RoomStatePlayerTurn roomStatePlayerTurn)
         {
             this.activePlayer = player;
             this.room = room;
-            this.wordDifficulty = difficulty;
+            this.word = word;
             this.playerResults = playerResults;
             this.playersGuessing = playersGuessing;
             this.roomStatePlayerTurn = roomStatePlayerTurn;
@@ -79,6 +80,7 @@ namespace Draw.Server.Game.Rooms
                 foreach ((Player player, double timeRemaining) result in playerResults)
                 {
                     int score = (int)(((result.timeRemaining / bestTime) * 100) + 0.5);
+                    score = Math.Max(score, 10);
                     playerScores.Add(new(result.player, score));
                 }
             }
@@ -94,7 +96,8 @@ namespace Draw.Server.Game.Rooms
                 else
                 {
                     activePlayerScore = (int)((100.0 * playerResults.Count / totalGuesserCount) + 0.5);
-                    activePlayerScore += wordDifficulty;
+                    activePlayerScore += word.Difficulty * 3;
+                    activePlayerScore += word.CharacterCount * 3;
                 }
                 playerScores.Add(new(activePlayer, activePlayerScore));
             } 

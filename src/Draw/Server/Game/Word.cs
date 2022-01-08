@@ -1,4 +1,5 @@
 ﻿using Draw.Shared.Game;
+using System.Linq;
 
 namespace Draw.Server.Game
 {
@@ -12,6 +13,7 @@ namespace Draw.Server.Game
 
         public string TheWord { get; private set;  }
         public WordDifficulty Difficulty { get; private set; }
+        public int CharacterCount => TheWord.Count(c => c != ' ');
 
         internal WordDTO ToWordDTO()
         {

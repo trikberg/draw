@@ -1,8 +1,5 @@
 ﻿var BucketFill = BucketFill || {};
 BucketFill.fill = function (startX, startY, fillColorR, fillColorG, fillColorB) {
-    //console.log("startX: " + startX + ", startY: " + startY);
-    //console.log("R: " + fillColorR + ", G: " + fillColorG + ", B: " + fillColorB);
-
     var canvasContainer = document.getElementById('canvas-wrapper'),
         canvas = canvasContainer.getElementsByTagName('canvas')[0];
 
@@ -16,22 +13,27 @@ BucketFill.fill = function (startX, startY, fillColorR, fillColorG, fillColorB) 
     pixelStack = [[startX, startY]];
 
     startPixelPos = (startY * canvasWidth + startX) * 4;
+    if (matchFillColor(startPixelPos)) {
+        return;
+    }
     var startR = colorLayer.data[startPixelPos];
     var startG = colorLayer.data[startPixelPos + 1];
     var startB = colorLayer.data[startPixelPos + 2];
     var startA = colorLayer.data[startPixelPos + 3];
-
-    if (startR == fillColorR && startG == fillColorG && startB == fillColorB && startA == 255) {
-        return;
-    }
 
     while (pixelStack.length) {
         var newPos, x, y, pixelPos, reachLeft, reachRight;
         newPos = pixelStack.pop();
         x = newPos[0];
         y = newPos[1];
-
         pixelPos = (y * canvasWidth + x) * 4;
+
+        // Guard against case where start pixel and fill color only differ a little bit,
+        // usually alpha channel due to anti-aliasing. Can lead to infinite loop.
+        if (matchFillColor(pixelPos)) {
+            continue;
+        }
+
         while (y-- >= drawingBoundTop && matchStartColor(pixelPos)) {
             pixelPos -= canvasWidth * 4;
         }
@@ -71,6 +73,15 @@ BucketFill.fill = function (startX, startY, fillColorR, fillColorG, fillColorB) 
     }
     context.putImageData(colorLayer, 0, 0);
 
+    function matchFillColor(pixelPos) {
+        var r = colorLayer.data[pixelPos];
+        var g = colorLayer.data[pixelPos + 1];
+        var b = colorLayer.data[pixelPos + 2];
+        var a = colorLayer.data[pixelPos + 3];
+
+        return (r == fillColorR && g == fillColorG && b == fillColorB && a == 255);
+    }
+
     function matchStartColor(pixelPos) {
         var r = colorLayer.data[pixelPos];
         var g = colorLayer.data[pixelPos + 1];
@@ -82,7 +93,6 @@ BucketFill.fill = function (startX, startY, fillColorR, fillColorG, fillColorB) 
         var db = Math.abs(b - startB);
         var da = Math.abs(a - startA);
 
-        //return (r == startR && g == startG && b == startB && && a == startA);
         return (dr + dg + db + da) < 50;
     }
 

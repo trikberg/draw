@@ -32,6 +32,7 @@ namespace Draw.Client.Services
         public void OnMouseDown(MouseEventArgs e);
         public Task OnMouseUp(MouseEventArgs e);
         public Task OnMouseLeave(MouseEventArgs e);
+        public void OnMouseEnter(MouseEventArgs e, int canvasWidth, int canvasHeight);
 
         public Task Undo();
         public Task ClearCanvas();

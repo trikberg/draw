@@ -15,7 +15,8 @@
              @onmousemove="OnMouseMove"
              @onpointerdown="OnMouseDown"
              @onpointerup="OnMouseUp"
-             @onpointerout="OnMouseLeave">
+             @onpointerout="OnMouseLeave"
+             @onmouseover="OnMouseEnter"> @*onpointerenter not working? (https://stackoverflow.com/questions/65452165)*@
             <BECanvas Width="@canvasWidth" Height="@canvasHeight" @ref="canvasReference" />
         </div>
     </CanvasCursor>
@@ -246,6 +247,14 @@
         if (drawingAllowed)
         {
             await ToolboxService.OnMouseLeave(e);
+        }
+    }
+
+    public void OnMouseEnter(MouseEventArgs e)
+    {
+        if (drawingAllowed)
+        {
+            ToolboxService.OnMouseEnter(e, canvasWidth, canvasHeight);
         }
     }
 }

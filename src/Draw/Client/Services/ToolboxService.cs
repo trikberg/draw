@@ -151,11 +151,39 @@ namespace Draw.Client.Services
                     Tool.Erase => "#00000000",
                     _ => "#000000"
                 };
-                DrawLineEventArgs args = new DrawLineEventArgs(mousePoint, currentPoint, brushSize, color, false);
+                DrawLineEventArgs args = new DrawLineEventArgs(mousePoint, currentPoint, brushSize, color, true);
                 Task sendTask = gameService.DrawLine(args);
                 gameService.GameState.DrawLine(args);
                 mousePoint = null;
                 await sendTask;
+            }
+        }
+
+        public void OnMouseEnter(MouseEventArgs e, int canvasWidth, int canvasHeight)
+        {
+            if (e.Buttons == 1 && (activeTool == Tool.Brush || activeTool == Tool.Erase))
+            {
+                double mouseX = e.OffsetX;
+                double mouseY = e.OffsetY;
+                if (mouseX <= mouseY && mouseX <= (canvasWidth - mouseX) && mouseX <= (canvasHeight - mouseY))
+                {
+                    mouseX = 0.0;
+                }
+                else if (mouseY <= (canvasWidth - mouseX) && mouseY <= (canvasHeight - mouseY))
+                {
+                    mouseY = 0.0;
+                }
+                else if ((canvasWidth - mouseX) <= (canvasHeight - mouseY))
+                {
+                    mouseX = canvasWidth;
+                }
+                else
+                {
+                    mouseY = canvasHeight;
+                }
+
+                mousePoint = new Point2D(mouseX, mouseY);
+                isMouseDown = true;
             }
         }
 

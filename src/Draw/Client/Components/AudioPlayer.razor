@@ -1,0 +1,128 @@
+﻿@using System.Timers
+@implements IDisposable
+@inject IGameService GameService
+
+<div class="audio-player">
+    <button class="mute-button @(isSoundEnabled ? "sound-on" : "")" @onclick="() => ToggleMute()">
+        @if (isSoundEnabled)
+        {
+            <img src="icons/sound_on.svg" width="36" height="36" />
+        }
+        else
+        {
+            <img src="icons/sound_off.svg" width="36" height="36" />
+        }
+    </button>
+@foreach((Timer timer, string sound) in activeSounds)
+{
+    <audio src="@sound" autoplay />
+}   
+</div>
+
+@code {
+    private bool isSoundEnabled = true;
+    private List<(Timer timer, string sound)> activeSounds = new List<(Timer timer, string sound)>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        GameService.ActivePlayerWordChoiceStarted += ActivePlayerWordChoiceStarted;
+        GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
+        GameService.GameState.HintLetterReceived += HintLetterReceived;
+        GameService.CorrectGuessMade += CorrectGuessMade;
+        GameService.TurnScores += TurnScores;
+
+    }
+
+    public void Dispose()
+    {
+        GameService.ActivePlayerWordChoiceStarted -= ActivePlayerWordChoiceStarted;
+        GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
+        GameService.GameState.HintLetterReceived -= HintLetterReceived;
+        GameService.CorrectGuessMade -= CorrectGuessMade;
+        GameService.TurnScores -= TurnScores;
+    }
+
+    private void ToggleMute()
+	{
+		isSoundEnabled = !isSoundEnabled;
+        StateHasChanged();
+	}
+
+    private void ActivePlayerWordChoiceStarted(object sender, WordChoiceEventArgs _)
+    {
+        PlaySound("gong", 2500);
+    }
+
+    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs _)
+    {
+        PlaySound("gong", 2500);
+    }
+
+    private void HintLetterReceived(object sender, EventArgs _)
+    {
+        PlaySound("bell", 2500);
+    }
+
+    private void CorrectGuessMade(object sender, PlayerDTO player)
+    {
+        if (player.Id.Equals(GameService.PlayerGuid))
+        {
+            PlaySound("tadaa", 1500);
+        }
+        else
+        {
+            PlaySound("ding", 700);
+        }
+    }
+
+    private void TurnScores(object sender, (List<PlayerScore> scores, int timeout) args)
+    {
+        PlayerScore score = args.scores.Where(s => s.Player.Id.Equals(GameService.PlayerGuid)).FirstOrDefault();
+        if (score != null && score.Score <= 0)
+        {
+            PlaySound("trombone", 2000);
+        }
+    }
+
+    private void PlaySound(string sound, int duration)
+    {
+        if (isSoundEnabled)
+        {
+            Timer timer = new Timer();
+            lock (activeSounds)
+            {
+                activeSounds.Add((timer, "audio/" + sound + ".mp3"));
+            }
+            StateHasChanged();
+            timer.Interval = duration;
+            timer.AutoReset = false;
+            timer.Elapsed += TimerElapsed;
+            timer.Start();
+        }
+    }
+
+    private void TimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        if (sender is Timer t)
+        {
+            lock (activeSounds)
+            {
+                int index = activeSounds.FindIndex(item => item.timer.Equals(t));
+                if (index == -1)
+                {
+                    throw new InvalidOperationException("Timer object was not in activeSounds list during TimerElapsed");
+                }
+                activeSounds.RemoveAt(index);
+            }
+            StateHasChanged();
+            t.Elapsed -= TimerElapsed;
+            t.Dispose();
+        }
+        else
+        {
+            throw new InvalidOperationException("TimerElapsed sender was not a Timer.");
+        }
+    }
+}

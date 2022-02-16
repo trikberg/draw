@@ -8,26 +8,28 @@
             <ChatMessageDisplay Message=message />
         }
     </div>
-    <input class="guess-input" 
-           maxlength="50" 
-           placeholder="@(IsChatMode ? "Chat here..." : "Type your guess here...")"
-           @bind="Guess" />
+    <div class="guess-wrapper">
+        @if (!IsChatMode && !letterCount.Equals(string.Empty))
+        {
+            <div class="word-count">
+                @letterCount
+            </div>
+        }
+        <input class="guess-input" 
+               maxlength="50" 
+               placeholder="@(IsChatMode ? "Chat here..." : "Type your guess here...")"
+               value="@guess" 
+               @oninput="ValueChanged"
+               @onchange="ValueSubmit"/>
+    </div>
 </div>
 
 @code {
     [Parameter]
     public bool IsChatMode { get; set; } = false;
 
-    private string guess = "";
-    private string Guess
-    {
-        set
-        {
-            GameService.MakeGuess(value);
-            guess = "";
-        }
-        get { return guess; }
-    }
+    private string guess = string.Empty;
+    private string letterCount = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,6 +40,60 @@
     public void Dispose()
     {
         GameService.GameState.ChatMessageReceived -= ChatMessageReceived;
+    }
+
+    private void ValueChanged(ChangeEventArgs e)
+    {
+        guess = e.Value.ToString();
+        UpdateLetterCount();
+        StateHasChanged();
+    }
+
+    private void ValueSubmit(ChangeEventArgs e)
+    {
+        GameService.MakeGuess(guess);
+        guess = string.Empty;
+        UpdateLetterCount();
+        StateHasChanged();
+    }
+
+    private void UpdateLetterCount()
+    {
+        letterCount = string.Empty;
+        if (String.IsNullOrWhiteSpace(guess))
+        {
+            return;
+        }
+
+        string[] words = guess.Trim().Split(' ');
+        for (int i = 0; i < words.Length; i++)
+        {
+            if (words[i].Length != 0)
+            {
+                letterCount += words[i].Length;
+                if (i != words.Length - 1)
+                {
+                    letterCount += "+";
+                }
+            }
+        }
+
+        if (!String.IsNullOrWhiteSpace(GameService.GameState.WordHint))
+        {
+            words = GameService.GameState.WordHint.Trim().Split(' ');
+            letterCount += " / ";
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (words[i].Length != 0)
+                {
+                    letterCount += words[i].Length;
+                    if (i != words.Length - 1)
+                    {
+                        letterCount += "+";
+                    }
+                }
+            }
+        }
     }
 
     private void ChatMessageReceived(object sender, ChatMessage cm)

@@ -19,6 +19,37 @@
 }
 
 .guess-input {
-    flex: 0 0 auto;
+    width: 100%;
     border-bottom-right-radius: 18px;
 }
+
+.guess-wrapper {
+    position: relative;
+}
+
+.word-count {
+    position: absolute;
+    right: 103%;
+    top: -3px;
+    min-width: 25px;
+    height: 20px;
+    white-space: nowrap;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: #ffffff;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0px 0px 6px 3px #00000066, 12px 0px 6px 3px #00000022;
+}
+
+    .word-count:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 100%;
+        border-top: solid 10px transparent;
+        border-left: solid 10px #ffffff;
+        border-right: solid 10px transparent;
+        border-bottom: solid 10px transparent;
+    }

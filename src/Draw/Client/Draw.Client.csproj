@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Shared\Draw.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\favicons\" />
+  </ItemGroup>
+
 </Project>

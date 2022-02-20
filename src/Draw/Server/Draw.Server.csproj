@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\commit.txt" />
     <None Remove="Resources\English.csv" />
     <None Remove="Resources\Swedish.csv" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\commit.txt" />
     <EmbeddedResource Include="Resources\English.csv" />
     <EmbeddedResource Include="Resources\Swedish.csv" />
   </ItemGroup>
@@ -30,5 +32,11 @@
     <ProjectReference Include="..\Shared\Draw.Shared.csproj" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <Exec Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)\Resources\commit.txt&quot;" />
+  </Target>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <Exec Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)/Resources/commit.txt&quot;" />
+  </Target>
 
 </Project>

@@ -4,5 +4,6 @@ src/Draw/Client/obj/**
 src/Draw/Client/Draw.Client.csproj.user
 src/Draw/Server/bin/**
 src/Draw/Server/obj/**
+src/Draw/Server/Resources/commit.txt
 src/Draw/Shared/bin/**
 src/Draw/Shared/obj/**

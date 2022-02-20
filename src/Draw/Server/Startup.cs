@@ -60,7 +60,7 @@ namespace Draw.Server
                 endpoints.MapControllers();
                 endpoints.MapHub<GameHub>(GameHub.HubUrl);
                 endpoints.MapHub<ClientLogHub>(ClientLogHub.HubUrl);
-                endpoints.MapFallbackToFile("index.html");
+                endpoints.MapFallbackToController("Index", "Index");
             });
         }
     }

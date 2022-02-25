@@ -37,8 +37,8 @@ namespace Draw.Server.Game.Rooms
 
         public async Task Enter()
         {
-            int timeout = 8 + playerScores.Count;
             CalculateScores();
+            int timeout = 8 + playerScores.Count;
             await SendScores(timeout);
             roomStatePlayerTurn.Scores = playerScores;
             turnEndTimer = new GameTimer(timeout * 1000, TurnEndTimerElapsed);

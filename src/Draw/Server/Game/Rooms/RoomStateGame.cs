@@ -39,7 +39,7 @@ namespace Draw.Server.Game.Rooms
             }
             else
             {
-                int timeout = 12;
+                int timeout = 12 + (2 * playerScores.Count);
                 await GameScores(timeout);
                 gameEndTimer = new Timer(timeout * 1000);
                 gameEndTimer.Elapsed += GameEndTimerElapsed;

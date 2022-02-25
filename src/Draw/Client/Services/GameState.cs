@@ -14,6 +14,7 @@ namespace Draw.Client.Services
         public event EventHandler<PlayerDrawEventArgs> PlayerDrawStarted;
         public event EventHandler HintLetterReceived;
         public event EventHandler CorrectWordReceived;
+        public event EventHandler<(List<PlayerScore> scores, WordDTO word, int timeout)> TurnScores;
         public event EventHandler<IDrawEventArgs> DrawEventReceived;
         public event EventHandler<IEnumerable<IDrawCommand>> UndoEventReceived;
         public event EventHandler<ChatMessage> ChatMessageReceived;
@@ -62,6 +63,7 @@ namespace Draw.Client.Services
             TurnTimer.StartTimer(time);
             PlayerDrawStarted?.Invoke(this, new PlayerDrawEventArgs(player, time));
         }
+
         internal void HintLetter(HintLetter hint)
         {
             StringBuilder sb = new StringBuilder(WordHint);
@@ -69,10 +71,18 @@ namespace Draw.Client.Services
             WordHint = sb.ToString();
             HintLetterReceived?.Invoke(this, EventArgs.Empty);
         }
+
         internal void CorrectWord(WordDTO correctWord)
         {
             Word = correctWord;
             CorrectWordReceived?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal void TurnScoresReceived(List<PlayerScore> scores, WordDTO word, int timeout)
+        {
+            Word = word;
+            TurnTimer.Stop();
+            TurnScores?.Invoke(this, (scores, word, timeout));
         }
 
         #region Drawing Commands

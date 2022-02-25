@@ -28,7 +28,6 @@ namespace Draw.Client.Services
         public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
         public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
         public event EventHandler<PlayerDTO> CorrectGuessMade;
-        public event EventHandler<(List<PlayerScore> scores, int timeout)> TurnScores;
         public event EventHandler<(List<PlayerScore> scores, int timeout)> GameScores;
 
         public GameService(NavigationManager navigationManager)
@@ -146,11 +145,7 @@ namespace Draw.Client.Services
                     gameState.AddChatMessage(chatMessage);
                 }
             });
-            hubConnection.On<List<PlayerScore>, int>("TurnScores", (scores, timeout) =>
-            {
-                gameState.TurnTimer.Stop();
-                TurnScores?.Invoke(this, (scores, timeout));
-            });
+            hubConnection.On<List<PlayerScore>, WordDTO, int>("TurnScores", (scores, word, timeout) => gameState.TurnScoresReceived(scores, word, timeout));
             hubConnection.On<List<PlayerScore>>("UpdateTotalScores", (scores) => UpdatePlayerScores(scores));
             hubConnection.On<List<PlayerScore>, int>("GameScores", (scores, timeout) => GameScores?.Invoke(this, (scores, timeout)));
             hubConnection.On("GameEnded", () => navigationManager.NavigateTo("/waitingroom"));

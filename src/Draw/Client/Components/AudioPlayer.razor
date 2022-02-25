@@ -31,7 +31,7 @@
         GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
         GameService.GameState.HintLetterReceived += HintLetterReceived;
         GameService.CorrectGuessMade += CorrectGuessMade;
-        GameService.TurnScores += TurnScores;
+        GameService.GameState.TurnScores += TurnScores;
 
     }
 
@@ -41,7 +41,7 @@
         GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
         GameService.GameState.HintLetterReceived -= HintLetterReceived;
         GameService.CorrectGuessMade -= CorrectGuessMade;
-        GameService.TurnScores -= TurnScores;
+        GameService.GameState.TurnScores -= TurnScores;
     }
 
     private void ToggleMute()
@@ -77,7 +77,7 @@
         }
     }
 
-    private void TurnScores(object sender, (List<PlayerScore> scores, int timeout) args)
+    private void TurnScores(object sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
     {
         PlayerScore score = args.scores.Where(s => s.Player.Id.Equals(GameService.PlayerGuid)).FirstOrDefault();
         if (score != null && score.Score <= 0)

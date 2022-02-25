@@ -28,7 +28,7 @@
         await base.OnInitializedAsync();
         GameService.ActivePlayerWordChoiceStarted += ActivePlayerWordChoiceStarted;
         GameService.PlayerWordChoiceStarted += PlayerWordChoiceStarted;
-        GameService.TurnScores += OnTurnScores;
+        GameService.GameState.TurnScores += OnTurnScores;
         GameService.GameScores += GameEnded;
     }
 
@@ -36,11 +36,11 @@
     {
         GameService.ActivePlayerWordChoiceStarted -= ActivePlayerWordChoiceStarted;
         GameService.PlayerWordChoiceStarted -= PlayerWordChoiceStarted;
-        GameService.TurnScores -= OnTurnScores;
+        GameService.GameState.TurnScores -= OnTurnScores;
         GameService.GameScores -= GameEnded;
     }
 
-    private void OnTurnScores(object sender, (List<PlayerScore> scores, int timeout) args)
+    private void OnTurnScores(object sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
     {
         args.scores.Sort((s1, s2) => s2.Score.CompareTo(s1.Score));
         turnScores = args.scores;

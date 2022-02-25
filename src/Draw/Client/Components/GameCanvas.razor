@@ -40,7 +40,7 @@
         GameService.GameState.UndoEventReceived += UndoReceived;
         GameService.GameState.ActivePlayerDrawStarted += ActivePlayerDrawStarted;
         GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
-        GameService.TurnScores += TurnScores;
+        GameService.GameState.TurnScores += TurnScores;
     }
 
     public void Dispose()
@@ -50,7 +50,7 @@
         GameService.GameState.UndoEventReceived -= UndoReceived;
         GameService.GameState.ActivePlayerDrawStarted -= ActivePlayerDrawStarted;
         GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
-        GameService.TurnScores -= TurnScores;
+        GameService.GameState.TurnScores -= TurnScores;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -213,7 +213,7 @@
         }
     }
 
-    private void TurnScores(object sender, (List<PlayerScore> scores, int timeout) args)
+    private void TurnScores(object sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
     {
         drawingAllowed = false;
     }

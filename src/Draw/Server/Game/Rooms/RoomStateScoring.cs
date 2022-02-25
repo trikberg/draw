@@ -111,7 +111,7 @@ namespace Draw.Server.Game.Rooms
         {
             List<PlayerScore> turnScores = 
                 playerScores.Select(s => new PlayerScore(s.player.ToPlayerDTO(), s.score)).ToList();
-            return room.SendAll("TurnScores", turnScores, timeout);
+            return room.SendAll("TurnScores", turnScores, word.ToWordDTO(), timeout);
         }
     }
 }

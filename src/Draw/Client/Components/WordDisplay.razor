@@ -27,6 +27,7 @@ else
         GameService.GameState.PlayerDrawStarted += PlayerDrawStarted;
         GameService.GameState.HintLetterReceived += HintLetterReceived;
         GameService.GameState.CorrectWordReceived += CorrectWordReceived;
+        GameService.GameState.TurnScores += TurnScores;
     }
 
     public void Dispose()
@@ -35,6 +36,7 @@ else
         GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
         GameService.GameState.HintLetterReceived -= HintLetterReceived;
         GameService.GameState.CorrectWordReceived -= CorrectWordReceived;
+        GameService.GameState.TurnScores -= TurnScores;
     }
 
     private void ActivePlayerDrawStarted(object sender, EventArgs _)
@@ -53,6 +55,11 @@ else
     }
 
     private void CorrectWordReceived(object sender, EventArgs _)
+    {
+        StateHasChanged();
+    }
+
+    private void TurnScores(object sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
     {
         StateHasChanged();
     }

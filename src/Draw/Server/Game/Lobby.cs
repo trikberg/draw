@@ -54,9 +54,9 @@ namespace Draw.Server.Game
             return room.Players;
         }
 
-        internal void AddPlayer(Player player)
+        internal Task AddPlayer(Player player)
         {
-            hubContext.Groups.AddToGroupAsync(player.ConnectionId, lobbyGroupName);
+            return hubContext.Groups.AddToGroupAsync(player.ConnectionId, lobbyGroupName);
         }
 
         internal IEnumerable<RoomStateDTO> GetRooms()

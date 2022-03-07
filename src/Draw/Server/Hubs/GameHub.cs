@@ -36,7 +36,7 @@ namespace Draw.Server.Hubs
             {
                 Player player = new Player(Context.ConnectionId);
                 playerDictionary.Add(Context.ConnectionId, player);
-                lobby.AddPlayer(player);
+                await lobby.AddPlayer(player);
             }
             await base.OnConnectedAsync();
         }
@@ -106,6 +106,7 @@ namespace Draw.Server.Hubs
                 return false;
             }
             await lobby.LeaveRoom(player, room);
+            await lobby.AddPlayer(player);
             return true;
         }
 

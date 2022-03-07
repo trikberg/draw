@@ -221,9 +221,16 @@ namespace Draw.Client.Services
                 return true;
             }
         }
-        public Task<bool> LeaveRoom()
+        public async Task<bool> LeaveRoom()
         {
-            return hubConnection.InvokeAsync<bool>("LeaveRoom");
+            if (await hubConnection.InvokeAsync<bool>("LeaveRoom"))
+            {
+                List<RoomStateDTO> newRooms = await hubConnection.InvokeAsync<List<RoomStateDTO>>("GetRooms");
+                rooms.Clear();
+                AddRooms(newRooms);
+                return true;
+            }
+            return false;
         }
 
         public Task<bool> StartGame()

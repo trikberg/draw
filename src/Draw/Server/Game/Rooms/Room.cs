@@ -131,11 +131,25 @@ namespace Draw.Server.Game.Rooms
                 GetFreshWordList();
             }
 
-            List<Word> selectedWords = new List<Word>(3); 
+            List<Word> selectedWords = new List<Word>(3);
+            List<int> allowedDifficulties = RoomSettings.WordDifficultyDelta switch
+            {
+                0 => new List<int>() { RoomSettings.MinWordDifficulty, RoomSettings.MinWordDifficulty, RoomSettings.MinWordDifficulty },
+                1 => new List<int>() { RoomSettings.MinWordDifficulty, RoomSettings.MinWordDifficulty, RoomSettings.MaxWordDifficulty, RoomSettings.MaxWordDifficulty }, // max 2 of each difficulty
+                _ => Enumerable.Range(RoomSettings.MinWordDifficulty, RoomSettings.WordDifficultyDelta + 1).ToList()
+            };
 
             while (selectedWords.Count < 3)
             {
-                if (unusedWords.Count == 0)
+                int wordIndex = unusedWords.FindIndex(word => allowedDifficulties.Contains(word.Difficulty));
+
+                if (wordIndex >= 0)
+                {
+                    allowedDifficulties.Remove(unusedWords[wordIndex].Difficulty);
+                    selectedWords.Add(unusedWords[wordIndex]);
+                    unusedWords.RemoveAt(wordIndex);
+                }
+                else
                 {
                     if (rejectedWords.Count > 0.2 * wordCount)
                     {
@@ -146,19 +160,6 @@ namespace Draw.Server.Game.Rooms
                     {
                         GetFreshWordList();
                     }
-                }
-
-                Word wordCandidate = unusedWords[0];
-                unusedWords.RemoveAt(0);
-                if (RoomSettings.WordDifficultyDelta > 1 &&
-                    selectedWords.Count((w) => w.Difficulty == wordCandidate.Difficulty) > 0)
-                {
-                    // TODO: danger infinite loop if all words left have same difficulty.
-                    unusedWords.Add(wordCandidate);
-                }
-                else
-                {
-                    selectedWords.Add(wordCandidate);
                 }
             }
 

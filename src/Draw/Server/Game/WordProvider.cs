@@ -79,17 +79,6 @@ namespace Draw.Server.Game
 
         internal List<Word> GetWords(Language language, WordDifficulty minDifficulty, WordDifficulty maxDifficulty)
         {
-            //List<Word> words = new List<Word>();
-            //words.Add(new Word("asterix", 1));
-            //words.Add(new Word("banana", 2));
-            //words.Add(new Word("cat", 3));
-            //words.Add(new Word("duck", 4));
-            //words.Add(new Word("extra cheese", 5));
-            //words.Add(new Word("flying pig", 6));
-            //words.Add(new Word("grease", 7));
-            //words.Add(new Word("hat in the cat", 8));
-            //words.Add(new Word("industry", 9));
-
             List<Word> words = WordLists[language].Where(w => w.Difficulty >= minDifficulty && w.Difficulty <= maxDifficulty).ToList();
             words.Shuffle();
             return words;

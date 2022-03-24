@@ -20,7 +20,8 @@
                placeholder="@(IsChatMode ? "Chat here..." : "Type your guess here...")"
                value="@guess" 
                @oninput="ValueChanged"
-               @onchange="ValueSubmit"/>
+               @onchange="ValueSubmit"
+               @onkeypress:stopPropagation="true" />
     </div>
 </div>
 

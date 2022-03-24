@@ -1,0 +1,8 @@
+﻿.keypress-catcher {
+    margin: 0px auto auto auto;
+    height: 100%;
+}
+
+.keypress-catcher:focus {
+    outline: none;
+}

@@ -13,6 +13,7 @@ namespace Draw.Client.Services
         public event EventHandler<Tool> ActiveToolChanged;
 
         private IGameService gameService;
+        private IKeyboardCommandService keyboardCommandService;
         private bool isActivePlayer = false;
         private bool isMouseDown = false;
         private Point2D mousePoint = null;
@@ -27,12 +28,14 @@ namespace Draw.Client.Services
         private string backgroundColor = CanvasSettings.DEFAULT_BACKGROUND_COLOR;
         private Tool activeTool = Tool.Brush;
 
-        public ToolboxService(IGameService gameService)
+        public ToolboxService(IGameService gameService, IKeyboardCommandService keyboardCommandService)
         {
             this.gameService = gameService;
+            this.keyboardCommandService = keyboardCommandService;
             gameService.BackgroundColorChanged += OnBackgroundColorChanged;
             gameService.GameState.ActivePlayerDrawStarted += OnActivePlayerDrawStarted;
             gameService.GameState.PlayerDrawStarted += OnPlayerDrawStarted;
+            keyboardCommandService.KeyboardShortCutHit += KeyboardShortCutHit;
         }
 
         public void Dispose()
@@ -40,6 +43,7 @@ namespace Draw.Client.Services
             gameService.BackgroundColorChanged -= OnBackgroundColorChanged;
             gameService.GameState.ActivePlayerDrawStarted -= OnActivePlayerDrawStarted;
             gameService.GameState.PlayerDrawStarted -= OnPlayerDrawStarted;
+            keyboardCommandService.KeyboardShortCutHit -= KeyboardShortCutHit;
         }
 
         public int BrushSize
@@ -78,6 +82,25 @@ namespace Draw.Client.Services
         {
             isActivePlayer = true;
             ResetTools();
+        }
+
+        private async void KeyboardShortCutHit(object sender, KeyboardShortcuts shortcut)
+        {
+            switch (shortcut)
+            {
+                case KeyboardShortcuts.Undo:
+                    await Undo();
+                    break;
+                case KeyboardShortcuts.Brush:
+                    ActiveTool = Tool.Brush;
+                    break;
+                case KeyboardShortcuts.Fill:
+                    ActiveTool = Tool.Fill;
+                    break;
+                case KeyboardShortcuts.Erase:
+                    ActiveTool = Tool.Erase;
+                    break;
+            }
         }
 
         private void ResetTools()

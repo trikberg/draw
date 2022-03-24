@@ -1,0 +1,44 @@
+﻿@implements IDisposable
+@inject IGameService GameService
+@inject IKeyboardCommandService KeyboardCommandService
+
+<div class="keypress-catcher" @onkeypress="HandleKeyPress"  tabindex="0" @ref=elementRef>
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private ElementReference elementRef;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GameService.GameState.ActivePlayerDrawStarted += OnActivePlayerDrawStarted;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await elementRef.FocusAsync();
+        }
+    }
+    
+    public void Dispose()
+    {
+        GameService.GameState.ActivePlayerDrawStarted -= OnActivePlayerDrawStarted;
+
+    }
+
+    private async void OnActivePlayerDrawStarted(object sender, EventArgs _)
+    {
+        await elementRef.FocusAsync();
+    }
+
+    private void HandleKeyPress(KeyboardEventArgs e)
+    {
+        KeyboardCommandService.KeyPressed(e.Code, e.CtrlKey);
+    }
+}

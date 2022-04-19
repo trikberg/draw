@@ -25,7 +25,8 @@ namespace Draw.Client.Services
         public GameState GameState { get; }
         public Guid? PlayerGuid { get; }
 
-        public Task SetPlayerName(string userName);
+        public Task<RoomStateDTO> TryReconnect(string userName, Guid connectionGuid);
+        public Task<Guid> SetPlayerName(string userName);
         public Task<bool> CreateRoom(string roomName, RoomSettings roomSettings);
         public Task<bool> JoinRoom(string roomName, string password);
         public Task SetRoomSettings(RoomSettings roomSettings);

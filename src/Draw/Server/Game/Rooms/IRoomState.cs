@@ -9,7 +9,7 @@ namespace Draw.Server.Game.Rooms
     {
         Task Enter();
 
-        Task AddPlayer(Player player);
+        Task AddPlayer(Player player, bool isReconnect);
         Task RemovePlayer(Player player);
     }
 }

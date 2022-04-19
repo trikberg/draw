@@ -19,3 +19,10 @@
     outline: none;
     border: 3px solid black;
 }
+
+.disclaimer {
+    color: #fff;
+    max-width: 48em;
+    text-align: center;
+    font-size: 18px;
+}

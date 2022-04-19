@@ -27,7 +27,7 @@ namespace Draw.Server.Game.Rooms
                await room.SendAll("GameStarted");
             }
 
-            if (room.Players.Count == 0)
+            if (room.Players.Where(p => p.IsConnected).Count() == 0)
             {
                 room.RoomState = roomStateLobby;
                 return;
@@ -49,7 +49,7 @@ namespace Draw.Server.Game.Rooms
             entryCount++;
         }
 
-        public async Task AddPlayer(Player player)
+        public async Task AddPlayer(Player player, bool isReconnect)
         {
             await room.SendPlayer(player, "GameStarted");
             List<PlayerScore> totalScores = GetTotalScores();

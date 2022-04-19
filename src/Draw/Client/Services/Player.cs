@@ -14,10 +14,12 @@ namespace Draw.Client.Services
             Name = player.Name;
             Id = player.Id;
             Score = 0;
+            IsConnected = player.IsConnected;
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public bool IsConnected { get; set; }
         public int Score
         {
             get { return score; }

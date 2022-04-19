@@ -12,6 +12,8 @@ namespace Draw.Server.Game
         {
             ConnectionId = connectionId;
             Id = Guid.NewGuid();
+            ConnectionGuid = Guid.NewGuid();
+            IsConnected = true;
         }
 
         public Player(string connectionId, string name) : this(connectionId)
@@ -19,13 +21,15 @@ namespace Draw.Server.Game
             Name = name;
         }
 
-        public string ConnectionId { get; }
+        public string ConnectionId { get; set; }
         public string Name { get; set; }
         public Guid Id { get; }
+        public Guid ConnectionGuid { get; }
+        public bool IsConnected { get; set; }
 
         internal PlayerDTO ToPlayerDTO()
         {
-            return new PlayerDTO(Name, Id);
+            return new PlayerDTO(Name, Id, IsConnected);
         }
 
         public override bool Equals(object o)

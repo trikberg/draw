@@ -73,6 +73,24 @@ namespace Draw.Client.Services
                 }
             });
 
+            hubConnection.On<PlayerDTO>("PlayerConnectionStatusChanged", playerDTO =>
+            {
+                Player player = players.SingleOrDefault(p => p.Id.Equals(playerDTO.Id));
+                if (player != null)
+                {
+                    player.IsConnected = playerDTO.IsConnected;
+                    PlayerListChanged?.Invoke(this, null);
+                    if (playerDTO.IsConnected)
+                    {
+                        gameState.AddChatMessage(new ChatMessage(ChatMessageType.GameFlow, playerDTO.Name, playerDTO.Name + " reconnected."));
+                    }
+                    else
+                    {
+                        gameState.AddChatMessage(new ChatMessage(ChatMessageType.GameFlow, playerDTO.Name, playerDTO.Name + " disconnected."));
+                    }
+                }
+            });
+
             hubConnection.On<PlayerDTO>("PlayerLeft", (p) =>
             {
                 Player player = new Player(p);
@@ -161,9 +179,24 @@ namespace Draw.Client.Services
 
         public Guid? PlayerGuid => playerGuid;
 
-        public async Task SetPlayerName(string userName)
+        public async Task<RoomStateDTO> TryReconnect(string userName, Guid connectionGuid)
         {
-            playerGuid = await hubConnection.InvokeAsync<Guid>("SetPlayerName", userName);
+            RoomStateDTO roomState =  await hubConnection.InvokeAsync<RoomStateDTO>("TryReconnect", userName, connectionGuid);
+            if (roomState != null)
+            {
+                players = roomState.Players.Select((p) => new Player(p)).ToList();
+                PlayerListChanged?.Invoke(this, null);
+                currentRoomState = roomState;
+                RoomSettingsChanged?.Invoke(this, null);
+            }
+            return RoomState;
+        }
+
+        public async Task<Guid> SetPlayerName(string userName)
+        {
+            PlayerGuids playerGuids = await hubConnection.InvokeAsync<PlayerGuids>("SetPlayerName", userName);
+            playerGuid = playerGuids.PlayerGuid;
+            return playerGuids.ConnectionGuid;
         }
 
         private void AddRooms(IEnumerable<RoomStateDTO> newRooms)

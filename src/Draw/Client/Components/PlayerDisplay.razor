@@ -2,9 +2,16 @@
 @inject IGameService GameService
 
 <div class="playerdisplay @(isPlayerTurn ? "playerturn" : "") @(hasGuessedWord ? "correct" : "")">
-    <img src="icons/player.svg" width="50" height="50" />
+    @if (Player.IsConnected)
+    {
+        <img src="icons/player.svg" width="50" height="50" />
+    }
+    else
+    {
+        <WaitSpinner />
+    }
     <div>
-        <div class="player-name">@Player.Name</div>
+        <div class="player-name @(Player.IsConnected ? "" : "disconnected")">@Player.Name</div>
         @if (ShowScore && Player.Position.HasValue)
         {
             <div class="player-score"><span class="player-position">#@Player.Position</span> - @Player.Score</div>

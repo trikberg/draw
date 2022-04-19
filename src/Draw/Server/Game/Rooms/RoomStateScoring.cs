@@ -45,9 +45,9 @@ namespace Draw.Server.Game.Rooms
             turnEndTimer.Start();
         }
 
-        public async Task AddPlayer(Player player)
+        public async Task AddPlayer(Player player, bool isReconnect)
         {
-            await roomStatePlayerTurn.AddPlayer(player);
+            await roomStatePlayerTurn.AddPlayer(player, isReconnect);
             List<PlayerScore> turnScores =
                 playerScores.Select(s => new PlayerScore(s.player.ToPlayerDTO(), s.score)).ToList();
             int timeRemaining = (int)(turnEndTimer.TimeRemaining / 1000);

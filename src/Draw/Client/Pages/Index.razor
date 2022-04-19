@@ -1,39 +1,81 @@
 ﻿@page "/"
 @inject IGameService GameService
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <div class="wrapper">
     <Logo />
-    <div>
-        <input class="username" 
-               @bind="userName" 
-               @bind:event="oninput" 
-               @onkeydown="@Enter" 
-               @ref="inputref" 
-               placeholder="Nickname" 
-               maxlength="20"/>
-        <button  
-                @onclick="NavigateToLobby" 
-                disabled="@String.IsNullOrWhiteSpace(userName)">Let's go!</button>
-    </div>
+    @if (isReconnecting)
+    {
+        <WaitSpinner />
+    }
+    else
+    {
+        <div>
+            <input class="username" 
+                   @bind="userName" 
+                   @bind:event="oninput" 
+                   @onkeydown="@Enter" 
+                   @ref="inputref" 
+                   placeholder="Nickname" 
+                   maxlength="20"/>
+            <button  
+                    @onclick="NavigateToLobby" 
+                    disabled="@String.IsNullOrWhiteSpace(userName)">Let's go!</button>
+        </div>
+    }
+    <div class="disclaimer">(DRAW.FI uses browser local storage (similar to cookies) to store your nick name and a randomized connection id number so we can reconnect you to your game in case of connection issues.)</div>
 </div>
 
 @code
-{ 
+{
     private string userName = "";
     private ElementReference inputref;
+    private bool hasInputBeenFocused = false;
+    private bool isReconnecting = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string userName = await LocalStorage.GetItemAsync<string>("UserName");
+        Guid connectionGuid = await LocalStorage.GetItemAsync<Guid>("ConnectionGuid");
+        if (!connectionGuid.Equals(Guid.Empty) && userName != null)
+        {
+            RoomStateDTO roomState = await GameService.TryReconnect(userName, connectionGuid);
+            if (roomState != null)
+            {
+                if (roomState.GameInProgress)
+                {
+                    NavigationManager.NavigateTo("room");
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("waitingroom");
+                }
+            }
+        }
+
+        if (userName != null)
+        {
+            this.userName = userName;
+        }
+
+        isReconnecting = false;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (!hasInputBeenFocused && inputref.Context != null)
         {
             await inputref.FocusAsync();
+            hasInputBeenFocused = true;
         }
     }
 
     private async Task NavigateToLobby()
     {
-        await GameService.SetPlayerName(userName);
+        Guid connectionGuid = await GameService.SetPlayerName(userName);
+        await LocalStorage.SetItemAsync("UserName", userName);
+        await LocalStorage.SetItemAsync("ConnectionGuid", connectionGuid);
         NavigationManager.NavigateTo("lobby");
     }
 

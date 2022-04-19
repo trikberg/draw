@@ -37,9 +37,9 @@ namespace Draw.Server.Game.Rooms
             entryCount++;
         }
 
-        public async Task AddPlayer(Player player)
+        public async Task AddPlayer(Player player, bool isReconnect)
         {
-            await roomRoundState.AddPlayer(player);
+            await roomRoundState.AddPlayer(player, isReconnect);
             await room.SendPlayer(player, "ChatMessage", new ChatMessage(ChatMessageType.GameFlow,
                                                                          null,
                                                                          this.player.Name + "'s turn to draw."));

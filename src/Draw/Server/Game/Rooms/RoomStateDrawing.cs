@@ -53,13 +53,33 @@ namespace Draw.Server.Game.Rooms
             hintTimer.Start();
         }
 
-        public async Task AddPlayer(Player player)
+        public async Task AddPlayer(Player player, bool isReconnect)
         {
-            await roomStatePlayerTurn.AddPlayer(player);
-            playersGuessing.Add(player);
+            await roomStatePlayerTurn.AddPlayer(player, isReconnect);
+            if (isReconnect)
+            {
+                if (!activePlayer.Equals(player) &&
+                    !playersGuessing.Contains(player))
+                {
+                    playersGuessing.Add(player);
+                }
+            }
+            else
+            {
+                playersGuessing.Add(player);
+            }
             string wordHint = WordDTO.GetHintWord(word.TheWord);
             int turnTimeLeft = (int) (timer.TimeRemaining / 1000);
-            await room.SendPlayer(player, "PlayerDrawing", activePlayer.ToPlayerDTO(), wordHint, turnTimeLeft);
+
+            if (isReconnect && player.Equals(activePlayer))
+            {
+                await room.SendPlayer(activePlayer, "ActivePlayerDrawing", word.ToWordDTO(), turnTime);
+            }
+            else
+            {
+                await room.SendPlayer(player, "PlayerDrawing", activePlayer.ToPlayerDTO(), wordHint, turnTimeLeft);
+            }
+
             foreach (HintLetter hl in hintsSent)
             {
                 await room.SendPlayer(player, "HintLetter", hl);
@@ -189,7 +209,7 @@ namespace Draw.Server.Game.Rooms
                     chatLog.Add(cm);
                     await room.SendAllExcept(player, "CorrectGuess", player.ToPlayerDTO(), turnTimeLeft, null, cm);
                     await room.SendPlayer(player, "CorrectGuess", player.ToPlayerDTO(), turnTimeLeft, word.ToWordDTO(), cm);
-                    if (playersGuessing.Count == 0)
+                    if (playersGuessing.Where(p => p.IsConnected).Count() == 0)
                     {
                         EndTurn();
                     }

@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Draw.Client.Services;
 using Draw.Client.UnhandledExceptions;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -21,6 +22,7 @@ namespace Draw.Client
             builder.Services.AddSingleton<IToolboxService, ToolboxService>();
             builder.Services.AddSingleton<ILoggerService, LoggerService>();
             builder.Services.AddSingleton<IKeyboardCommandService, KeyboardCommandService>();
+            builder.Services.AddBlazoredLocalStorage();
             UnhandledExceptionProvider exceptionProvider = new UnhandledExceptionProvider();
             builder.Logging.AddProvider(exceptionProvider);
 

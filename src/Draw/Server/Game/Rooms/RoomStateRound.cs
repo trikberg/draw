@@ -31,7 +31,7 @@ namespace Draw.Server.Game.Rooms
                 await room.SendAll("RoundStarted", roundNumber + 1, room.RoomSettings.Rounds, cm);
             }
 
-            IEnumerable<Player> remainingPlayers = room.Players.Except(playersAlreadyDrawn);
+            IEnumerable<Player> remainingPlayers = room.Players.Except(playersAlreadyDrawn).Where(p => p.IsConnected);
             if (remainingPlayers.Count() > 0)
             {
                 Player player = remainingPlayers.First();
@@ -45,9 +45,9 @@ namespace Draw.Server.Game.Rooms
             entryCount++;
         }
 
-        public async Task AddPlayer(Player player)
+        public async Task AddPlayer(Player player, bool isReconnect)
         {
-            await roomStateGame.AddPlayer(player);
+            await roomStateGame.AddPlayer(player, isReconnect);
             ChatMessage cm = new ChatMessage(ChatMessageType.GameFlow,
                                              null,
                                              "Round " + (roundNumber + 1) + " starting.");

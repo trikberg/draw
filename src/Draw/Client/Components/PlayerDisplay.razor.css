@@ -26,6 +26,10 @@
     white-space: nowrap;
 }
 
+.player-name.disconnected {
+    color: lightsteelblue;
+}
+
 .player-score {
     height: 25px;
     font-weight: normal;

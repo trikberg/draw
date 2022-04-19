@@ -31,7 +31,7 @@ namespace Draw.Server.Game.Rooms
             return false;
         }
 
-        public Task AddPlayer(Player player)
+        public Task AddPlayer(Player player, bool isReconnect)
         {
             return room.SendPlayer(player, "RoomStateChanged", room.ToRoomStateDTO());
         }

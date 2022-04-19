@@ -32,10 +32,18 @@ namespace Draw.Server.Hubs
         {
             HttpTransportType? tranportType = Context.Features.Get<IHttpTransportFeature>()?.TransportType;
             logger.LogDebug("OnConnected SignalR TransportType: " + tranportType);
-            if (!playerDictionary.ContainsKey(Context.ConnectionId))
+            Player player = null;
+            lock (playerDictionary)
             {
-                Player player = new Player(Context.ConnectionId);
-                playerDictionary.Add(Context.ConnectionId, player);
+                if (!playerDictionary.ContainsKey(Context.ConnectionId))
+                {
+                    player = new Player(Context.ConnectionId);
+                    playerDictionary.Add(Context.ConnectionId, player);
+                }
+            }
+
+            if (player != null)
+            {
                 await lobby.AddPlayer(player);
             }
             await base.OnConnectedAsync();
@@ -51,7 +59,7 @@ namespace Draw.Server.Hubs
             Room room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
-                await lobby.LeaveRoom(player, room);
+                await lobby.PlayerDisconnected(player, room);
             }
 
             await base.OnDisconnectedAsync(exception);
@@ -62,18 +70,49 @@ namespace Draw.Server.Hubs
             return lobby.GetRooms().ToList();
         }
 
-        public Guid SetPlayerName(string userName)
+        public async Task<RoomStateDTO> TryReconnect(string userName, Guid connectionGuid)
         {
-            if (playerDictionary.TryGetValue(Context.ConnectionId, out Player player))
+            Player existingPlayerInstance;
+            lock (playerDictionary)
             {
-                player.Name = userName;
+                existingPlayerInstance = playerDictionary.Values.SingleOrDefault(p => p.ConnectionGuid.Equals(connectionGuid));
             }
-            else
+
+            Room room = lobby.GetRoom(existingPlayerInstance);
+            if (existingPlayerInstance != null && room != null && !existingPlayerInstance.IsConnected)
             {
-                player = new Player(Context.ConnectionId, userName);
-                playerDictionary.Add(Context.ConnectionId, player);
+                lock (playerDictionary)
+                {
+                    playerDictionary.Remove(Context.ConnectionId);
+                    playerDictionary.Remove(existingPlayerInstance.ConnectionId);
+                    existingPlayerInstance.ConnectionId = Context.ConnectionId;
+                    playerDictionary.Add(Context.ConnectionId, existingPlayerInstance);
+                }
+
+                await lobby.ReconnectPlayer(existingPlayerInstance, room);
+                return room.ToRoomStateDTO();
             }
-            return player.Id;
+            
+            return null;
+        }
+
+        public PlayerGuids SetPlayerName(string userName)
+        {
+            Player player;
+            lock (playerDictionary)
+            {
+                if (playerDictionary.TryGetValue(Context.ConnectionId, out player))
+                {
+                    player.Name = userName;
+                }
+                else
+                {
+                    player = new Player(Context.ConnectionId, userName);
+                    playerDictionary.Add(Context.ConnectionId, player);
+                }
+            }
+
+            return new PlayerGuids(player.Id, player.ConnectionGuid);
         }
 
         public Task<bool> CreateRoom(string roomName, RoomSettings roomSettings)
@@ -153,10 +192,14 @@ namespace Draw.Server.Hubs
 
         private Player GetPlayer(string connectionId)
         {
-            if (playerDictionary.TryGetValue(connectionId, out Player player))
+            lock (playerDictionary)
             {
-                return player;
+                if (playerDictionary.TryGetValue(connectionId, out Player player))
+                {
+                    return player;
+                }
             }
+
             return null;
         }
 

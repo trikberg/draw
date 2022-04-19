@@ -63,10 +63,13 @@ namespace Draw.Server.Game.Rooms
 
         public bool IsGameInProgress => !(roomState is RoomStateLobby);
 
-        public async Task AddPlayer(Player player)
+        public async Task AddPlayer(Player player, bool isReconnect = false)
         {
-            players.Add(player);
-            await roomState.AddPlayer(player);
+            if (!isReconnect)
+            {
+                players.Add(player);
+            }
+            await roomState.AddPlayer(player, isReconnect);
         }
 
         internal RoomStateDTO ToRoomStateDTO()

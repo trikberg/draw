@@ -7,6 +7,7 @@ namespace Draw.Server.Game.Rooms
     internal class RoomStateWordChoice : IRoomState
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly int wordChoiceTimeout = 12;
 
         private Player activePlayer;
         private Room room;
@@ -28,18 +29,24 @@ namespace Draw.Server.Game.Rooms
 
         public async Task Enter()
         {
-            int timeout = 12;
             (word1, word2, word3) = room.GetNext3Words();
-            await room.SendPlayer(activePlayer, "ActivePlayerWordChoice", word1.ToWordDTO(), word2.ToWordDTO(), word3.ToWordDTO(), timeout);
-            await room.SendAllExcept(activePlayer, "PlayerWordChoice", activePlayer.ToPlayerDTO(), timeout);
-            wordChoiceTimer = new GameTimer(timeout * 1000, WordChoiceTimerElapsed);
+            await room.SendPlayer(activePlayer, "ActivePlayerWordChoice", word1.ToWordDTO(), word2.ToWordDTO(), word3.ToWordDTO(), wordChoiceTimeout);
+            await room.SendAllExcept(activePlayer, "PlayerWordChoice", activePlayer.ToPlayerDTO(), wordChoiceTimeout);
+            wordChoiceTimer = new GameTimer(wordChoiceTimeout * 1000, WordChoiceTimerElapsed);
             wordChoiceTimer.Start();
         }
 
-        public Task AddPlayer(Player player)
+        public async Task AddPlayer(Player player, bool isReconnect)
         {
             int timeRemaining = (int)(wordChoiceTimer.TimeRemaining / 1000);
-            return room.SendPlayer(player, "PlayerWordChoice", activePlayer.ToPlayerDTO(), timeRemaining);
+            if (isReconnect && player.Equals(activePlayer))
+            {
+                await room.SendPlayer(activePlayer, "ActivePlayerWordChoice", word1.ToWordDTO(), word2.ToWordDTO(), word3.ToWordDTO(), wordChoiceTimeout);
+            }
+            else
+            {
+                await room.SendPlayer(player, "PlayerWordChoice", activePlayer.ToPlayerDTO(), timeRemaining);
+            }
         }
 
         public Task RemovePlayer(Player player)

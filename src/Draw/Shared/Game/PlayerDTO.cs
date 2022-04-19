@@ -4,14 +4,16 @@ namespace Draw.Shared.Game
 {
     public class PlayerDTO
     {
-        public PlayerDTO(string name, Guid id)
+        public PlayerDTO(string name, Guid id, bool isConnected)
         {
             Name = name;
             Id = id;
+            IsConnected = isConnected;
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public bool IsConnected { get; set; }
 
         public override bool Equals(object obj)
         {

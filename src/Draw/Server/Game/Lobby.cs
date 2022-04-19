@@ -83,6 +83,27 @@ namespace Draw.Server.Game
             return true;
         }
 
+        internal async Task PlayerDisconnected(Player player, Room room)
+        {
+            player.IsConnected = false;
+            if (room.RoomState is RoomStateLobby)
+            {
+                await LeaveRoom(player, room);
+            }
+            else
+            {
+                await hubContext.Clients.GroupExcept(room.RoomName, player.ConnectionId).SendAsync("PlayerConnectionStatusChanged", player.ToPlayerDTO());
+            }
+        }
+
+        internal async Task ReconnectPlayer(Player player, Room room)
+        {
+            player.IsConnected = true;
+            await hubContext.Clients.GroupExcept(room.RoomName, player.ConnectionId).SendAsync("PlayerConnectionStatusChanged", player.ToPlayerDTO());
+            await hubContext.Groups.AddToGroupAsync(player.ConnectionId, room.RoomName);
+            await room.AddPlayer(player, true);
+        }
+
         internal async Task<RoomStateDTO> JoinRoom(Player player, Room newRoom, string password)
         {
             if (newRoom == null || player == null)

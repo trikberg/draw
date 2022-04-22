@@ -24,23 +24,34 @@ namespace Draw.Server.Game.Rooms
         private IHubContext<GameHub> hubContext;
         private IRoomState roomState;
 
-        public Room(IHubContext<Hubs.GameHub> context, string name) : this(context, name, new RoomSettings())
+        public Room(IHubContext<Hubs.GameHub> context, string name, Func<Room, Task> gameEndedCallback)
+            : this(context, name, new RoomSettings(), gameEndedCallback)
         {
         }
 
-        public Room(IHubContext<Hubs.GameHub> context, string name, RoomSettings settings)
+        public Room(IHubContext<Hubs.GameHub> context, string name, RoomSettings settings, Func<Room, Task> gameEndedCallback)
         {
             roomIndex = roomCounter++;
             hubContext = context;
             RoomName = name;
             RoomSettings = settings;
-            RoomState = new RoomStateLobby(this);
+            RoomState = new RoomStateLobby(this, gameEndedCallback);
         }
 
         internal int RoomIndex => roomIndex;
         internal IHubContext<GameHub> HubContext => hubContext;
         internal List<Word> UnusedWords => unusedWords;
-        public List<Player> Players => players;
+
+        public List<Player> Players
+        {
+            get
+            {
+                lock (players)
+                {
+                    return players.ToList();
+                }
+            }
+        }
 
         public string RoomName { get; }
 
@@ -67,7 +78,10 @@ namespace Draw.Server.Game.Rooms
         {
             if (!isReconnect)
             {
-                players.Add(player);
+                lock (players)
+                {
+                    players.Add(player);
+                }
             }
             await roomState.AddPlayer(player, isReconnect);
         }
@@ -84,7 +98,13 @@ namespace Draw.Server.Game.Rooms
 
         public async Task<bool> RemovePlayer(Player player)
         {
-            if (players.Remove(player))
+            bool playerRemoved;
+            lock (players)
+            {
+                playerRemoved = players.Remove(player);
+            }
+
+            if (playerRemoved)
             {
                 await roomState.RemovePlayer(player);
                 return true;
@@ -107,7 +127,13 @@ namespace Draw.Server.Game.Rooms
 
         internal bool StartGame(Player player)
         {
-            if (player.Equals(players.FirstOrDefault()) &&
+            bool isFirstPlayer;
+            lock (players)
+            {
+                isFirstPlayer = player.Equals(players.FirstOrDefault());
+            }
+
+            if (isFirstPlayer &&
                 RoomState is RoomStateLobby rsl)
             {
                 RoomState = new RoomStateGame(this, rsl);

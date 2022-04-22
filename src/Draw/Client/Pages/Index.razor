@@ -38,7 +38,7 @@
     {
         string userName = await LocalStorage.GetItemAsync<string>("UserName");
         Guid connectionGuid = await LocalStorage.GetItemAsync<Guid>("ConnectionGuid");
-        if (!connectionGuid.Equals(Guid.Empty) && userName != null)
+        if (!connectionGuid.Equals(Guid.Empty) && !String.IsNullOrEmpty(userName))
         {
             RoomStateDTO roomState = await GameService.TryReconnect(userName, connectionGuid);
             if (roomState != null)

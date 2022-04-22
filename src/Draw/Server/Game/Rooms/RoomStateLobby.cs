@@ -2,21 +2,30 @@
 using Draw.Shared.Game;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Draw.Server.Game.Rooms
 {
     public class RoomStateLobby : IRoomState
     {
-        private Room room;
+        private readonly Room room;
+        private readonly Func<Room, Task> gameEndedCallback;
+        private int entryCount = 0;
 
-        internal RoomStateLobby(Room room)
+        internal RoomStateLobby(Room room, Func<Room, Task> gameEndedCallback)
         {
             this.room = room;
+            this.gameEndedCallback = gameEndedCallback;
         }
 
-        public Task Enter()
+        public async Task Enter()
         {
-            return Task.CompletedTask;
+            if (entryCount > 0)
+            {
+                await gameEndedCallback(room);
+            }
+            entryCount++;
+            return;
         }
 
         internal async Task<bool> SetRoomSettings(RoomSettings settings, Player player)

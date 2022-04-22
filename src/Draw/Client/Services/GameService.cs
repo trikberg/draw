@@ -181,12 +181,13 @@ namespace Draw.Client.Services
 
         public async Task<RoomStateDTO> TryReconnect(string userName, Guid connectionGuid)
         {
-            RoomStateDTO roomState =  await hubConnection.InvokeAsync<RoomStateDTO>("TryReconnect", userName, connectionGuid);
-            if (roomState != null)
+            ReconnectStateDTO reconnectState = await hubConnection.InvokeAsync<ReconnectStateDTO>("TryReconnect", userName, connectionGuid);
+            if (reconnectState.RoomState != null)
             {
-                players = roomState.Players.Select((p) => new Player(p)).ToList();
+                this.playerGuid = reconnectState.PlayerId;
+                players = reconnectState.RoomState.Players.Select((p) => new Player(p)).ToList();
                 PlayerListChanged?.Invoke(this, null);
-                currentRoomState = roomState;
+                currentRoomState = reconnectState.RoomState;
                 RoomSettingsChanged?.Invoke(this, null);
             }
             return RoomState;

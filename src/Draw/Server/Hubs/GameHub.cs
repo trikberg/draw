@@ -56,10 +56,21 @@ namespace Draw.Server.Hubs
                 logger.LogWarning(exception, "Player disconnect with exception " + exception.GetType().Name);
             }
             Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
-            if (room != null && player != null)
+            if (player != null)
             {
-                await lobby.PlayerDisconnected(player, room);
+                Room room = lobby.GetRoom(player);
+                if (room != null)
+                {
+                    await lobby.PlayerDisconnected(player, room);
+                }
+                else
+                {
+                    await lobby.RemovePlayer(player);
+                    lock (playerDictionary)
+                    {
+                        playerDictionary.Remove(Context.ConnectionId);
+                    }
+                }
             }
 
             await base.OnDisconnectedAsync(exception);
@@ -70,7 +81,7 @@ namespace Draw.Server.Hubs
             return lobby.GetRooms().ToList();
         }
 
-        public async Task<RoomStateDTO> TryReconnect(string userName, Guid connectionGuid)
+        public async Task<ReconnectStateDTO> TryReconnect(string userName, Guid connectionGuid)
         {
             Player existingPlayerInstance;
             lock (playerDictionary)
@@ -78,22 +89,31 @@ namespace Draw.Server.Hubs
                 existingPlayerInstance = playerDictionary.Values.SingleOrDefault(p => p.ConnectionGuid.Equals(connectionGuid));
             }
 
-            Room room = lobby.GetRoom(existingPlayerInstance);
-            if (existingPlayerInstance != null && room != null && !existingPlayerInstance.IsConnected)
+            if (existingPlayerInstance != null &&
+                !existingPlayerInstance.IsConnected)
             {
                 lock (playerDictionary)
                 {
                     playerDictionary.Remove(Context.ConnectionId);
                     playerDictionary.Remove(existingPlayerInstance.ConnectionId);
                     existingPlayerInstance.ConnectionId = Context.ConnectionId;
+                    existingPlayerInstance.IsConnected = true;
                     playerDictionary.Add(Context.ConnectionId, existingPlayerInstance);
                 }
 
-                await lobby.ReconnectPlayer(existingPlayerInstance, room);
-                return room.ToRoomStateDTO();
+                Room room = lobby.GetRoom(existingPlayerInstance);
+
+                if (room != null &&
+                    room.RoomState is not RoomStateLobby)
+                {
+                    await lobby.PlayerReconnected(existingPlayerInstance, room);
+                    return new ReconnectStateDTO(existingPlayerInstance.Id, room.ToRoomStateDTO());
+                }
+
+                return new ReconnectStateDTO(Guid.Empty, null);
             }
             
-            return null;
+            return new ReconnectStateDTO(Guid.Empty, null);
         }
 
         public PlayerGuids SetPlayerName(string userName)

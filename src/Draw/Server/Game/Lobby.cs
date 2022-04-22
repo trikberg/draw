@@ -24,7 +24,7 @@ namespace Draw.Server.Game
             hubContext = context;
             for (int i = 0; i < 5; i++)
             {
-                AddRoom(new PublicRoom(context, "Room " + i, new RoomSettings()));
+                AddRoom(new PublicRoom(context, "Room " + i, new RoomSettings(), GameEnded));
             }
         }
 
@@ -59,6 +59,11 @@ namespace Draw.Server.Game
             return hubContext.Groups.AddToGroupAsync(player.ConnectionId, lobbyGroupName);
         }
 
+        internal Task RemovePlayer(Player player)
+        {
+            return hubContext.Groups.RemoveFromGroupAsync(player.ConnectionId, lobbyGroupName);
+        }
+
         internal IEnumerable<RoomStateDTO> GetRooms()
         {
             lock (rooms)
@@ -77,7 +82,7 @@ namespace Draw.Server.Game
                     return false;
                 }
             }
-            Room newRoom = new PublicRoom(hubContext, roomName, roomSettings);
+            Room newRoom = new PublicRoom(hubContext, roomName, roomSettings, GameEnded);
             AddRoom(newRoom);
             await hubContext.Clients.Group(lobbyGroupName).SendAsync("RoomCreated", newRoom.ToRoomStateDTO());
             return true;
@@ -96,9 +101,8 @@ namespace Draw.Server.Game
             }
         }
 
-        internal async Task ReconnectPlayer(Player player, Room room)
+        internal async Task PlayerReconnected(Player player, Room room)
         {
-            player.IsConnected = true;
             await hubContext.Clients.GroupExcept(room.RoomName, player.ConnectionId).SendAsync("PlayerConnectionStatusChanged", player.ToPlayerDTO());
             await hubContext.Groups.AddToGroupAsync(player.ConnectionId, room.RoomName);
             await room.AddPlayer(player, true);
@@ -192,6 +196,20 @@ namespace Draw.Server.Game
                 await hubContext.Clients.GroupExcept(room.RoomName, player.ConnectionId).SendAsync("PlayerLeft", player.ToPlayerDTO());
                 await hubContext.Groups.RemoveFromGroupAsync(player.ConnectionId, room.RoomName);
                 await hubContext.Clients.Group(lobbyGroupName).SendAsync("RoomStateChanged", room.ToRoomStateDTO());
+            }
+        }
+
+        private async Task GameEnded(Room room)
+        {
+            List<Player> disconnectedPlayers = new List<Player>();
+            foreach (Player player in room.Players.Where(p => !p.IsConnected))
+            {
+                disconnectedPlayers.Add(player);
+            }
+
+            foreach (Player player in disconnectedPlayers)
+            {
+                await LeaveRoom(player, room);
             }
         }
     }

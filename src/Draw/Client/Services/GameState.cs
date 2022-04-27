@@ -69,6 +69,13 @@ namespace Draw.Client.Services
             StringBuilder sb = new StringBuilder(WordHint);
             sb[hint.Position] = hint.Letter;
             WordHint = sb.ToString();
+            StringBuilder wordHintMessage = new StringBuilder("Hint:");
+            foreach (char c in WordHint)
+            {
+                wordHintMessage.Append(' ');
+                wordHintMessage.Append(c);
+            }
+            AddChatMessage(new ChatMessage(ChatMessageType.GameFlow, null, wordHintMessage.ToString()));
             HintLetterReceived?.Invoke(this, EventArgs.Empty);
         }
 

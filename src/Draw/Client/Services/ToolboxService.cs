@@ -164,7 +164,9 @@ namespace Draw.Client.Services
 
         public async Task OnMouseLeave(MouseEventArgs e)
         {
-            if (isMouseDown && (activeTool == Tool.Brush || activeTool == Tool.Erase))
+            if (isMouseDown &&
+                mousePoint != null &&
+                (activeTool == Tool.Brush || activeTool == Tool.Erase))
             {
                 isMouseDown = false;
                 Point2D currentPoint = new Point2D(e.OffsetX, e.OffsetY);
@@ -212,7 +214,9 @@ namespace Draw.Client.Services
 
         public async Task OnMouseMove(MouseEventArgs e)
         {
-            if (isMouseDown && (activeTool == Tool.Brush || activeTool == Tool.Erase))
+            if (isMouseDown &&
+                mousePoint != null &&
+                (activeTool == Tool.Brush || activeTool == Tool.Erase))
             {
                 Point2D currentPoint = new Point2D(e.OffsetX, e.OffsetY);
                 if (currentPoint.Distance(mousePoint) < 5.0)
@@ -235,7 +239,9 @@ namespace Draw.Client.Services
 
         public async Task OnMouseUp(MouseEventArgs e)
         {
-            if (isMouseDown && (activeTool == Tool.Brush || activeTool == Tool.Erase))
+            if (isMouseDown &&
+                mousePoint != null &&
+                (activeTool == Tool.Brush || activeTool == Tool.Erase))
             {
                 Point2D currentPoint = new Point2D(e.OffsetX, e.OffsetY);
                 string color = activeTool switch

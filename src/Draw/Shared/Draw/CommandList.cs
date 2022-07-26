@@ -23,7 +23,7 @@ namespace Draw.Shared.Draw
         {
             lock (stack)
             {
-                CommandSubList currentList;
+                CommandSubList? currentList;
                 if (command is CommandClearCanvas ccc)
                 {
                     currentList = new CommandSubList(ccc.BackgroundColor);
@@ -32,7 +32,7 @@ namespace Draw.Shared.Draw
                 else
                 {
                     currentList = stack.LastOrDefault();
-                    currentList.Add(command);
+                    currentList?.Add(command);
                 }
             }
         }
@@ -41,17 +41,20 @@ namespace Draw.Shared.Draw
         {
             lock (stack)
             {
-                CommandSubList currentList = stack.LastOrDefault();
-                if (currentList.Last() is CommandDrawLine cdl &&
-                    !cdl.IsClosed)
+                CommandSubList? currentList = stack.LastOrDefault();
+                if (currentList != null)
                 {
-                    cdl.Add(lineArgs);
-                }
-                else
-                {
-                    CommandDrawLine command = new CommandDrawLine();
-                    command.Add(lineArgs);
-                    currentList.Add(command);
+                    if (currentList.Last() is CommandDrawLine cdl &&
+                        !cdl.IsClosed)
+                    {
+                        cdl.Add(lineArgs);
+                    }
+                    else
+                    {
+                        CommandDrawLine command = new CommandDrawLine();
+                        command.Add(lineArgs);
+                        currentList.Add(command);
+                    }
                 }
             }
         }
@@ -60,8 +63,7 @@ namespace Draw.Shared.Draw
         {
             lock (stack)
             {
-                CommandSubList currentList = stack.LastOrDefault();
-                currentList.Add(new CommandFill(fillArgs));
+                stack.LastOrDefault()?.Add(new CommandFill(fillArgs));
             }
         }
 
@@ -71,15 +73,15 @@ namespace Draw.Shared.Draw
             {
                 if (stack.Count == 0)
                 {
-                    return null;
+                    return new List<IDrawCommand>();
                 }
 
-                CommandSubList currentList = stack.LastOrDefault();
-                if (currentList.Count == 0)
+                CommandSubList? currentList = stack.LastOrDefault();
+                if (currentList?.Count == 0)
                 {
                     if (stack.Count == 1)
                     {
-                        return null;
+                        return new List<IDrawCommand>();
                     }
                     else
                     {
@@ -87,22 +89,23 @@ namespace Draw.Shared.Draw
                         currentList = stack.LastOrDefault();
                         if (currentList == null)
                         {
-                            return null;
+                            return new List<IDrawCommand>();
                         }
                     }
                 }
                 else
                 {
-                    currentList.RemoveLast();
+                    currentList?.RemoveLast();
                 }
 
-                List<IDrawCommand> result = currentList.ToList();
-                result.Insert(0, new CommandClearCanvas(currentList.BackgroundColor));
+                List<IDrawCommand> result = currentList?.ToList() ?? new();
+
+                result.Insert(0, new CommandClearCanvas(currentList?.BackgroundColor ?? CanvasSettings.DEFAULT_BACKGROUND_COLOR));
                 return result;
             }
         }
 
-        public IEnumerable<IDrawCommand> GetDrawCommands()
+        public IEnumerable<IDrawCommand>? GetDrawCommands()
         {
             return stack.LastOrDefault()?.ToList();
         }

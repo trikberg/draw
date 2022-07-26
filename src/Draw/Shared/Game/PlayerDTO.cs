@@ -15,7 +15,7 @@ namespace Draw.Shared.Game
         public string Name { get; set; }
         public bool IsConnected { get; set; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is PlayerDTO p && this.Id.Equals(p.Id))
             {

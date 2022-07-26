@@ -35,7 +35,7 @@ namespace Draw.Shared.Draw
             }
         }
 
-        internal IDrawCommand Last()
+        internal IDrawCommand? Last()
         {
             return commands.LastOrDefault();
         }

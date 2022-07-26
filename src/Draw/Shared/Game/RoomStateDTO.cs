@@ -21,9 +21,9 @@ namespace Draw.Shared.Game
             GameInProgress = gameInProgress;
         }
 
-        public string RoomName { get; set; }
-        public List<PlayerDTO> Players { get; set; }
-        public RoomSettings RoomSettings { get; set; }
+        public string RoomName { get; set; } = string.Empty;
+        public List<PlayerDTO> Players { get; set; } = new();
+        public RoomSettings RoomSettings { get; set; } = new();
         public bool GameInProgress { get; set; }
     }
 }

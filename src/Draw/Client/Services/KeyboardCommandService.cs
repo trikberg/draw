@@ -7,7 +7,7 @@ namespace Draw.Client.Services
         private readonly IGameService gameService;
         private bool isActivePlayer = false;
 
-        public event EventHandler<KeyboardShortcuts> KeyboardShortCutHit;
+        public event EventHandler<KeyboardShortcuts>? KeyboardShortCutHit;
 
         public KeyboardCommandService(IGameService gameService)
         {
@@ -45,12 +45,12 @@ namespace Draw.Client.Services
             }
         }
 
-        private void OnActivePlayerDrawStarted(object sender, EventArgs _)
+        private void OnActivePlayerDrawStarted(object? sender, EventArgs _)
         {
             isActivePlayer = true;
         }
 
-        private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs _)
+        private void OnPlayerDrawStarted(object? sender, PlayerDrawEventArgs _)
         {
             isActivePlayer = false;
         }

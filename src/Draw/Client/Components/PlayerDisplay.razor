@@ -21,7 +21,7 @@
 
 @code {
     [Parameter]
-    public Player Player { get; set; }
+    public Player Player { get; set; } = null!;
 
     [Parameter]
     public bool ShowScore { get; set; }
@@ -49,33 +49,33 @@
         GameService.GameScores -= GameScores;
     }
 
-    public void ScoreChanged(object sender, int newScore)
+    public void ScoreChanged(object? sender, int newScore)
     {
         StateHasChanged();
     }
 
     // Needed for player being added during drawing.
-    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs args)
+    private void PlayerDrawStarted(object? sender, PlayerDrawEventArgs args)
     {
         isPlayerTurn = Player.Equals(args.Player);
         StateHasChanged();
     }
 
-    private void PlayerWordChoiceStarted(object sender, (PlayerDTO player, int timeout) args)
+    private void PlayerWordChoiceStarted(object? sender, (PlayerDTO player, int timeout) args)
     {
         isPlayerTurn = Player.Equals(args.player);
         hasGuessedWord = false;
         StateHasChanged();
     }
 
-    private void ActivePlayerWordChoiceStarted(object sender, WordChoiceEventArgs args)
+    private void ActivePlayerWordChoiceStarted(object? sender, WordChoiceEventArgs args)
     {
         isPlayerTurn = Player.Id.Equals(GameService.PlayerGuid);
         hasGuessedWord = false;
         StateHasChanged();
     }
 
-    private void CorrectGuessMade(object sender, PlayerDTO player)
+    private void CorrectGuessMade(object? sender, PlayerDTO player)
     {
         if (Player.Equals(player))
         {
@@ -84,7 +84,7 @@
         }
     }
 
-    private void GameScores(object sender, (List<PlayerScore> scores, int timeout) args)
+    private void GameScores(object? sender, (List<PlayerScore> scores, int timeout) args)
     {
         isPlayerTurn = false;
         hasGuessedWord = false;

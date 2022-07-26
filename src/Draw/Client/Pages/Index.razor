@@ -40,7 +40,7 @@
         Guid connectionGuid = await LocalStorage.GetItemAsync<Guid>("ConnectionGuid");
         if (!connectionGuid.Equals(Guid.Empty) && !String.IsNullOrEmpty(userName))
         {
-            RoomStateDTO roomState = await GameService.TryReconnect(userName, connectionGuid);
+            RoomStateDTO? roomState = await GameService.TryReconnect(userName, connectionGuid);
             if (roomState != null)
             {
                 if (roomState.GameInProgress)

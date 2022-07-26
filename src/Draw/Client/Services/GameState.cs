@@ -9,18 +9,18 @@ namespace Draw.Client.Services
 {
     public class GameState
     {
-        public event EventHandler RoundStarted;
-        public event EventHandler ActivePlayerDrawStarted;
-        public event EventHandler<PlayerDrawEventArgs> PlayerDrawStarted;
-        public event EventHandler HintLetterReceived;
-        public event EventHandler CorrectWordReceived;
-        public event EventHandler<(List<PlayerScore> scores, WordDTO word, int timeout)> TurnScores;
-        public event EventHandler<IDrawEventArgs> DrawEventReceived;
-        public event EventHandler<IEnumerable<IDrawCommand>> UndoEventReceived;
-        public event EventHandler<ChatMessage> ChatMessageReceived;
-        public event EventHandler ClearCanvasReceived;
+        public event EventHandler? RoundStarted;
+        public event EventHandler? ActivePlayerDrawStarted;
+        public event EventHandler<PlayerDrawEventArgs>? PlayerDrawStarted;
+        public event EventHandler? HintLetterReceived;
+        public event EventHandler? CorrectWordReceived;
+        public event EventHandler<(List<PlayerScore> scores, WordDTO word, int timeout)>? TurnScores;
+        public event EventHandler<IDrawEventArgs>? DrawEventReceived;
+        public event EventHandler<IEnumerable<IDrawCommand>>? UndoEventReceived;
+        public event EventHandler<ChatMessage>? ChatMessageReceived;
+        public event EventHandler? ClearCanvasReceived;
 
-        private CommandList undoStack;
+        private CommandList? undoStack;
         private List<ChatMessage> chatLog = new List<ChatMessage>();
 
         public IEnumerable<ChatMessage> ChatLog => chatLog;
@@ -28,8 +28,8 @@ namespace Draw.Client.Services
         public int RoundCount { get; private set; } = 0;
         public TurnTimer TurnTimer { get; } = new TurnTimer();
 
-        public WordDTO Word { get; private set; } = null;
-        public string WordHint { get; private set; } = null;
+        public WordDTO? Word { get; private set; } = null;
+        public string? WordHint { get; private set; } = null;
 
         internal GameState()
         {
@@ -100,13 +100,13 @@ namespace Draw.Client.Services
 
         internal void DrawLine(DrawLineEventArgs e)
         {
-            undoStack.Add(e);
+            (undoStack ??= new CommandList(CanvasSettings.DEFAULT_BACKGROUND_COLOR)).Add(e);
             DrawEventReceived?.Invoke(this, e);
         }
 
         internal void Fill(FillEventArgs e)
         {
-            undoStack.Add(e);
+            (undoStack ??= new CommandList(CanvasSettings.DEFAULT_BACKGROUND_COLOR)).Add(e);
             DrawEventReceived?.Invoke(this, e);
         }
 
@@ -120,16 +120,16 @@ namespace Draw.Client.Services
             {
                 undoStack.Add(new CommandClearCanvas(backgroundColor));
             }
-            ClearCanvasReceived?.Invoke(this, null);
+            ClearCanvasReceived?.Invoke(this, EventArgs.Empty);
         }
 
         internal void Undo()
         {
-            IEnumerable<IDrawCommand> commands = undoStack.Undo();
+            IEnumerable<IDrawCommand> commands = (undoStack ??= new CommandList(CanvasSettings.DEFAULT_BACKGROUND_COLOR)).Undo();
             UndoEventReceived?.Invoke(this, commands);
         }
 
-        internal IEnumerable<IDrawCommand> GetDrawBacklog()
+        internal IEnumerable<IDrawCommand>? GetDrawBacklog()
         {
             if (undoStack == null)
             {
@@ -140,7 +140,7 @@ namespace Draw.Client.Services
 
         internal void BackgroundColorChanged(string color)
         {
-            undoStack.Add(new CommandBackground(color));
+            (undoStack ??= new CommandList(color)).Add(new CommandBackground(color));
         }
         #endregion Drawing Commands
 

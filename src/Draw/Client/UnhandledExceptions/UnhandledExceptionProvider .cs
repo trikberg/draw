@@ -6,7 +6,7 @@ namespace Draw.Client.UnhandledExceptions
 {
     public class UnhandledExceptionProvider : ILoggerProvider
     {
-        public ILoggerService LoggerService { get; set; }
+        public ILoggerService? LoggerService { get; set; }
 
         public UnhandledExceptionProvider()
         {

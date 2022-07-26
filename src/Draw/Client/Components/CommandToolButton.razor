@@ -9,13 +9,13 @@
     private bool isActiveTool = false;
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment ChildContent { get; set; } = null!;
 
     [Parameter]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
     [Parameter]
-    public Tool Tool { get; set; }
+    public Tool Tool { get; set; } = default;
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,7 +35,7 @@
         ToolboxService.ActiveTool = Tool;
     }
 
-    private void OnActiveToolChanged(object sender, Tool activeTool)
+    private void OnActiveToolChanged(object? sender, Tool activeTool)
     {
         isActiveTool = (activeTool == Tool);
         StateHasChanged();

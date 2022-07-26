@@ -48,7 +48,7 @@
 
 @code {
     private bool showCreateRoomDialog = false;
-    private RoomStateDTO selectedRoom = null;
+    private RoomStateDTO? selectedRoom = null;
     private string password = "";
     private bool waitingForJoin = false;
     private bool joinFailed = false;
@@ -72,12 +72,12 @@
         GameService.RoomSettingsChanged -= OnRoomSettingsChanged;
     }
 
-    private void OnRoomListChanged(object sender, EventArgs e)
+    private void OnRoomListChanged(object? sender, EventArgs e)
     {
         StateHasChanged();
     }
 
-    private void OnRoomSettingsChanged(object sender, EventArgs e)
+    private void OnRoomSettingsChanged(object? sender, EventArgs e)
     {
         StateHasChanged();
     }

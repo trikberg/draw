@@ -52,7 +52,7 @@
         }
     }
 
-    private void OnBrushSizeChanged(object sender, EventArgs e)
+    private void OnBrushSizeChanged(object? sender, EventArgs e)
     {
         int size = ToolboxService.BrushSize;
         int i = Array.IndexOf<int>(brushSizes, size);

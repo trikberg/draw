@@ -5,7 +5,7 @@ namespace Draw.Client.Services
 {
     public class TurnTimer : IDisposable
     {
-        public event EventHandler<int> TurnTimerChanged;
+        public event EventHandler<int>? TurnTimerChanged;
         public int RemainingSeconds { get; private set; } = 0;
         private Timer timer;
 
@@ -18,8 +18,7 @@ namespace Draw.Client.Services
 
         public void Dispose()
         {
-            timer?.Dispose();
-            timer = null;
+            timer.Dispose();
         }
 
         internal void StartTimer(int time)
@@ -29,7 +28,7 @@ namespace Draw.Client.Services
             TurnTimerChanged?.Invoke(this, RemainingSeconds);
         }
 
-        private void TimerElapsed(object sender, ElapsedEventArgs e)
+        private void TimerElapsed(object? sender, ElapsedEventArgs e)
         {
             RemainingSeconds -= 1;
             TurnTimerChanged?.Invoke(this, RemainingSeconds);

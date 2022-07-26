@@ -50,22 +50,22 @@
         StateHasChanged();
 	}
 
-    private void ActivePlayerWordChoiceStarted(object sender, WordChoiceEventArgs _)
+    private void ActivePlayerWordChoiceStarted(object? sender, WordChoiceEventArgs _)
     {
         PlaySound("gong", 2500);
     }
 
-    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs _)
+    private void PlayerDrawStarted(object? sender, PlayerDrawEventArgs _)
     {
         PlaySound("gong", 2500);
     }
 
-    private void HintLetterReceived(object sender, EventArgs _)
+    private void HintLetterReceived(object? sender, EventArgs _)
     {
         PlaySound("jingle", 2500);
     }
 
-    private void CorrectGuessMade(object sender, PlayerDTO player)
+    private void CorrectGuessMade(object? sender, PlayerDTO player)
     {
         if (player.Id.Equals(GameService.PlayerGuid))
         {
@@ -77,9 +77,9 @@
         }
     }
 
-    private void TurnScores(object sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
+    private void TurnScores(object? sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
     {
-        PlayerScore score = args.scores.Where(s => s.Player.Id.Equals(GameService.PlayerGuid)).FirstOrDefault();
+        PlayerScore? score = args.scores.Where(s => s.Player.Id.Equals(GameService.PlayerGuid)).FirstOrDefault();
         if (score != null && score.Score <= 0)
         {
             PlaySound("trombone", 2000);
@@ -103,7 +103,7 @@
         }
     }
 
-    private void TimerElapsed(object sender, ElapsedEventArgs e)
+    private void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
         if (sender is Timer t)
         {

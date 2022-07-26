@@ -7,16 +7,16 @@ namespace Draw.Client.Services
 {
     internal class ToolboxService : IToolboxService, IDisposable
     {
-        public event EventHandler BrushColorChanged;
-        public event EventHandler BrushSizeChanged;
-        public event EventHandler<bool> BackgroundColorChanged;
-        public event EventHandler<Tool> ActiveToolChanged;
+        public event EventHandler? BrushColorChanged;
+        public event EventHandler? BrushSizeChanged;
+        public event EventHandler<bool>? BackgroundColorChanged;
+        public event EventHandler<Tool>? ActiveToolChanged;
 
         private IGameService gameService;
         private IKeyboardCommandService keyboardCommandService;
         private bool isActivePlayer = false;
         private bool isMouseDown = false;
-        private Point2D mousePoint = null;
+        private Point2D? mousePoint = null;
 
         private (int y, int x) activeColor = (4, 0);
         private string[,] colors = new string[,] {{ "#ffffff", "#fcab88", "#9090ff", "#90ffff", "#90ff90", "#ffff90", "#ffc699", "#ff9090", "#ff90ff", },
@@ -54,7 +54,7 @@ namespace Draw.Client.Services
                 if (brushSize != value)
                 {
                     brushSize = value;
-                    BrushSizeChanged?.Invoke(this, null);
+                    BrushSizeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -72,19 +72,19 @@ namespace Draw.Client.Services
             }
         }
 
-        private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs _)
+        private void OnPlayerDrawStarted(object? sender, PlayerDrawEventArgs _)
         {
             isActivePlayer = false;
             ResetTools();
         }
 
-        private void OnActivePlayerDrawStarted(object sender, EventArgs _)
+        private void OnActivePlayerDrawStarted(object? sender, EventArgs _)
         {
             isActivePlayer = true;
             ResetTools();
         }
 
-        private async void KeyboardShortCutHit(object sender, KeyboardShortcuts shortcut)
+        private async void KeyboardShortCutHit(object? sender, KeyboardShortcuts shortcut)
         {
             switch (shortcut)
             {
@@ -108,12 +108,12 @@ namespace Draw.Client.Services
             ActiveTool = Tool.Brush;
             BrushSize = CanvasSettings.DEFAULT_BRUSH_SIZE;
             activeColor = (4, 0);
-            BrushColorChanged?.Invoke(this, null);
+            BrushColorChanged?.Invoke(this, EventArgs.Empty);
             backgroundColor = CanvasSettings.DEFAULT_BACKGROUND_COLOR;
             BackgroundColorChanged?.Invoke(this, false);
         }
 
-        private void OnBackgroundColorChanged(object sender, string color)
+        private void OnBackgroundColorChanged(object? sender, string color)
         {
             _ = SetBackgroundColor(color, false, true);
         }
@@ -126,7 +126,7 @@ namespace Draw.Client.Services
         public void SetActiveBrushColor(int x, int y)
         {
             activeColor = (y, x);
-            BrushColorChanged?.Invoke(this, null);
+            BrushColorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public bool IsActiveBrushColor(int x, int y)

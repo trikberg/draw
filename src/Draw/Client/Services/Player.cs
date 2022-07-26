@@ -7,7 +7,7 @@ namespace Draw.Client.Services
     {
         private int score;
         private int? position = null;
-        public event EventHandler<int> ScoreChanged;
+        public event EventHandler<int>? ScoreChanged;
 
         internal Player(PlayerDTO player)
         {
@@ -46,7 +46,7 @@ namespace Draw.Client.Services
             }
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is Player p && this.Id.Equals(p.Id))
             {

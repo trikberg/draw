@@ -17,22 +17,27 @@ namespace Draw.Client.Services
         private GameState gameState = new GameState();
         private List<RoomStateDTO> rooms = new List<RoomStateDTO>();
         private List<Player> players = new List<Player>();
-        private RoomStateDTO currentRoomState = null;
+        private RoomStateDTO? currentRoomState = null;
         private Guid? playerGuid = null;
 
-        public event EventHandler<string> BackgroundColorChanged;
-        public event EventHandler RoomListChanged;
-        public event EventHandler PlayerListChanged;
-        public event EventHandler RoomSettingsChanged;
-        public event EventHandler GameStarted;
-        public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
-        public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
-        public event EventHandler<PlayerDTO> CorrectGuessMade;
-        public event EventHandler<(List<PlayerScore> scores, int timeout)> GameScores;
+        public event EventHandler<string>? BackgroundColorChanged;
+        public event EventHandler? RoomListChanged;
+        public event EventHandler? PlayerListChanged;
+        public event EventHandler? RoomSettingsChanged;
+        public event EventHandler? GameStarted;
+        public event EventHandler<WordChoiceEventArgs>? ActivePlayerWordChoiceStarted;
+        public event EventHandler<(PlayerDTO player, int timeout)>? PlayerWordChoiceStarted;
+        public event EventHandler<PlayerDTO>? CorrectGuessMade;
+        public event EventHandler<(List<PlayerScore> scores, int timeout)>? GameScores;
 
         public GameService(NavigationManager navigationManager)
         {
             this.navigationManager = navigationManager;
+
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(navigationManager.ToAbsoluteUri("/game"))
+                .Build();
+
             Init();
         }
 
@@ -43,10 +48,6 @@ namespace Draw.Client.Services
 
         private async void Init()
         {
-            hubConnection = new HubConnectionBuilder()
-                .WithUrl(navigationManager.ToAbsoluteUri("/game"))
-                .Build();
-
             InitServerCallbacks();
 
             await hubConnection.StartAsync();
@@ -69,17 +70,17 @@ namespace Draw.Client.Services
                 if (!players.Contains(player))
                 {
                     players.Add(player);
-                    PlayerListChanged?.Invoke(this, null);
+                    PlayerListChanged?.Invoke(this, EventArgs.Empty);
                 }
             });
 
             hubConnection.On<PlayerDTO>("PlayerConnectionStatusChanged", playerDTO =>
             {
-                Player player = players.SingleOrDefault(p => p.Id.Equals(playerDTO.Id));
+                Player? player = players.SingleOrDefault(p => p.Id.Equals(playerDTO.Id));
                 if (player != null)
                 {
                     player.IsConnected = playerDTO.IsConnected;
-                    PlayerListChanged?.Invoke(this, null);
+                    PlayerListChanged?.Invoke(this, EventArgs.Empty);
                     if (playerDTO.IsConnected)
                     {
                         gameState.AddChatMessage(new ChatMessage(ChatMessageType.GameFlow, playerDTO.Name, playerDTO.Name + " reconnected."));
@@ -97,7 +98,7 @@ namespace Draw.Client.Services
                 if (players.Contains(player))
                 {
                     players.Remove(player);
-                    PlayerListChanged?.Invoke(this, null);
+                    PlayerListChanged?.Invoke(this, EventArgs.Empty);
                     gameState.AddChatMessage(new ChatMessage(ChatMessageType.GameFlow, p.Name, p.Name + " left the game."));
                 }
             });
@@ -112,14 +113,14 @@ namespace Draw.Client.Services
                     currentRoomState = state;
                 }
 
-                RoomStateDTO room = rooms.Where(r => r.RoomName.Equals(state.RoomName)).FirstOrDefault();
+                RoomStateDTO? room = rooms.Where(r => r.RoomName.Equals(state.RoomName)).FirstOrDefault();
                 if (room != null)
                 {
                     room.GameInProgress = state.GameInProgress;
                     room.RoomSettings = state.RoomSettings;
                     room.Players = state.Players;
                 }
-                RoomSettingsChanged?.Invoke(this, null);
+                RoomSettingsChanged?.Invoke(this, EventArgs.Empty);
             });
 
             hubConnection.On("GameStarted", () =>
@@ -129,7 +130,7 @@ namespace Draw.Client.Services
                     p.Score = 0;
                     p.Position = null;
                 }
-                GameStarted?.Invoke(this, null);
+                GameStarted?.Invoke(this, EventArgs.Empty);
             });
 
             hubConnection.On<int, int, ChatMessage>("RoundStarted", (currentRound, roundCount, chatMessage) =>
@@ -173,22 +174,22 @@ namespace Draw.Client.Services
 
         public IEnumerable<Player> Players => players;
 
-        public RoomStateDTO RoomState => currentRoomState;
+        public RoomStateDTO? RoomState => currentRoomState;
 
         public GameState GameState => gameState;
 
         public Guid? PlayerGuid => playerGuid;
 
-        public async Task<RoomStateDTO> TryReconnect(string userName, Guid connectionGuid)
+        public async Task<RoomStateDTO?> TryReconnect(string userName, Guid connectionGuid)
         {
             ReconnectStateDTO reconnectState = await hubConnection.InvokeAsync<ReconnectStateDTO>("TryReconnect", userName, connectionGuid);
             if (reconnectState.RoomState != null)
             {
                 this.playerGuid = reconnectState.PlayerId;
                 players = reconnectState.RoomState.Players.Select((p) => new Player(p)).ToList();
-                PlayerListChanged?.Invoke(this, null);
+                PlayerListChanged?.Invoke(this, EventArgs.Empty);
                 currentRoomState = reconnectState.RoomState;
-                RoomSettingsChanged?.Invoke(this, null);
+                RoomSettingsChanged?.Invoke(this, EventArgs.Empty);
             }
             return RoomState;
         }
@@ -203,22 +204,22 @@ namespace Draw.Client.Services
         private void AddRooms(IEnumerable<RoomStateDTO> newRooms)
         {
             rooms.AddRange(newRooms);
-            RoomListChanged?.Invoke(this, null);
+            RoomListChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void AddRoom(RoomStateDTO newRoom)
         {
             rooms.Add(newRoom);
-            RoomListChanged?.Invoke(this, null);
+            RoomListChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void RemoveRoom(RoomStateDTO room)
         {
-            RoomStateDTO room2 = rooms.Where(r => room.RoomName.Equals(r.RoomName)).FirstOrDefault();
+            RoomStateDTO? room2 = rooms.Where(r => room.RoomName.Equals(r.RoomName)).FirstOrDefault();
             if (room2 != null)
             {
                 rooms.Remove(room2);
-                RoomListChanged?.Invoke(this, null);
+                RoomListChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -233,17 +234,17 @@ namespace Draw.Client.Services
             if (roomState == null)
             {
                 players = new List<Player>();
-                PlayerListChanged?.Invoke(this, null);
+                PlayerListChanged?.Invoke(this, EventArgs.Empty);
                 currentRoomState = null;
-                RoomSettingsChanged?.Invoke(this, null);
+                RoomSettingsChanged?.Invoke(this, EventArgs.Empty);
                 return false;
             }
             else
             {
                 players = roomState.Players.Select((p) => new Player(p)).ToList();
-                PlayerListChanged?.Invoke(this, null);
+                PlayerListChanged?.Invoke(this, EventArgs.Empty);
                 currentRoomState = roomState;
-                RoomSettingsChanged?.Invoke(this, null);
+                RoomSettingsChanged?.Invoke(this, EventArgs.Empty);
                 if (roomState.GameInProgress)
                 {
                     navigationManager.NavigateTo("/room");
@@ -274,7 +275,11 @@ namespace Draw.Client.Services
 
         public Task SetRoomSettings(RoomSettings roomSettings)
         {
-            this.currentRoomState.RoomSettings = roomSettings;
+            if (this.currentRoomState != null)
+            {
+                this.currentRoomState.RoomSettings = roomSettings;
+            }
+
             return hubConnection.InvokeAsync("SetRoomSettings", roomSettings);
         }
 

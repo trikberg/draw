@@ -34,7 +34,7 @@
     private int BrushSize => Math.Max(6, ToolboxService.BrushSize);
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment ChildContent { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,7 +67,7 @@
         cursorVisible = false;
     }
 
-    private void OnActiveToolChanged(object sender, Tool _)
+    private void OnActiveToolChanged(object? sender, Tool _)
     {
         StateHasChanged();
     }

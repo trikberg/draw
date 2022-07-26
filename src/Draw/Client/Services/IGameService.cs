@@ -9,23 +9,23 @@ namespace Draw.Client.Services
 {
     internal interface IGameService : IDisposable
     {
-        public event EventHandler<string> BackgroundColorChanged;
-        public event EventHandler RoomListChanged;
-        public event EventHandler PlayerListChanged;
-        public event EventHandler RoomSettingsChanged;
-        public event EventHandler GameStarted;
-        public event EventHandler<WordChoiceEventArgs> ActivePlayerWordChoiceStarted;
-        public event EventHandler<(PlayerDTO player, int timeout)> PlayerWordChoiceStarted;
-        public event EventHandler<PlayerDTO> CorrectGuessMade;
-        public event EventHandler<(List<PlayerScore> scores, int timeout)> GameScores;
+        public event EventHandler<string>? BackgroundColorChanged;
+        public event EventHandler? RoomListChanged;
+        public event EventHandler? PlayerListChanged;
+        public event EventHandler? RoomSettingsChanged;
+        public event EventHandler? GameStarted;
+        public event EventHandler<WordChoiceEventArgs>? ActivePlayerWordChoiceStarted;
+        public event EventHandler<(PlayerDTO player, int timeout)>? PlayerWordChoiceStarted;
+        public event EventHandler<PlayerDTO>? CorrectGuessMade;
+        public event EventHandler<(List<PlayerScore> scores, int timeout)>? GameScores;
 
         public IEnumerable<RoomStateDTO> Rooms { get; }
         public IEnumerable<Player> Players { get; }
-        public RoomStateDTO RoomState { get; }
+        public RoomStateDTO? RoomState { get; }
         public GameState GameState { get; }
         public Guid? PlayerGuid { get; }
 
-        public Task<RoomStateDTO> TryReconnect(string userName, Guid connectionGuid);
+        public Task<RoomStateDTO?> TryReconnect(string userName, Guid connectionGuid);
         public Task<Guid> SetPlayerName(string userName);
         public Task<bool> CreateRoom(string roomName, RoomSettings roomSettings);
         public Task<bool> JoinRoom(string roomName, string password);

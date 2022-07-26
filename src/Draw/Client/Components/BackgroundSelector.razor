@@ -51,7 +51,7 @@
         await ToolboxService.SetBackgroundColor(backgroundColors[sliderValue], true, true);
     }
 
-    private void OnBackgroundChanged(object sender, bool _)
+    private void OnBackgroundChanged(object? sender, bool _)
     {
         string color = ToolboxService.GetBackgroundColor();
         int i = Array.IndexOf<string>(backgroundColors, color);

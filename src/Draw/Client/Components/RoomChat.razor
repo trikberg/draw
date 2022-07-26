@@ -45,7 +45,7 @@
 
     private void ValueChanged(ChangeEventArgs e)
     {
-        guess = e.Value.ToString();
+        guess = e.Value?.ToString() ?? string.Empty;
         UpdateLetterCount();
         StateHasChanged();
     }
@@ -97,7 +97,7 @@
         }
     }
 
-    private void ChatMessageReceived(object sender, ChatMessage cm)
+    private void ChatMessageReceived(object? sender, ChatMessage cm)
     {
         StateHasChanged();
     }

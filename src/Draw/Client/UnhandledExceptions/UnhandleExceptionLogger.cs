@@ -6,9 +6,9 @@ namespace Draw.Client.UnhandledExceptions
 {
     public class UnhandledExceptionLogger : ILogger
     {
-        private ILoggerService loggerService;
+        private ILoggerService? loggerService;
 
-        public UnhandledExceptionLogger(ILoggerService loggerService)
+        public UnhandledExceptionLogger(ILoggerService? loggerService)
         {
             this.loggerService = loggerService;
         }
@@ -18,7 +18,7 @@ namespace Draw.Client.UnhandledExceptions
             return true;
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception, string> formatter)
         {
             if (exception != null && loggerService != null)
             {

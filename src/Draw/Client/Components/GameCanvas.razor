@@ -28,8 +28,8 @@
 
     private bool drawingAllowed = false;
 
-    private Canvas2DContext context;
-    private BECanvasComponent canvasReference;
+    private Canvas2DContext context = null!;
+    private BECanvasComponent canvasReference = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,12 +62,15 @@
             await context.SetLineCapAsync(LineCap.Round);
             await context.ClearRectAsync(0, 0, canvasWidth, canvasHeight);
 
-            IEnumerable<IDrawCommand> backlog = GameService.GameState.GetDrawBacklog();
-            await DrawCommandList(backlog);
+            IEnumerable<IDrawCommand>? backlog = GameService.GameState.GetDrawBacklog();
+            if (backlog != null)
+            {
+                await DrawCommandList(backlog);
+            }
         }
     }
 
-    private async void DrawEventReceived(object sender, IDrawEventArgs e)
+    private async void DrawEventReceived(object? sender, IDrawEventArgs e)
     {
         if (e is DrawLineEventArgs drawLineArgs)
         {
@@ -155,12 +158,12 @@
         await JsRuntime.InvokeVoidAsync("BucketFill.fill", (int)args.Point.X, (int)args.Point.Y, color.R, color.G, color.B);
     }
 
-    private async void ClearCanvasReceived(object sender, EventArgs e)
+    private async void ClearCanvasReceived(object? sender, EventArgs e)
     {
         await ClearCanvas();
     }
 
-    private async void UndoReceived(object sender, IEnumerable<IDrawCommand> commands)
+    private async void UndoReceived(object? sender, IEnumerable<IDrawCommand> commands)
     {
         await DrawCommandList(commands);
     }
@@ -194,13 +197,13 @@
         }
     }
 
-    private async void ActivePlayerDrawStarted(object sender, EventArgs _)
+    private async void ActivePlayerDrawStarted(object? sender, EventArgs _)
     {
         drawingAllowed = true;
         await ClearCanvas();
     }
 
-    private async void PlayerDrawStarted(object sender, PlayerDrawEventArgs _)
+    private async void PlayerDrawStarted(object? sender, PlayerDrawEventArgs _)
     {
         await ClearCanvas();
     }
@@ -213,7 +216,7 @@
         }
     }
 
-    private void TurnScores(object sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
+    private void TurnScores(object? sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
     {
         drawingAllowed = false;
     }

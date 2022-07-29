@@ -39,9 +39,9 @@ namespace Draw.Server.Game
             logger.LogInformation("Room added. Index: " + room.RoomIndex + ". Name: " + room.RoomName + ". Active rooms: " + count);
         }
 
-        internal IEnumerable<Player> GetPlayersInRoom(string roomName)
+        internal IEnumerable<Player>? GetPlayersInRoom(string roomName)
         {
-            Room room;
+            Room? room;
             lock (rooms)
             {
                 room = rooms.Where(r => r.RoomName.Equals(roomName)).FirstOrDefault();
@@ -108,7 +108,7 @@ namespace Draw.Server.Game
             await room.AddPlayer(player, true);
         }
 
-        internal async Task<RoomStateDTO> JoinRoom(Player player, Room newRoom, string password)
+        internal async Task<RoomStateDTO?> JoinRoom(Player player, Room newRoom, string password)
         {
             if (newRoom == null || player == null)
             {
@@ -121,7 +121,7 @@ namespace Draw.Server.Game
                 return null;
             }
 
-            if (playerToRoomDictionary.TryGetValue(player, out Room oldRoom))
+            if (playerToRoomDictionary.TryGetValue(player, out Room? oldRoom))
             {
                 await LeaveRoom(player, oldRoom);
             }
@@ -157,14 +157,14 @@ namespace Draw.Server.Game
             return false;
         }
 
-        internal Room GetRoom(Player player)
+        internal Room? GetRoom(Player? player)
         {
             if (player == null)
             {
                 return null;
             }
 
-            if (playerToRoomDictionary.TryGetValue(player, out Room room))
+            if (playerToRoomDictionary.TryGetValue(player, out Room? room))
             {
                 return room;
             }
@@ -172,7 +172,7 @@ namespace Draw.Server.Game
             return null;
         }
 
-        internal Room GetRoom(string roomName)
+        internal Room? GetRoom(string roomName)
         {
             lock (rooms)
             {

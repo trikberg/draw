@@ -29,9 +29,9 @@ namespace Draw.Server.Game
             foreach (Language language in Enum.GetValues(typeof(Language)))
             {
                 WordLists.Add(language, new List<Word>());
-                string languageName = Enum.GetName(typeof(Language), language);
+                string? languageName = Enum.GetName(typeof(Language), language);
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream resourceStream = assembly.GetManifestResourceStream("Draw.Server.Resources." + languageName + ".csv");
+                Stream? resourceStream = assembly.GetManifestResourceStream("Draw.Server.Resources." + languageName + ".csv");
                 int wordCount = 0;
 
                 if (resourceStream == null)
@@ -44,7 +44,7 @@ namespace Draw.Server.Game
                 {
                     using (StreamReader reader = new StreamReader(resourceStream, Encoding.UTF8))
                     {
-                        while (!reader.EndOfStream)
+                        while (reader != null && !reader.EndOfStream)
                         {
                             if (ParseLine(reader.ReadLine(), language))
                             {
@@ -63,16 +63,19 @@ namespace Draw.Server.Game
             }
         }
 
-        private bool ParseLine(string line, Language language)
+        private bool ParseLine(string? line, Language language)
         {
-            string[] split = line.Split(',');
-            if (split.Length == 2 &&
-                !String.IsNullOrWhiteSpace(split[0]) &&
-                Int32.TryParse(split[1].Trim(), out int difficulty))
+            if (line != null)
             {
-                Word w = new Word(split[0].Trim(), difficulty);
-                WordLists[language].Add(w);
-                return true;
+                string[] split = line.Split(',');
+                if (split.Length == 2 &&
+                    !String.IsNullOrWhiteSpace(split[0]) &&
+                    Int32.TryParse(split[1].Trim(), out int difficulty))
+                {
+                    Word w = new Word(split[0].Trim(), difficulty);
+                    WordLists[language].Add(w);
+                    return true;
+                }
             }
             return false;
         }

@@ -10,8 +10,8 @@ namespace Draw.Server.Controllers
 {
     public static class GitCommitHash
     {
-        private static string commitHash = null;
-        public static string CommitHash
+        private static string? commitHash = null;
+        public static string? CommitHash
         {
             get
             {
@@ -23,17 +23,17 @@ namespace Draw.Server.Controllers
                     }
                     catch (Exception)
                     {
-                        commitHash = "";
+                        commitHash = string.Empty;
                     }
                 }
                 return commitHash;
             }
         }
 
-        private static string GetCommitHash()
+        private static string? GetCommitHash()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            Stream resourceStream = assembly.GetManifestResourceStream("Draw.Server.Resources.commit.txt");
+            Stream? resourceStream = assembly.GetManifestResourceStream("Draw.Server.Resources.commit.txt");
 
             if (resourceStream == null)
             {
@@ -44,7 +44,7 @@ namespace Draw.Server.Controllers
             {
                 using (StreamReader reader = new StreamReader(resourceStream, Encoding.UTF8))
                 {
-                    return reader.ReadLine();
+                    return reader?.ReadLine();
                 }
             }
             catch (Exception e)

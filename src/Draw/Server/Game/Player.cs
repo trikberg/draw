@@ -22,7 +22,7 @@ namespace Draw.Server.Game
         }
 
         public string ConnectionId { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public Guid Id { get; }
         public Guid ConnectionGuid { get; }
         public bool IsConnected { get; set; }
@@ -32,9 +32,9 @@ namespace Draw.Server.Game
             return new PlayerDTO(Name, Id, IsConnected);
         }
 
-        public override bool Equals(object o)
+        public override bool Equals(object? obj)
         {
-            if (o is Player p)
+            if (obj is Player p)
             {
                 return ConnectionId.Equals(p.ConnectionId);
             }

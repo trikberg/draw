@@ -17,6 +17,7 @@ namespace Draw.Server.Game.Rooms
         private List<Player> playersGuessing;
         private RoomStatePlayerTurn roomStatePlayerTurn;
         private GameTimer turnEndTimer;
+        private int timeout;
 
         private List<(Player player, int score)> playerScores;
 
@@ -33,15 +34,15 @@ namespace Draw.Server.Game.Rooms
             this.playerResults = playerResults;
             this.playersGuessing = playersGuessing;
             this.roomStatePlayerTurn = roomStatePlayerTurn;
+            CalculateScores();
+            timeout = 8 + playerScores!.Count;
+            turnEndTimer = new GameTimer(timeout * 1000, TurnEndTimerElapsed);
         }
 
         public async Task Enter()
         {
-            CalculateScores();
-            int timeout = 8 + playerScores.Count;
             await SendScores(timeout);
             roomStatePlayerTurn.Scores = playerScores;
-            turnEndTimer = new GameTimer(timeout * 1000, TurnEndTimerElapsed);
             turnEndTimer.Start();
         }
 
@@ -60,7 +61,7 @@ namespace Draw.Server.Game.Rooms
             return Task.CompletedTask;
         }
 
-        private void TurnEndTimerElapsed(object sender, ElapsedEventArgs e)
+        private void TurnEndTimerElapsed(object? sender, ElapsedEventArgs e)
         {
             turnEndTimer.Dispose();
             room.RoomState = roomStatePlayerTurn;

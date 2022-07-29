@@ -8,7 +8,7 @@ namespace Draw.Server.Controllers
     // https://stackoverflow.com/a/68074648/
     public class IndexController : Controller
     {
-        private static string _processedIndexFile;
+        private static string? _processedIndexFile;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public IndexController(IWebHostEnvironment webHostEnvironment)
@@ -26,7 +26,7 @@ namespace Draw.Server.Controllers
         {
             if (_processedIndexFile == null)
             {
-                string versionString = GitCommitHash.CommitHash;
+                string? versionString = GitCommitHash.CommitHash;
                 if (string.IsNullOrWhiteSpace(versionString) || Debugger.IsAttached)
                 {
                     versionString = System.DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss");

@@ -25,14 +25,14 @@ namespace Draw.Server.Game.Rooms
             this.activePlayer = player;
             this.room = room;
             this.roomStatePlayerTurn = roomStatePlayerTurn;
+            wordChoiceTimer = new GameTimer(wordChoiceTimeout * 1000, WordChoiceTimerElapsed);
+            (word1, word2, word3) = room.GetNext3Words();
         }
 
         public async Task Enter()
         {
-            (word1, word2, word3) = room.GetNext3Words();
             await room.SendPlayer(activePlayer, "ActivePlayerWordChoice", word1.ToWordDTO(), word2.ToWordDTO(), word3.ToWordDTO(), wordChoiceTimeout);
             await room.SendAllExcept(activePlayer, "PlayerWordChoice", activePlayer.ToPlayerDTO(), wordChoiceTimeout);
-            wordChoiceTimer = new GameTimer(wordChoiceTimeout * 1000, WordChoiceTimerElapsed);
             wordChoiceTimer.Start();
         }
 
@@ -58,7 +58,7 @@ namespace Draw.Server.Game.Rooms
             return Task.CompletedTask;
         }
 
-        private void WordChoiceTimerElapsed(object sender, ElapsedEventArgs e)
+        private void WordChoiceTimerElapsed(object? sender, ElapsedEventArgs e)
         {
             WordChosen(1, activePlayer);
         }

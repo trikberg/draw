@@ -12,7 +12,7 @@ namespace Draw.Server.Game.Rooms
         private Room room;
         private RoomStateLobby roomStateLobby;
         private Dictionary<Player, int> playerScores = new Dictionary<Player, int>();
-        private Timer gameEndTimer;
+        private Timer? gameEndTimer;
 
         public RoomStateGame(Room room, RoomStateLobby rsl)
         {
@@ -61,10 +61,10 @@ namespace Draw.Server.Game.Rooms
             return Task.CompletedTask;
         }
 
-        private void GameEndTimerElapsed(object sender, ElapsedEventArgs e)
+        private void GameEndTimerElapsed(object? sender, ElapsedEventArgs e)
         {
-            gameEndTimer.Stop();
-            gameEndTimer.Dispose();
+            gameEndTimer?.Stop();
+            gameEndTimer?.Dispose();
             room.RoomState = roomStateLobby;
             _ = room.SendAll("GameEnded");
         }

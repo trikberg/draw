@@ -32,7 +32,7 @@ namespace Draw.Server.Hubs
         {
             HttpTransportType? tranportType = Context.Features.Get<IHttpTransportFeature>()?.TransportType;
             logger.LogDebug("OnConnected SignalR TransportType: " + tranportType);
-            Player player = null;
+            Player? player = null;
             lock (playerDictionary)
             {
                 if (!playerDictionary.ContainsKey(Context.ConnectionId))
@@ -49,16 +49,16 @@ namespace Draw.Server.Hubs
             await base.OnConnectedAsync();
         }
 
-        public override async Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
             if (exception != null)
             {
                 logger.LogWarning(exception, "Player disconnect with exception " + exception.GetType().Name);
             }
-            Player player = GetPlayer(Context.ConnectionId);
+            Player? player = GetPlayer(Context.ConnectionId);
             if (player != null)
             {
-                Room room = lobby.GetRoom(player);
+                Room? room = lobby.GetRoom(player);
                 if (room != null)
                 {
                     await lobby.PlayerDisconnected(player, room);
@@ -83,7 +83,7 @@ namespace Draw.Server.Hubs
 
         public async Task<ReconnectStateDTO> TryReconnect(string userName, Guid connectionGuid)
         {
-            Player existingPlayerInstance;
+            Player? existingPlayerInstance;
             lock (playerDictionary)
             {
                 existingPlayerInstance = playerDictionary.Values.SingleOrDefault(p => p.ConnectionGuid.Equals(connectionGuid));
@@ -101,7 +101,7 @@ namespace Draw.Server.Hubs
                     playerDictionary.Add(Context.ConnectionId, existingPlayerInstance);
                 }
 
-                Room room = lobby.GetRoom(existingPlayerInstance);
+                Room? room = lobby.GetRoom(existingPlayerInstance);
 
                 if (room != null &&
                     room.RoomState is not RoomStateLobby)
@@ -118,7 +118,7 @@ namespace Draw.Server.Hubs
 
         public PlayerGuids SetPlayerName(string userName)
         {
-            Player player;
+            Player? player;
             lock (playerDictionary)
             {
                 if (playerDictionary.TryGetValue(Context.ConnectionId, out player))
@@ -140,15 +140,15 @@ namespace Draw.Server.Hubs
             return lobby.CreateRoom(roomName, roomSettings);
         }
 
-        public async Task<RoomStateDTO> JoinRoom(string roomName, string password)
+        public async Task<RoomStateDTO?> JoinRoom(string roomName, string password)
         {
-            Player player = GetPlayer(Context.ConnectionId);
+            Player? player = GetPlayer(Context.ConnectionId);
             if (player == null)
             {
                 return null;
             }
 
-            Room newRoom = lobby.GetRoom(roomName);
+            Room? newRoom = lobby.GetRoom(roomName);
             if (newRoom != null)
             {
                 return await lobby.JoinRoom(player, newRoom, password);
@@ -158,8 +158,8 @@ namespace Draw.Server.Hubs
 
         public async Task<bool> LeaveRoom()
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (player == null || room == null)
             {
                 return false;
@@ -171,8 +171,8 @@ namespace Draw.Server.Hubs
 
         public async Task SetRoomSettings(RoomSettings settings)
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 await lobby.SetRoomSettings(settings, room, player);
@@ -181,8 +181,8 @@ namespace Draw.Server.Hubs
 
         public async Task<bool> StartGame()
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 return await lobby.StartGame(room, player);
@@ -192,8 +192,8 @@ namespace Draw.Server.Hubs
 
         public void WordChosen(int wordIndex)
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 room.WordChosen(wordIndex, player);
@@ -202,19 +202,19 @@ namespace Draw.Server.Hubs
 
         public async Task MakeGuess(string guess)
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 await room.MakeGuess(player, guess);
             }    
         }
 
-        private Player GetPlayer(string connectionId)
+        private Player? GetPlayer(string connectionId)
         {
             lock (playerDictionary)
             {
-                if (playerDictionary.TryGetValue(connectionId, out Player player))
+                if (playerDictionary.TryGetValue(connectionId, out Player? player))
                 {
                     return player;
                 }
@@ -225,8 +225,8 @@ namespace Draw.Server.Hubs
 
         public async Task DrawLine(DrawLineEventArgs e)
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 await room.DrawLine(player, e);
@@ -235,8 +235,8 @@ namespace Draw.Server.Hubs
 
         public async Task Fill(FillEventArgs e)
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 await room.Fill(player, e);
@@ -245,8 +245,8 @@ namespace Draw.Server.Hubs
 
         public async Task ClearCanvas(string backgroundColor)
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 await room.ClearCanvas(player, backgroundColor);
@@ -255,8 +255,8 @@ namespace Draw.Server.Hubs
 
         public async Task Undo()
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 await room.Undo(player);
@@ -265,8 +265,8 @@ namespace Draw.Server.Hubs
 
         public async Task ChangeBackgroundColor(string color)
         {
-            Player player = GetPlayer(Context.ConnectionId);
-            Room room = lobby.GetRoom(player);
+            Player? player = GetPlayer(Context.ConnectionId);
+            Room? room = lobby.GetRoom(player);
             if (room != null && player != null)
             {
                 await room.ChangeBackgroundColor(player, color);

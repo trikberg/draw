@@ -14,8 +14,8 @@ namespace Draw.Server.Game.Rooms
         private static int roomCounter = 0;
 
         private int roomIndex;
-        private List<Word> unusedWords = null;
-        private List<Word> rejectedWords = null;
+        private List<Word> unusedWords = new();
+        private List<Word> rejectedWords = new();
         private int wordCount = 0;
         private Language wordListLanguage;
         private int wordListMinDifficulty;
@@ -35,12 +35,12 @@ namespace Draw.Server.Game.Rooms
             hubContext = context;
             RoomName = name;
             RoomSettings = settings;
-            RoomState = new RoomStateLobby(this, gameEndedCallback);
+            roomState = new RoomStateLobby(this, gameEndedCallback);
+            _ = roomState.Enter();
         }
 
         internal int RoomIndex => roomIndex;
         internal IHubContext<GameHub> HubContext => hubContext;
-        internal List<Word> UnusedWords => unusedWords;
 
         public List<Player> Players
         {
@@ -152,7 +152,7 @@ namespace Draw.Server.Game.Rooms
 
         internal (Word, Word, Word) GetNext3Words()
         {
-            if (unusedWords == null ||
+            if (unusedWords.Count == 0 ||
                 wordListLanguage != RoomSettings.Language ||
                 wordListMinDifficulty != RoomSettings.MinWordDifficulty ||
                 wordListMaxDifficulty != RoomSettings.MaxWordDifficulty)
@@ -267,17 +267,17 @@ namespace Draw.Server.Game.Rooms
             return HubContext.Clients.Group(RoomName).SendAsync(method);
         }
 
-        internal Task SendAll(string method, object arg)
+        internal Task SendAll(string method, object? arg)
         {
             return HubContext.Clients.Group(RoomName).SendAsync(method, arg);
         }
 
-        internal Task SendAll(string method, object arg1, object arg2)
+        internal Task SendAll(string method, object? arg1, object? arg2)
         {
             return HubContext.Clients.Group(RoomName).SendAsync(method, arg1, arg2);
         }
 
-        internal Task SendAll(string method, object arg1, object arg2, object arg3)
+        internal Task SendAll(string method, object? arg1, object? arg2, object? arg3)
         {
             return HubContext.Clients.Group(RoomName).SendAsync(method, arg1, arg2, arg3);
         }
@@ -287,22 +287,22 @@ namespace Draw.Server.Game.Rooms
             return HubContext.Clients.GroupExcept(RoomName, player.ConnectionId).SendAsync(method);
         }
 
-        internal Task SendAllExcept(Player player, string method, object arg)
+        internal Task SendAllExcept(Player player, string method, object? arg)
         {
             return HubContext.Clients.GroupExcept(RoomName, player.ConnectionId).SendAsync(method, arg);
         }
 
-        internal Task SendAllExcept(Player player, string method, object arg1, object arg2)
+        internal Task SendAllExcept(Player player, string method, object? arg1, object? arg2)
         {
             return HubContext.Clients.GroupExcept(RoomName, player.ConnectionId).SendAsync(method, arg1, arg2);
         }
 
-        internal Task SendAllExcept(Player player, string method, object arg1, object arg2, object arg3)
+        internal Task SendAllExcept(Player player, string method, object? arg1, object? arg2, object? arg3)
         {
             return HubContext.Clients.GroupExcept(RoomName, player.ConnectionId).SendAsync(method, arg1, arg2, arg3);
         }
 
-        internal Task SendAllExcept(Player player, string method, object arg1, object arg2, object arg3, object arg4)
+        internal Task SendAllExcept(Player player, string method, object? arg1, object? arg2, object? arg3, object? arg4)
         {
             return HubContext.Clients.GroupExcept(RoomName, player.ConnectionId).SendAsync(method, arg1, arg2, arg3, arg4);
         }
@@ -312,22 +312,22 @@ namespace Draw.Server.Game.Rooms
             return HubContext.Clients.Client(player.ConnectionId).SendAsync(method);
         }
 
-        internal Task SendPlayer(Player player, string method, object arg)
+        internal Task SendPlayer(Player player, string method, object? arg)
         {
             return HubContext.Clients.Client(player.ConnectionId).SendAsync(method, arg);
         }
 
-        internal Task SendPlayer(Player player, string method, object arg1, object arg2)
+        internal Task SendPlayer(Player player, string method, object? arg1, object? arg2)
         {
             return HubContext.Clients.Client(player.ConnectionId).SendAsync(method, arg1, arg2);
         }
 
-        internal Task SendPlayer(Player player, string method, object arg1, object arg2, object arg3)
+        internal Task SendPlayer(Player player, string method, object? arg1, object? arg2, object? arg3)
         {
             return HubContext.Clients.Client(player.ConnectionId).SendAsync(method, arg1, arg2, arg3);
         }
 
-        internal Task SendPlayer(Player player, string method, object arg1, object arg2, object arg3, object arg4)
+        internal Task SendPlayer(Player player, string method, object? arg1, object? arg2, object? arg3, object? arg4)
         {
             return HubContext.Clients.Client(player.ConnectionId).SendAsync(method, arg1, arg2, arg3, arg4);
         }

@@ -30,7 +30,7 @@ namespace Draw.Server.Game.Rooms
 
         internal async Task<bool> SetRoomSettings(RoomSettings settings, Player player)
         {
-            Player firstPlayer = room.Players.FirstOrDefault();
+            Player? firstPlayer = room.Players.FirstOrDefault();
             if (firstPlayer != null && firstPlayer.Equals(player))
             {
                 room.RoomSettings = settings;

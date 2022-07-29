@@ -39,16 +39,16 @@ namespace Draw.Server.Game.Rooms
             this.word = word;
             this.roomStatePlayerTurn = roomStatePlayerTurn;
             this.turnTime = room.RoomSettings.DrawingTime;
+            playersGuessing = room.Players.Where(p => !p.Equals(this.activePlayer)).ToList();
+            timer = new GameTimer(turnTime * 1000, TimerElapsed);
+            hintTimer = new GameTimer(turnTime * 333, HintTimerElapsed);
         }
 
         public async Task Enter()
         {
-            playersGuessing = room.Players.Where(p => !p.Equals(this.activePlayer)).ToList();
             string wordHint = WordDTO.GetHintWord(word.TheWord);
             await room.SendPlayer(activePlayer, "ActivePlayerDrawing", word.ToWordDTO(), turnTime);
             await room.SendAllExcept(activePlayer, "PlayerDrawing", activePlayer.ToPlayerDTO(), wordHint, turnTime);
-            timer = new GameTimer(turnTime * 1000, TimerElapsed);
-            hintTimer = new GameTimer(turnTime * 333, HintTimerElapsed);
             timer.Start();
             hintTimer.Start();
         }
@@ -139,14 +139,14 @@ namespace Draw.Server.Game.Rooms
             return Task.CompletedTask;
         }
 
-        private void TimerElapsed(object sender, ElapsedEventArgs e)
+        private void TimerElapsed(object? sender, ElapsedEventArgs e)
         {
             EndTurn();
         }
 
-        private void HintTimerElapsed(object sender, ElapsedEventArgs e)
+        private void HintTimerElapsed(object? sender, ElapsedEventArgs e)
         {
-            HintLetter hint = GetWordHint();
+            HintLetter? hint = GetWordHint();
             if (hint != null)
             {
                 hintsSent.Add(hint);
@@ -166,7 +166,7 @@ namespace Draw.Server.Game.Rooms
             }
         }
 
-        private HintLetter GetWordHint()
+        private HintLetter? GetWordHint()
         {
             if (hintsSent.Count >= word.TheWord.Length - 1)
             {

@@ -35,6 +35,15 @@ label {
     display: block;
 }
 
+.guesses-label {
+    line-height: 2rem;
+}
+
+.guesses-label::after {
+    content: "";
+    display: block;
+}
+
 input[type=checkbox] {
     transform: scale(1.5);
 }

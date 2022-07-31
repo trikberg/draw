@@ -216,7 +216,15 @@ namespace Draw.Server.Game.Rooms
                 }
                 else
                 {
-                    ChatMessage cm = new ChatMessage(ChatMessageType.Guess, player.Name, guess);
+                    ChatMessage cm;
+                    if (room.RoomSettings.ShowGuesses)
+                    {
+                        cm = new ChatMessage(ChatMessageType.Guess, player.Name, guess);
+                    }
+                    else
+                    {
+                        cm = new ChatMessage(ChatMessageType.Guess, player.Name, null);
+                    }
                     chatLog.Add(cm);
                     await room.SendAll("ChatMessage", cm);
                 }

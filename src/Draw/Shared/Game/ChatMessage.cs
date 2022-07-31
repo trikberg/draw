@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Draw.Shared.Game
+﻿namespace Draw.Shared.Game
 {
     public enum ChatMessageType
     {
@@ -17,7 +11,7 @@ namespace Draw.Shared.Game
 
     public class ChatMessage
     {
-        public ChatMessage(ChatMessageType messageType, string? playerName, string message)
+        public ChatMessage(ChatMessageType messageType, string? playerName, string? message)
         {
             this.MessageType = messageType;
             this.Message = message;
@@ -25,7 +19,7 @@ namespace Draw.Shared.Game
         }
 
         public ChatMessageType MessageType { get; set; }
-        public string Message { get; set;  }
+        public string? Message { get; set;  }
         public string? PlayerName { get; set; }
     }
 }

@@ -1,6 +1,11 @@
 ﻿<div class="message-display">
-    @if (Message.MessageType == ChatMessageType.Guess ||
-         Message.MessageType == ChatMessageType.Chat)
+    @if (Message.MessageType == ChatMessageType.Guess && Message.Message == null)
+    {
+        <span class="player-name">@(Message.PlayerName + " ")</span>
+        <span class="message-text">made an incorrect guess.</span>
+    }
+    else if (Message.MessageType == ChatMessageType.Guess ||
+             Message.MessageType == ChatMessageType.Chat)
     {
         <span class="player-name">@(Message.PlayerName + ": ")</span>
         <span class="message-text">@Message.Message</span>

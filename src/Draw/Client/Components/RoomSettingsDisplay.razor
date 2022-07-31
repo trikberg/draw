@@ -40,7 +40,11 @@
                 <DifficultySlider Settings="Settings" OnSettingsChanged="OnSettingsChanged" IsEditable="true"/>
             </div>
             <div class="setting">
-                <input type="checkbox" id="private-room" @bind="@IsPrivateRoom" />    
+                <input type="checkbox" id="show-guesses" @bind="@ShowGuesses" />
+                <label class="guesses-label" for="show-guesses">Show incorrect guesses</label>
+            </div>
+            <div class="setting">
+                <input type="checkbox" id="private-room" @bind="@IsPrivateRoom" />
                 <label class="privacy-label" for="private-room">Private room</label>
                 @if(IsPrivateRoom)
                 {
@@ -60,6 +64,10 @@
                 <label style="line-height:48px;">Difficulty:</label> 
                 <DifficultySlider Settings="Settings" OnSettingsChanged="OnSettingsChanged" IsEditable="false"/>
             </div>
+            <div class="setting">
+                <input type="checkbox" disabled="disabled" id="show-guesses" @bind="@ShowGuesses" />
+                <label class="guesses-label" for="show-guesses">Show incorrect guesses</label>
+            </div>
         </div>
     }
 </div>
@@ -69,7 +77,7 @@
     public bool IsEditable { get; set; }
 
     [Parameter]
-    public RoomSettings Settings { get; set; }
+    public RoomSettings Settings { get; set; } = null!;
 
     [Parameter]
     public EventCallback<RoomSettings> OnSettingsChanged { get; set; }
@@ -136,6 +144,20 @@
             {
                 Settings.Password = value;
                 OnSettingsChanged.InvokeAsync(Settings);
+            }
+        }
+    }
+
+    private bool ShowGuesses
+    {
+        get { return Settings.ShowGuesses; }
+        set
+        {
+            if (Settings.ShowGuesses != value)
+            {
+                Settings.ShowGuesses = value;
+                OnSettingsChanged.InvokeAsync(Settings);
+                StateHasChanged();
             }
         }
     }

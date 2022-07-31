@@ -9,11 +9,11 @@
 
 @code {
     [Parameter]
-    public WordDTO Word1 { get; set; }
+    public WordDTO Word1 { get; set; } = null!;
     [Parameter]
-    public WordDTO Word2 { get; set; }
+    public WordDTO Word2 { get; set; } = null!;
     [Parameter]
-    public WordDTO Word3 { get; set; }
+    public WordDTO Word3 { get; set; } = null!;
 
     private async Task WordChosen(int wordIndex)
     {

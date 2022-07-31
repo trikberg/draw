@@ -1,7 +1,7 @@
 ﻿@implements IDisposable
 @inject IGameService GameService
 
-@if (totalScoresVisible)
+@if (totalScoresVisible && totalScores != null)
 {
     <div class="overlay">
         <h2>Final scores</h2>
@@ -24,7 +24,7 @@
 
 @code {
     private bool totalScoresVisible = false;
-    private List<PlayerScore> totalScores = null;
+    private List<PlayerScore>? totalScores = null;
     private int timeout = 0;
 
     protected override async Task OnInitializedAsync()
@@ -39,7 +39,7 @@
     }
 
 
-    private void GameEnded(object sender, (List<PlayerScore> scores, int timeout) args)
+    private void GameEnded(object? sender, (List<PlayerScore> scores, int timeout) args)
     {
         args.scores.Sort((s1, s2) => s2.Score.CompareTo(s1.Score));
         totalScores = args.scores;

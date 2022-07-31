@@ -32,13 +32,13 @@
 
     }
 
-    private void OnPlayerDrawStarted(object sender, PlayerDrawEventArgs _)
+    private void OnPlayerDrawStarted(object? sender, PlayerDrawEventArgs _)
     {
         toolsVisible = false;
         StateHasChanged();
     }
 
-    private void OnActivePlayerDrawStarted(object sender, EventArgs _)
+    private void OnActivePlayerDrawStarted(object? sender, EventArgs _)
     {
         toolsVisible = true;
         StateHasChanged();

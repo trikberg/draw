@@ -17,7 +17,7 @@
         GameService.GameState.TurnTimer.TurnTimerChanged -= TurnTimerChanged;
     }
 
-    private void TurnTimerChanged(object sender, int time)
+    private void TurnTimerChanged(object? sender, int time)
     {
         StateHasChanged();
     }

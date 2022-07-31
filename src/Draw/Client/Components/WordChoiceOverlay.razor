@@ -11,7 +11,7 @@
 else if (playerWordChoiceActive)
 {
     <div class="overlay">
-        <h2>Waiting for @(player.Name) to choose a word</h2>
+        <h2>Waiting for @(player!.Name) to choose a word</h2>
         <Timeout Duration="@timeout" />
     </div>
 }
@@ -20,10 +20,10 @@ else if (playerWordChoiceActive)
     private bool activePlayerWordChoiceActive = false;
     private bool playerWordChoiceActive = false;
 
-    private WordDTO word1 = null;
-    private WordDTO word2 = null;
-    private WordDTO word3 = null;
-    private PlayerDTO player = null;
+    private WordDTO? word1 = null;
+    private WordDTO? word2 = null;
+    private WordDTO? word3 = null;
+    private PlayerDTO? player = null;
     private int timeout = 0;
 
         protected override async Task OnInitializedAsync()
@@ -43,7 +43,7 @@ else if (playerWordChoiceActive)
         GameService.GameState.PlayerDrawStarted -= PlayerDrawStarted;
     }
 
-    private void ActivePlayerWordChoiceStarted(object sender, WordChoiceEventArgs e)
+    private void ActivePlayerWordChoiceStarted(object? sender, WordChoiceEventArgs e)
     {
         word1 = e.Word1;
         word2 = e.Word2;
@@ -53,7 +53,7 @@ else if (playerWordChoiceActive)
         StateHasChanged();
     }
 
-    private void PlayerWordChoiceStarted(object sender, (PlayerDTO player, int timeout) args)
+    private void PlayerWordChoiceStarted(object? sender, (PlayerDTO player, int timeout) args)
     {
         player = args.player;
         timeout = args.timeout;
@@ -61,13 +61,13 @@ else if (playerWordChoiceActive)
         StateHasChanged();
     }
 
-    private void ActivePlayerDrawStarted(object sender, EventArgs _)
+    private void ActivePlayerDrawStarted(object? sender, EventArgs _)
     {
         activePlayerWordChoiceActive = false;
         StateHasChanged();
     }
 
-    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs _)
+    private void PlayerDrawStarted(object? sender, PlayerDrawEventArgs _)
     {
         playerWordChoiceActive = false;
         StateHasChanged();

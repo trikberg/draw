@@ -30,7 +30,7 @@
 
 @code {
     [Parameter]
-	public RoomSettings Settings { get; set; }
+    public RoomSettings Settings { get; set; } = null!;
 
     [Parameter]
     public EventCallback<RoomSettings> OnSettingsChanged { get; set; }

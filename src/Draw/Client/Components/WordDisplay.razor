@@ -39,27 +39,27 @@ else
         GameService.GameState.TurnScores -= TurnScores;
     }
 
-    private void ActivePlayerDrawStarted(object sender, EventArgs _)
+    private void ActivePlayerDrawStarted(object? sender, EventArgs _)
     {
         StateHasChanged();
     }
 
-    private void PlayerDrawStarted(object sender, PlayerDrawEventArgs e)
+    private void PlayerDrawStarted(object? sender, PlayerDrawEventArgs e)
     {
         StateHasChanged();
     }
 
-    private void HintLetterReceived(object sender, EventArgs _)
+    private void HintLetterReceived(object? sender, EventArgs _)
     {
         StateHasChanged();
     }
 
-    private void CorrectWordReceived(object sender, EventArgs _)
+    private void CorrectWordReceived(object? sender, EventArgs _)
     {
         StateHasChanged();
     }
 
-    private void TurnScores(object sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
+    private void TurnScores(object? sender, (List<PlayerScore> scores, WordDTO word, int timeout) args)
     {
         StateHasChanged();
     }
@@ -96,7 +96,7 @@ else
     {
         get
         {
-            string w = null;
+            string? w = null;
             if (GameService.GameState.WordHint != null)
             {
                 w = GameService.GameState.WordHint;

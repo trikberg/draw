@@ -64,14 +64,14 @@
         }
     }
 
-    private void GameStartedReceived(object sender, EventArgs e)
+    private void GameStartedReceived(object? sender, EventArgs e)
     {
         NavigationManager.NavigateTo("/room");
     }
 
     private bool IsEditable()
     {
-        Player firstPlayer = GameService.Players.FirstOrDefault();
+        Player? firstPlayer = GameService.Players.FirstOrDefault();
         Guid? myGuid = GameService.PlayerGuid;
         if (myGuid.HasValue &&
             firstPlayer != null &&
@@ -82,12 +82,12 @@
         return false;
     }
 
-    private void OnPlayerListChanged(object sender, EventArgs e)
+    private void OnPlayerListChanged(object? sender, EventArgs e)
     {
         StateHasChanged();
     }
 
-    private void OnRoomSettingsChanged(object sender, EventArgs e)
+    private void OnRoomSettingsChanged(object? sender, EventArgs e)
     {
         StateHasChanged();
     }

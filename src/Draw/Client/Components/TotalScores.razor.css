@@ -12,6 +12,12 @@
     gap: 30px;
 }
 
+.score-table {
+    display: block;
+    max-height: 460px;
+    overflow-y: auto;
+}
+
 h2 {
     color: #ffffff;
     font-size: 30px;

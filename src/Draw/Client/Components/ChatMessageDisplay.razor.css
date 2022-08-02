@@ -14,8 +14,14 @@
 .correct-guess {
     color: #008800;
     font-weight: bold;
+    overflow-wrap: break-word;
 }
 
 .already-guessed {
     color: #3d9a3d;
+    overflow-wrap: break-word;
+}
+
+.message-text {
+    overflow-wrap: break-word;
 }

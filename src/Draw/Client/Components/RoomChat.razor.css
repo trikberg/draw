@@ -1,5 +1,6 @@
 ﻿.roomchat {
     max-height: 756px;
+    max-width:375px;
     flex-grow: 2;
     background-color: #ffffff22;
     border-left: 2px solid white;

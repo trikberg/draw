@@ -119,15 +119,16 @@ namespace Draw.Server.Hubs
         public PlayerGuids SetPlayerName(string userName)
         {
             Player? player;
+            string playerName = userName.Substring(0, Math.Min(userName.Length, 16));
             lock (playerDictionary)
             {
                 if (playerDictionary.TryGetValue(Context.ConnectionId, out player))
                 {
-                    player.Name = userName;
+                    player.Name = playerName;
                 }
                 else
                 {
-                    player = new Player(Context.ConnectionId, userName);
+                    player = new Player(Context.ConnectionId, playerName);
                     playerDictionary.Add(Context.ConnectionId, player);
                 }
             }

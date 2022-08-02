@@ -81,6 +81,7 @@ namespace Draw.Client.Services
         private void OnActivePlayerDrawStarted(object? sender, EventArgs _)
         {
             isActivePlayer = true;
+            isMouseDown = false;
             ResetTools();
         }
 

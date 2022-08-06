@@ -1,0 +1,72 @@
+﻿@implements IDisposable
+@inject IGameService GameService
+@inject NavigationManager NavigationManager
+
+@if (isVisible)
+{
+    <div class="exit-wrapper" @onclick="() => ShowConfirmation(true)">
+        <button class="exit-button">X</button>
+    </div>
+}
+
+@if (confirmationDialog)
+{
+    <div class="confirmation-dialog">
+        <div class="confirmation-text">Really quit game?</div>
+        <div class="buttons-wrapper">
+            <button @onclick="() => ExitRoom()">Quit</button>
+            <button @onclick="() => ShowConfirmation(false)">Cancel</button>
+        </div>
+    </div>
+}
+
+
+@code {
+    bool isVisible = false;
+    bool confirmationDialog = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        GameService.GameStarted += GameStarted;
+        GameService.GameScores += GameScores;
+
+    }
+
+    public void Dispose()
+    {
+        GameService.GameStarted -= GameStarted;
+        GameService.GameScores -= GameScores;
+    }
+
+    private void GameStarted(object? sender, EventArgs e)
+    {
+        isVisible = true;
+        StateHasChanged();
+    }
+
+    private void GameScores(object? sender, (List<PlayerScore> scores, int timeout) args)
+    {
+        isVisible = false;
+        confirmationDialog = false;
+        StateHasChanged();
+    }
+
+    private void ShowConfirmation(bool show)
+    {
+        confirmationDialog = show;
+        StateHasChanged();
+    }
+
+    private async void ExitRoom()
+    {
+        if (await GameService.LeaveRoom())
+        {
+            isVisible = false;
+            confirmationDialog = false;
+            StateHasChanged();
+            NavigationManager.NavigateTo("/lobby");
+        }
+    }
+}

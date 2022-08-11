@@ -72,7 +72,8 @@ namespace Draw.Server.Game
                     !String.IsNullOrWhiteSpace(split[0]) &&
                     Int32.TryParse(split[1].Trim(), out int difficulty))
                 {
-                    Word w = new Word(split[0].Trim(), difficulty);
+                    string[] spellings = split[0].Trim().Split('|');
+                    Word w = new Word(spellings[0].Trim(), difficulty, spellings.Skip(1).Select(s => s.Trim()).ToList());
                     WordLists[language].Add(w);
                     return true;
                 }

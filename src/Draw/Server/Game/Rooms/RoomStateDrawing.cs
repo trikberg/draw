@@ -191,7 +191,8 @@ namespace Draw.Server.Game.Rooms
             }
             else
             {
-                if (guess.Trim().Equals(word.TheWord, StringComparison.InvariantCultureIgnoreCase))
+                if (guess.Trim().Equals(word.TheWord, StringComparison.InvariantCultureIgnoreCase) ||
+                    word.AlternateSpellings.Where(spelling => spelling.Equals(guess.Trim(), StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                 {
                     playersGuessing.Remove(player);
                     playerResults.Add(new(player, timer.TimeRemaining));

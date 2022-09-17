@@ -8,12 +8,14 @@
   <ItemGroup>
     <None Remove="Resources\commit.txt" />
     <None Remove="Resources\English.csv" />
+    <None Remove="Resources\Finnish.csv" />
     <None Remove="Resources\Swedish.csv" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\commit.txt" />
     <EmbeddedResource Include="Resources\English.csv" />
+    <EmbeddedResource Include="Resources\Finnish.csv" />
     <EmbeddedResource Include="Resources\Swedish.csv" />
   </ItemGroup>
 

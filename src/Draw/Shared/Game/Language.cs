@@ -10,5 +10,6 @@ namespace Draw.Shared.Game
     {
         English,
         Swedish,
+        Finnish
     }
 }

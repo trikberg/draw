@@ -74,7 +74,7 @@ namespace Draw.Client.Services
                 wordHintMessage.Append(' ');
                 wordHintMessage.Append(c);
             }
-            AddChatMessage(new ChatMessage(ChatMessageType.GameFlow, null, wordHintMessage.ToString()));
+            AddChatMessage(new ChatMessage(ChatMessageType.GameFlow, null, wordHintMessage.ToString().Replace("   ", " \u00A0 ")));
             HintLetterReceived?.Invoke(this, EventArgs.Empty);
         }
 

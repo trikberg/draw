@@ -91,8 +91,7 @@ button {
     justify-content: center;
 }
 
-#loading_logo {
-    margin-bottom: 40px;
+#loading-logo {
     color: #fffc;
     font-size: 120px;
     font-weight: bold;
@@ -100,13 +99,39 @@ button {
     text-shadow: -8px 8px 15px #00000055;
 }
 
-#loading {
+#loading-progress {
+    background-color: #ffffffaa;
+    border: 3px solid white;
+    width: 420px;
+    margin: 20px auto;
+    height: 30px;
+    border-radius: 800px;
+    overflow: hidden;
+    position: relative;
+}
+
+    #loading-progress:after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--theme-gradient);
+        scale: var(--blazor-load-percentage, 0%) 100%;
+        transform-origin: left top;
+        transition: scale ease-out 0.5s;
+    }
+
+#loading-progress-text {
     color: #fffc;
-    font-size: 80px;
+    margin-top: 10px;
+    font-size: 40px;
     font-weight: bold;
     font-family: sans-serif;
     text-shadow: -8px 8px 15px #00000055;
 }
+
+    #loading-progress-text:after {
+        content: var(--blazor-load-percentage-text, "Loading...");
+    }
 
 #blazor-error-ui {
     font-size: 1.5rem;

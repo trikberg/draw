@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using System.Diagnostics;
+using System.IO;
 
 namespace Draw.Server.Controllers
 {
@@ -32,6 +33,10 @@ namespace Draw.Server.Controllers
                     versionString = System.DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss");
                 }
                 IFileInfo file = _webHostEnvironment.WebRootFileProvider.GetFileInfo("index.html");
+                if (file.PhysicalPath is null)
+                {
+                    throw new FileNotFoundException("Physical file path not found.", "index.html");
+                }
                 _processedIndexFile = System.IO.File.ReadAllText(file.PhysicalPath);
                 _processedIndexFile = _processedIndexFile.Replace("{version}", versionString);
             }

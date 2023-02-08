@@ -26,7 +26,7 @@ namespace Draw.Client.UnhandledExceptions
             }
         }
 
-        public IDisposable BeginScope<TState>(TState state)
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
         {
             return new NoopDisposable();
         }

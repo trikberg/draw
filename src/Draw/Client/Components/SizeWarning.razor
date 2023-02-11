@@ -1,0 +1,18 @@
+﻿@if (warningVisible)
+{
+	<div class=size-warning>
+		<CloseButton CloseCommand="CloseDialog" />
+		<p>Due to technical reasons DRAW.FI has a minimum screen size and doesn't automatically scale to small screens.</p>
+		<p>Resizing using your browser's' zoom functionality (Ctrl and -) may work.</p>
+	</div>
+}
+
+@code {
+	bool warningVisible = true;
+
+	private void CloseDialog()
+	{
+		warningVisible = false;
+		StateHasChanged();
+	}
+}

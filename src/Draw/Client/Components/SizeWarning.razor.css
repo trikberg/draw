@@ -1,0 +1,23 @@
+﻿.size-warning {
+    position: absolute;
+    width: 90%;
+    margin: auto 30px;
+    z-index: 30;
+    background: linear-gradient(to right bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.3));
+    border-radius: 20px;
+    border: 2px solid white;
+    overflow: hidden;
+    backdrop-filter: blur(15px);
+    box-shadow: 10px 10px 25px 0px #00000055;
+    padding: 20px 80px 20px 20px;
+    color: black;
+    font-size: 18px;
+    visibility: hidden;
+}
+
+@media (max-width: 1500px)
+{
+    .size-warning {
+        visibility: visible;
+    }
+}

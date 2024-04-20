@@ -11,7 +11,7 @@ namespace Draw.Server
     {
         public static void Main(string[] args)
         {
-            Logger logger = NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+            Logger logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             try
             {
                 logger.Info("Application starting up.");

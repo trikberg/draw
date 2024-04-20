@@ -36,9 +36,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        string userName = await LocalStorage.GetItemAsync<string>("UserName");
+        string? userName = await LocalStorage.GetItemAsync<string>("UserName");
         Guid connectionGuid = await LocalStorage.GetItemAsync<Guid>("ConnectionGuid");
-        if (!connectionGuid.Equals(Guid.Empty) && !String.IsNullOrEmpty(userName))
+        if (!connectionGuid.Equals(Guid.Empty) && !string.IsNullOrEmpty(userName))
         {
             RoomStateDTO? roomState = await GameService.TryReconnect(userName, connectionGuid);
             if (roomState != null)

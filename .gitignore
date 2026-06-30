@@ -1,3 +1,4 @@
+.vs/**
 src/.vs/**
 src/Draw/Client/bin/**
 src/Draw/Client/obj/**
